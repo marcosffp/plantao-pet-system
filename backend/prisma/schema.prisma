@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Owner {
+  id              String           @id @default(uuid())
+  name            String
+  phone           String           @unique
+  address         String
+  passwordHash    String
+  pets            Pet[]
+  serviceRequests ServiceRequest[]
+  reviews         Review[]
+  createdAt       DateTime         @default(now())
+}
+
+model Pet {
+  id              String           @id @default(uuid())
+  name            String
+  species         Species
+  breed           String
+  age             Int
+  specialNotes    String?
+  owner           Owner            @relation(fields: [ownerId], references: [id])
+  ownerId         String
+  serviceRequests ServiceRequest[]
+  createdAt       DateTime         @default(now())
+}
+
+model Caregiver {
+  id              String           @id @default(uuid())
+  name            String
+  phone           String           @unique
+  passwordHash    String
+  neighborhoods   String[]
+  services        ServiceType[]
+  averageRating   Float            @default(0)
+  status          CaregiverStatus  @default(ACTIVE)
+  serviceRequests ServiceRequest[]
+  reviews         Review[]
+  createdAt       DateTime         @default(now())
+}
+
+model ServiceRequest {
+  id             String        @id @default(uuid())
+  pet            Pet           @relation(fields: [petId], references: [id])
+  petId          String
+  owner          Owner         @relation(fields: [ownerId], references: [id])
+  ownerId        String
+  caregiver      Caregiver?    @relation(fields: [caregiverId], references: [id])
+  caregiverId    String?
+  serviceType    ServiceType
+  scheduledAt    DateTime
+  meetingAddress String
+  status         RequestStatus @default(OPEN)
+  expiresAt      DateTime
+  review         Review?
+  createdAt      DateTime      @default(now())
+}
+
+model Review {
+  id               String         @id @default(uuid())
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+  serviceRequestId String         @unique
+  owner            Owner          @relation(fields: [ownerId], references: [id])
+  ownerId          String
+  caregiver        Caregiver      @relation(fields: [caregiverId], references: [id])
+  caregiverId      String
+  rating           Int
+  comment          String
+  createdAt        DateTime       @default(now())
+}
+
+enum Species {
+  DOG
+  CAT
+  OTHER
+}
+
+enum ServiceType {
+  WALK_30MIN
+  WALK_1H
+  HOME_VISIT
+  HOSTING
+}
+
+enum RequestStatus {
+  OPEN
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REFUSED
+}
+
+enum CaregiverStatus {
+  ACTIVE
+  INACTIVE
+}
