@@ -1,6 +1,7 @@
 'use strict';
 
-const kafka = require('./kafka.client');
+const getKafka = require('./kafka.client');
+const kafka = getKafka();
 
 const consumer = kafka.consumer({ groupId: 'plantao-pet-group' });
 

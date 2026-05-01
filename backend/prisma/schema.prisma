@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -10,6 +11,7 @@ datasource db {
 model Owner {
   id              String           @id @default(uuid())
   name            String
+  email           String           @unique
   phone           String           @unique
   address         String
   passwordHash    String
@@ -35,6 +37,7 @@ model Pet {
 model Caregiver {
   id              String           @id @default(uuid())
   name            String
+  email           String           @unique
   phone           String           @unique
   passwordHash    String
   neighborhoods   String[]

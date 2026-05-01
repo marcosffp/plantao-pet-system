@@ -1,0 +1,647 @@
+plantao-pet-kafka      |        metadata.log.max.snapshot.interval.ms = 3600000
+plantao-pet-kafka      |        metadata.log.segment.bytes = 1073741824
+plantao-pet-kafka      |        metadata.log.segment.min.bytes = 8388608
+plantao-pet-kafka      |        metadata.log.segment.ms = 604800000
+plantao-pet-kafka      |        metadata.max.idle.interval.ms = 500
+plantao-pet-kafka      |        metadata.max.retention.bytes = 104857600
+plantao-pet-kafka      |        metadata.max.retention.ms = 604800000
+plantao-pet-kafka      |        metric.reporters = []
+plantao-pet-kafka      |        metrics.num.samples = 2
+plantao-pet-kafka      |        metrics.recording.level = INFO
+plantao-pet-kafka      |        metrics.sample.window.ms = 30000
+plantao-pet-kafka      |        min.insync.replicas = 1
+plantao-pet-kafka      |        node.id = 1
+plantao-pet-kafka      |        num.io.threads = 8
+plantao-pet-kafka      |        num.network.threads = 3
+plantao-pet-kafka      |        num.partitions = 1
+plantao-pet-kafka      |        num.recovery.threads.per.data.dir = 1
+plantao-pet-kafka      |        num.replica.alter.log.dirs.threads = null
+plantao-pet-kafka      |        num.replica.fetchers = 1
+plantao-pet-kafka      |        offset.metadata.max.bytes = 4096
+plantao-pet-kafka      |        offsets.commit.required.acks = -1
+plantao-pet-kafka      |        offsets.commit.timeout.ms = 5000
+plantao-pet-kafka      |        offsets.load.buffer.size = 5242880
+plantao-pet-kafka      |        offsets.retention.check.interval.ms = 600000
+plantao-pet-kafka      |        offsets.retention.minutes = 10080
+plantao-pet-kafka      |        offsets.topic.compression.codec = 0
+plantao-pet-kafka      |        offsets.topic.num.partitions = 50
+plantao-pet-kafka      |        offsets.topic.replication.factor = 1
+plantao-pet-kafka      |        offsets.topic.segment.bytes = 104857600
+plantao-pet-kafka      |        password.encoder.cipher.algorithm = AES/CBC/PKCS5Padding
+plantao-pet-kafka      |        password.encoder.iterations = 4096
+plantao-pet-kafka      |        password.encoder.key.length = 128
+plantao-pet-kafka      |        password.encoder.keyfactory.algorithm = null
+plantao-pet-kafka      |        password.encoder.old.secret = null
+plantao-pet-kafka      |        password.encoder.secret = null
+plantao-pet-kafka      |        principal.builder.class = class org.apache.kafka.common.security.authenticator.DefaultKafkaPrincipalBuilder
+plantao-pet-kafka      |        process.roles = []
+plantao-pet-kafka      |        producer.id.expiration.check.interval.ms = 600000
+plantao-pet-kafka      |        producer.id.expiration.ms = 86400000
+plantao-pet-kafka      |        producer.purgatory.purge.interval.requests = 1000
+plantao-pet-kafka      |        queued.max.request.bytes = -1
+plantao-pet-kafka      |        queued.max.requests = 500
+plantao-pet-kafka      |        quota.window.num = 11
+plantao-pet-kafka      |        quota.window.size.seconds = 1
+plantao-pet-kafka      |        remote.log.index.file.cache.total.size.bytes = 1073741824
+plantao-pet-kafka      |        remote.log.manager.task.interval.ms = 30000
+plantao-pet-kafka      |        remote.log.manager.task.retry.backoff.max.ms = 30000
+plantao-pet-kafka      |        remote.log.manager.task.retry.backoff.ms = 500
+plantao-pet-kafka      |        remote.log.manager.task.retry.jitter = 0.2
+plantao-pet-kafka      |        remote.log.manager.thread.pool.size = 10
+plantao-pet-kafka      |        remote.log.metadata.manager.class.name = null
+plantao-pet-kafka      |        remote.log.metadata.manager.class.path = null
+plantao-pet-kafka      |        remote.log.metadata.manager.impl.prefix = null
+plantao-pet-kafka      |        remote.log.metadata.manager.listener.name = null
+plantao-pet-kafka      |        remote.log.reader.max.pending.tasks = 100
+plantao-pet-kafka      |        remote.log.reader.threads = 10
+plantao-pet-kafka      |        remote.log.storage.manager.class.name = null
+plantao-pet-kafka      |        remote.log.storage.manager.class.path = null
+plantao-pet-kafka      |        remote.log.storage.manager.impl.prefix = null
+plantao-pet-kafka      |        remote.log.storage.system.enable = false
+plantao-pet-kafka      |        replica.fetch.backoff.ms = 1000
+plantao-pet-kafka      |        replica.fetch.max.bytes = 1048576
+plantao-pet-kafka      |        replica.fetch.min.bytes = 1
+plantao-pet-kafka      |        replica.fetch.response.max.bytes = 10485760
+plantao-pet-kafka      |        replica.fetch.wait.max.ms = 500
+plantao-pet-kafka      |        replica.high.watermark.checkpoint.interval.ms = 5000
+plantao-pet-kafka      |        replica.lag.time.max.ms = 30000
+plantao-pet-kafka      |        replica.selector.class = null
+plantao-pet-kafka      |        replica.socket.receive.buffer.bytes = 65536
+plantao-pet-kafka      |        replica.socket.timeout.ms = 30000
+plantao-pet-kafka      |        replication.quota.window.num = 11
+plantao-pet-kafka      |        replication.quota.window.size.seconds = 1
+plantao-pet-kafka      |        request.timeout.ms = 30000
+plantao-pet-kafka      |        reserved.broker.max.id = 1000
+plantao-pet-kafka      |        sasl.client.callback.handler.class = null
+plantao-pet-kafka      |        sasl.enabled.mechanisms = [GSSAPI]
+plantao-pet-kafka      |        sasl.jaas.config = null
+plantao-pet-kafka      |        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+plantao-pet-kafka      |        sasl.kerberos.min.time.before.relogin = 60000
+plantao-pet-kafka      |        sasl.kerberos.principal.to.local.rules = [DEFAULT]
+plantao-pet-kafka      |        sasl.kerberos.service.name = null
+plantao-pet-kafka      |        sasl.kerberos.ticket.renew.jitter = 0.05
+plantao-pet-kafka      |        sasl.kerberos.ticket.renew.window.factor = 0.8
+plantao-pet-kafka      |        sasl.login.callback.handler.class = null
+plantao-pet-kafka      |        sasl.login.class = null
+plantao-pet-kafka      |        sasl.login.connect.timeout.ms = null
+plantao-pet-kafka      |        sasl.login.read.timeout.ms = null
+plantao-pet-kafka      |        sasl.login.refresh.buffer.seconds = 300
+plantao-pet-kafka      |        sasl.login.refresh.min.period.seconds = 60
+plantao-pet-kafka      |        sasl.login.refresh.window.factor = 0.8
+plantao-pet-kafka      |        sasl.login.refresh.window.jitter = 0.05
+plantao-pet-kafka      |        sasl.login.retry.backoff.max.ms = 10000
+plantao-pet-kafka      |        sasl.login.retry.backoff.ms = 100
+plantao-pet-kafka      |        sasl.mechanism.controller.protocol = GSSAPI
+plantao-pet-kafka      |        sasl.mechanism.inter.broker.protocol = GSSAPI
+plantao-pet-kafka      |        sasl.oauthbearer.clock.skew.seconds = 30
+plantao-pet-kafka      |        sasl.oauthbearer.expected.audience = null
+plantao-pet-kafka      |        sasl.oauthbearer.expected.issuer = null
+plantao-pet-kafka      |        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+plantao-pet-kafka      |        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+plantao-pet-kafka      |        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+plantao-pet-kafka      |        sasl.oauthbearer.jwks.endpoint.url = null
+plantao-pet-kafka      |        sasl.oauthbearer.scope.claim.name = scope
+plantao-pet-kafka      |        sasl.oauthbearer.sub.claim.name = sub
+plantao-pet-kafka      |        sasl.oauthbearer.token.endpoint.url = null
+plantao-pet-kafka      |        sasl.server.callback.handler.class = null
+plantao-pet-kafka      |        sasl.server.max.receive.size = 524288
+plantao-pet-kafka      |        security.inter.broker.protocol = PLAINTEXT
+plantao-pet-kafka      |        security.providers = null
+plantao-pet-kafka      |        socket.connection.setup.timeout.max.ms = 30000
+plantao-pet-kafka      |        socket.connection.setup.timeout.ms = 10000
+plantao-pet-kafka      |        socket.listen.backlog.size = 50
+plantao-pet-kafka      |        socket.receive.buffer.bytes = 102400
+plantao-pet-kafka      |        socket.request.max.bytes = 104857600
+plantao-pet-kafka      |        socket.send.buffer.bytes = 102400
+plantao-pet-kafka      |        ssl.cipher.suites = []
+plantao-pet-kafka      |        ssl.client.auth = none
+plantao-pet-kafka      |        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+plantao-pet-kafka      |        ssl.endpoint.identification.algorithm = https
+plantao-pet-kafka      |        ssl.engine.factory.class = null
+plantao-pet-kafka      |        ssl.key.password = null
+plantao-pet-kafka      |        ssl.keymanager.algorithm = SunX509
+plantao-pet-kafka      |        ssl.keystore.certificate.chain = null
+plantao-pet-kafka      |        ssl.keystore.key = null
+plantao-pet-kafka      |        ssl.keystore.location = null
+plantao-pet-kafka      |        ssl.keystore.password = null
+plantao-pet-kafka      |        ssl.keystore.type = JKS
+plantao-pet-kafka      |        ssl.principal.mapping.rules = DEFAULT
+plantao-pet-kafka      |        ssl.protocol = TLSv1.3
+plantao-pet-kafka      |        ssl.provider = null
+plantao-pet-kafka      |        ssl.secure.random.implementation = null
+plantao-pet-kafka      |        ssl.trustmanager.algorithm = PKIX
+plantao-pet-kafka      |        ssl.truststore.certificates = null
+plantao-pet-kafka      |        ssl.truststore.location = null
+plantao-pet-kafka      |        ssl.truststore.password = null
+plantao-pet-kafka      |        ssl.truststore.type = JKS
+plantao-pet-kafka      |        transaction.abort.timed.out.transaction.cleanup.interval.ms = 10000
+plantao-pet-kafka      |        transaction.max.timeout.ms = 900000
+plantao-pet-kafka      |        transaction.remove.expired.transaction.cleanup.interval.ms = 3600000
+plantao-pet-kafka      |        transaction.state.log.load.buffer.size = 5242880
+plantao-pet-kafka      |        transaction.state.log.min.isr = 2
+plantao-pet-kafka      |        transaction.state.log.num.partitions = 50
+plantao-pet-kafka      |        transaction.state.log.replication.factor = 3
+plantao-pet-kafka      |        transaction.state.log.segment.bytes = 104857600
+plantao-pet-kafka      |        transactional.id.expiration.ms = 604800000
+plantao-pet-kafka      |        unclean.leader.election.enable = false
+plantao-pet-kafka      |        zookeeper.clientCnxnSocket = null
+plantao-pet-kafka      |        zookeeper.connect = zookeeper:2181
+plantao-pet-kafka      |        zookeeper.connection.timeout.ms = null
+plantao-pet-kafka      |        zookeeper.max.in.flight.requests = 10
+plantao-pet-kafka      |        zookeeper.metadata.migration.enable = false
+plantao-pet-kafka      |        zookeeper.session.timeout.ms = 18000
+plantao-pet-kafka      |        zookeeper.set.acl = false
+plantao-pet-kafka      |        zookeeper.ssl.cipher.suites = null
+plantao-pet-kafka      |        zookeeper.ssl.client.enable = false
+plantao-pet-kafka      |        zookeeper.ssl.crl.enable = false
+plantao-pet-kafka      |        zookeeper.ssl.enabled.protocols = null
+plantao-pet-kafka      |        zookeeper.ssl.endpoint.identification.algorithm = HTTPS
+plantao-pet-kafka      |        zookeeper.ssl.keystore.location = null
+plantao-pet-kafka      |        zookeeper.ssl.keystore.password = null
+plantao-pet-kafka      |        zookeeper.ssl.keystore.type = null
+plantao-pet-kafka      |        zookeeper.ssl.ocsp.enable = false
+plantao-pet-kafka      |        zookeeper.ssl.protocol = TLSv1.2
+plantao-pet-kafka      |        zookeeper.ssl.truststore.location = null
+plantao-pet-kafka      |        zookeeper.ssl.truststore.password = null
+plantao-pet-kafka      |        zookeeper.ssl.truststore.type = null
+plantao-pet-kafka      |  (kafka.server.KafkaConfig)
+plantao-pet-kafka      | [2026-05-01 14:34:44,931] INFO [ThrottledChannelReaper-Fetch]: Starting (kafka.server.ClientQuotaManager$ThrottledChannelReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:44,932] INFO [ThrottledChannelReaper-Produce]: Starting (kafka.server.ClientQuotaManager$ThrottledChannelReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:44,934] INFO [ThrottledChannelReaper-Request]: Starting (kafka.server.ClientQuotaManager$ThrottledChannelReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:44,939] INFO [ThrottledChannelReaper-ControllerMutation]: Starting (kafka.server.ClientQuotaManager$ThrottledChannelReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:44,986] INFO Loading logs from log dirs ArraySeq(/var/lib/kafka/data) (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:44,990] INFO Attempting recovery for all logs in /var/lib/kafka/data since no clean shutdown file was found (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:45,008] INFO Loaded 0 logs in 22ms. (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:45,012] INFO Starting log cleanup with a period of 300000 ms. (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:45,016] INFO Starting log flusher with a default period of 9223372036854775807 ms. (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:45,033] INFO Starting the log cleaner (kafka.log.LogCleaner)
+plantao-pet-kafka      | [2026-05-01 14:34:45,181] INFO [kafka-log-cleaner-thread-0]: Starting (kafka.log.LogCleaner)
+plantao-pet-kafka      | [2026-05-01 14:34:45,207] INFO [feature-zk-node-event-process-thread]: Starting (kafka.server.FinalizedFeatureChangeListener$ChangeNotificationProcessorThread)
+plantao-pet-kafka      | [2026-05-01 14:34:45,219] INFO Feature ZK node at path: /feature does not exist (kafka.server.FinalizedFeatureChangeListener)
+plantao-pet-kafka      | [2026-05-01 14:34:45,251] INFO [BrokerToControllerChannelManager broker=1 name=forwarding]: Starting (kafka.server.BrokerToControllerRequestThread)
+plantao-pet-kafka      | [2026-05-01 14:34:45,672] INFO Updated connection-accept-rate max connection creation rate to 2147483647 (kafka.network.ConnectionQuotas)
+plantao-pet-kafka      | [2026-05-01 14:34:45,679] INFO Awaiting socket connections on 0.0.0.0:29092. (kafka.network.DataPlaneAcceptor)
+plantao-pet-kafka      | [2026-05-01 14:34:45,705] INFO [SocketServer listenerType=ZK_BROKER, nodeId=1] Created data-plane acceptor and processors for endpoint : ListenerName(PLAINTEXT) (kafka.network.SocketServer)
+plantao-pet-kafka      | [2026-05-01 14:34:45,706] INFO Updated connection-accept-rate max connection creation rate to 2147483647 (kafka.network.ConnectionQuotas)
+plantao-pet-kafka      | [2026-05-01 14:34:45,707] INFO Awaiting socket connections on 0.0.0.0:9092. (kafka.network.DataPlaneAcceptor)
+plantao-pet-kafka      | [2026-05-01 14:34:45,725] INFO [SocketServer listenerType=ZK_BROKER, nodeId=1] Created data-plane acceptor and processors for endpoint : ListenerName(PLAINTEXT_HOST) (kafka.network.SocketServer)
+plantao-pet-kafka      | [2026-05-01 14:34:45,759] INFO [BrokerToControllerChannelManager broker=1 name=alterPartition]: Starting (kafka.server.BrokerToControllerRequestThread)
+plantao-pet-kafka      | [2026-05-01 14:34:45,793] INFO [ExpirationReaper-1-Produce]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,794] INFO [ExpirationReaper-1-Fetch]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,796] INFO [ExpirationReaper-1-DeleteRecords]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,797] INFO [ExpirationReaper-1-ElectLeader]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,815] INFO [LogDirFailureHandler]: Starting (kafka.server.ReplicaManager$LogDirFailureHandler)
+plantao-pet-kafka      | [2026-05-01 14:34:45,839] INFO Creating /brokers/ids/1 (is it secure? false) (kafka.zk.KafkaZkClient)
+plantao-pet-kafka      | [2026-05-01 14:34:45,864] INFO Stat of the created znode at /brokers/ids/1 is: 27,27,1777646085851,1777646085851,1,0,0,72057816393121793,259,0,27
+plantao-pet-kafka      |  (kafka.zk.KafkaZkClient)
+plantao-pet-kafka      | [2026-05-01 14:34:45,865] INFO Registered broker 1 at path /brokers/ids/1 with addresses: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092, czxid (broker epoch): 27 (kafka.zk.KafkaZkClient)
+plantao-pet-kafka      | [2026-05-01 14:34:45,940] INFO [ControllerEventThread controllerId=1] Starting (kafka.controller.ControllerEventManager$ControllerEventThread)
+plantao-pet-kafka      | [2026-05-01 14:34:45,954] INFO [ExpirationReaper-1-topic]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,964] INFO Successfully created /controller_epoch with initial epoch 0 (kafka.zk.KafkaZkClient)
+plantao-pet-kafka      | [2026-05-01 14:34:45,967] INFO [ExpirationReaper-1-Heartbeat]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,970] INFO [ExpirationReaper-1-Rebalance]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:45,982] INFO [Controller id=1] 1 successfully elected as the controller. Epoch incremented to 1 and epoch zk version is now 1 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:45,988] INFO [Controller id=1] Creating FeatureZNode at path: /feature with contents: FeatureZNode(2,Enabled,Map()) (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:45,995] INFO Feature ZK node created at path: /feature (kafka.server.FinalizedFeatureChangeListener)
+plantao-pet-kafka      | [2026-05-01 14:34:46,006] INFO [GroupCoordinator 1]: Starting up. (kafka.coordinator.group.GroupCoordinator)
+plantao-pet-kafka      | [2026-05-01 14:34:46,012] INFO [GroupCoordinator 1]: Startup complete. (kafka.coordinator.group.GroupCoordinator)
+plantao-pet-kafka      | [2026-05-01 14:34:46,041] INFO [TransactionCoordinator id=1] Starting up. (kafka.coordinator.transaction.TransactionCoordinator)
+plantao-pet-kafka      | [2026-05-01 14:34:46,041] INFO [Controller id=1] Registering handlers (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,041] INFO [MetadataCache brokerId=1] Updated cache from existing <empty> to latest FinalizedFeaturesAndEpoch(features=Map(), epoch=0). (kafka.server.metadata.ZkMetadataCache)
+plantao-pet-kafka      | [2026-05-01 14:34:46,047] INFO [Controller id=1] Deleting log dir event notifications (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,050] INFO [TransactionCoordinator id=1] Startup complete. (kafka.coordinator.transaction.TransactionCoordinator)
+plantao-pet-kafka      | [2026-05-01 14:34:46,050] INFO [Transaction Marker Channel Manager 1]: Starting (kafka.coordinator.transaction.TransactionMarkerChannelManager)
+plantao-pet-kafka      | [2026-05-01 14:34:46,053] INFO [Controller id=1] Deleting isr change notifications (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,059] INFO [Controller id=1] Initializing controller context (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,088] INFO [Controller id=1] Initialized broker epochs cache: HashMap(1 -> 27) (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,101] DEBUG [Controller id=1] Register BrokerModifications handler for Set(1) (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,109] DEBUG [Channel manager on controller 1]: Controller 1 trying to connect to broker 1 (kafka.controller.ControllerChannelManager)
+plantao-pet-kafka      | [2026-05-01 14:34:46,124] INFO [RequestSendThread controllerId=1] Starting (kafka.controller.RequestSendThread)
+plantao-pet-kafka      | [2026-05-01 14:34:46,126] INFO [Controller id=1] Currently active brokers in the cluster: Set(1) (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,126] INFO [Controller id=1] Currently shutting brokers in the cluster: HashSet() (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,126] INFO [Controller id=1] Current list of topics in the cluster: HashSet() (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,126] INFO [Controller id=1] Fetching topic deletions in progress (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,131] INFO [Controller id=1] List of topics to be deleted:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,131] INFO [Controller id=1] List of topics ineligible for deletion:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,131] INFO [Controller id=1] Initializing topic deletion manager (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,132] INFO [Topic Deletion Manager 1] Initializing manager with initial deletions: Set(), initial ineligible deletions: HashSet() (kafka.controller.TopicDeletionManager)
+plantao-pet-kafka      | [2026-05-01 14:34:46,133] INFO [ExpirationReaper-1-AlterAcls]: Starting (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+plantao-pet-kafka      | [2026-05-01 14:34:46,133] INFO [Controller id=1] Sending update metadata request (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,142] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:46,157] INFO [ReplicaStateMachine controllerId=1] Initializing replica state (kafka.controller.ZkReplicaStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,158] INFO [ReplicaStateMachine controllerId=1] Triggering online replica state changes (kafka.controller.ZkReplicaStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,167] INFO [ReplicaStateMachine controllerId=1] Triggering offline replica state changes (kafka.controller.ZkReplicaStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,170] DEBUG [ReplicaStateMachine controllerId=1] Started replica state machine with initial state -> HashMap() (kafka.controller.ZkReplicaStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,171] INFO [PartitionStateMachine controllerId=1] Initializing partition state (kafka.controller.ZkPartitionStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,172] INFO [PartitionStateMachine controllerId=1] Triggering online partition state changes (kafka.controller.ZkPartitionStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,172] INFO [RequestSendThread controllerId=1] Controller 1 connected to kafka:29092 (id: 1 rack: null) for sending state change requests (kafka.controller.RequestSendThread)
+plantao-pet-kafka      | [2026-05-01 14:34:46,175] DEBUG [PartitionStateMachine controllerId=1] Started partition state machine with initial state -> HashMap() (kafka.controller.ZkPartitionStateMachine)
+plantao-pet-kafka      | [2026-05-01 14:34:46,175] INFO [Controller id=1] Ready to serve as the new controller with epoch 1 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,185] INFO [Controller id=1] Partitions undergoing preferred replica election:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,185] INFO [Controller id=1] Partitions that completed preferred replica election:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,185] INFO [Controller id=1] Skipping preferred replica election for partitions due to topic deletion:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,185] INFO [Controller id=1] Resuming preferred replica election for partitions:  (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,190] INFO [Controller id=1] Starting replica leader election (PREFERRED) for partitions  triggered by ZkTriggered (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,201] INFO [/config/changes-event-process-thread]: Starting (kafka.common.ZkNodeChangeNotificationListener$ChangeEventProcessThread)
+plantao-pet-kafka      | [2026-05-01 14:34:46,209] INFO [Controller id=1] Starting the controller scheduler (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:46,220] INFO [SocketServer listenerType=ZK_BROKER, nodeId=1] Enabling request processing. (kafka.network.SocketServer)
+plantao-pet-kafka      | [2026-05-01 14:34:46,244] INFO Kafka version: 7.4.0-ccs (org.apache.kafka.common.utils.AppInfoParser)
+plantao-pet-kafka      | [2026-05-01 14:34:46,244] INFO Kafka commitId: 30969fa33c185e880b9e02044761dfaac013151d (org.apache.kafka.common.utils.AppInfoParser)
+plantao-pet-kafka      | [2026-05-01 14:34:46,245] INFO Kafka startTimeMs: 1777646086237 (org.apache.kafka.common.utils.AppInfoParser)
+plantao-pet-kafka      | [2026-05-01 14:34:46,250] INFO [KafkaServer id=1] started (kafka.server.KafkaServer)
+plantao-pet-kafka      | [2026-05-01 14:34:46,310] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 0 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:46,367] INFO [BrokerToControllerChannelManager broker=1 name=alterPartition]: Recorded new controller, from now on will use node kafka:29092 (id: 1 rack: null) (kafka.server.BrokerToControllerRequestThread)
+plantao-pet-kafka      | [2026-05-01 14:34:46,372] INFO [BrokerToControllerChannelManager broker=1 name=forwarding]: Recorded new controller, from now on will use node kafka:29092 (id: 1 rack: null) (kafka.server.BrokerToControllerRequestThread)
+Container plantao-pet-kafka Healthy 
+Container plantao-pet-kafka Healthy 
+plantao-pet-kafka-ui   | Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Container plantao-pet-postgres Healthy 
+plantao-pet-kafka-ui   |  _   _ ___    __             _                _          _  __      __ _
+plantao-pet-kafka-ui   | | | | |_ _|  / _|___ _ _    /_\  _ __ __ _ __| |_  ___  | |/ /__ _ / _| |_____
+plantao-pet-kafka-ui   | | |_| || |  |  _/ _ | '_|  / _ \| '_ / _` / _| ' \/ -_) | ' </ _` |  _| / / _`|
+plantao-pet-kafka-ui   |  \___/|___| |_| \___|_|   /_/ \_| .__\__,_\__|_||_\___| |_|\_\__,_|_| |_\_\__,|
+plantao-pet-kafka-ui   |                                  |_|                                             
+plantao-pet-kafka-ui   | 
+plantao-pet-kafka-ui   | 2026-05-01 14:34:49,407 INFO  [main] c.p.k.u.KafkaUiApplication: Starting KafkaUiApplication using Java 17.0.6 with PID 1 (/kafka-ui-api.jar started by kafkaui in /)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:49,411 DEBUG [main] c.p.k.u.KafkaUiApplication: Running with Spring Boot v3.1.3, Spring v6.0.11
+plantao-pet-kafka-ui   | 2026-05-01 14:34:49,412 INFO  [main] c.p.k.u.KafkaUiApplication: No active profile set, falling back to 1 default profile: "default"
+plantao-pet-kafka      | [2026-05-01 14:34:51,212] INFO [Controller id=1] Processing automatic preferred replica leader election (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:51,213] TRACE [Controller id=1] Checking need to trigger auto leader balancing (kafka.controller.KafkaController)
+plantao-pet-api        | Prisma schema loaded from prisma/schema.prisma
+plantao-pet-api        | Datasource "db": PostgreSQL database "plantao_pet", schema "public" at "postgres:5432"
+plantao-pet-postgres   | 2026-05-01 14:34:51.924 UTC [41] LOG:  could not receive data from client: Connection reset by peer
+plantao-pet-api        | 
+plantao-pet-api        | No migration found in prisma/migrations
+plantao-pet-api        | 
+plantao-pet-api        | 
+plantao-pet-api        | No pending migrations to apply.
+plantao-pet-kafka-ui   | 2026-05-01 14:34:52,630 DEBUG [main] c.p.k.u.s.SerdesInitializer: Configuring serdes for cluster plantao-pet
+plantao-pet-api        | [KAFKA] Producer conectado
+plantao-pet-api        | [KAFKA] Consumer conectado
+plantao-pet-kafka      | [2026-05-01 14:34:52,845] INFO Creating topic service_request.created with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+plantao-pet-kafka      | [2026-05-01 14:34:52,894] INFO [Controller id=1] New topics: [Set(service_request.created)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service_request.created,Some(S-MdbwdeRsaJDJEtfwc-HQ),Map(service_request.created-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:52,896] INFO [Controller id=1] New partition creation callback for service_request.created-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:52,905] INFO [Controller id=1 epoch=1] Changed partition service_request.created-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:52,905] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:52,914] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.created-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:52,914] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:52,957] INFO [Controller id=1 epoch=1] Changed partition service_request.created-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:52.960Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":1,"size":97}
+plantao-pet-kafka      | [2026-05-01 14:34:52,996] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service_request.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:52,997] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,000] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,001] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.created-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,001] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,011] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 1 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,012] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 1 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,045] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 1 from controller 1 epoch 1 starting the become-leader transition for partition service_request.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,046] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service_request.created-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,047] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 1 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,128] INFO [LogLoader partition=service_request.created-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:53,150] INFO Created log for partition service_request.created-0 in /var/lib/kafka/data/service_request.created-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,151] INFO [Partition service_request.created-0 broker=1] No checkpointed highwatermark is found for partition service_request.created-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,152] INFO [Partition service_request.created-0 broker=1] Log loaded for partition service_request.created-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,156] INFO [Broker id=1] Leader service_request.created-0 with topic id Some(S-MdbwdeRsaJDJEtfwc-HQ) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,178] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 1 from controller 1 epoch 1 for the become-leader transition for partition service_request.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,190] INFO [Broker id=1] Finished LeaderAndIsr request in 181ms correlationId 1 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,197] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=S-MdbwdeRsaJDJEtfwc-HQ, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 1 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,203] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service_request.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service_request.created-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 2 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,204] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 2 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,205] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 2 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:53.295Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka      | [2026-05-01 14:34:53,306] INFO Creating topic service_request.accepted with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+
+
+plantao-pet-kafka      | [2026-05-01 14:34:53,326] INFO [Controller id=1] New topics: [Set(service_request.accepted)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service_request.accepted,Some(IVovT6CzTv2r14y-WmcsTQ),Map(service_request.accepted-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:53,326] INFO [Controller id=1] New partition creation callback for service_request.accepted-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:53,326] INFO [Controller id=1 epoch=1] Changed partition service_request.accepted-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,326] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,327] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.accepted-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,327] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,347] INFO [Controller id=1 epoch=1] Changed partition service_request.accepted-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,347] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.accepted', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service_request.accepted-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,347] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,348] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,348] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.accepted-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,348] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,349] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 3 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,350] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.accepted', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 3 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,351] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 3 from controller 1 epoch 1 starting the become-leader transition for partition service_request.accepted-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,351] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service_request.accepted-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,352] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 3 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,359] INFO [LogLoader partition=service_request.accepted-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:53,363] INFO Created log for partition service_request.accepted-0 in /var/lib/kafka/data/service_request.accepted-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,364] INFO [Partition service_request.accepted-0 broker=1] No checkpointed highwatermark is found for partition service_request.accepted-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,365] INFO [Partition service_request.accepted-0 broker=1] Log loaded for partition service_request.accepted-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,365] INFO [Broker id=1] Leader service_request.accepted-0 with topic id Some(IVovT6CzTv2r14y-WmcsTQ) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,397] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 3 from controller 1 epoch 1 for the become-leader transition for partition service_request.accepted-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,400] INFO [Broker id=1] Finished LeaderAndIsr request in 51ms correlationId 3 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,402] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=IVovT6CzTv2r14y-WmcsTQ, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 3 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,403] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service_request.accepted', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service_request.accepted-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 4 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,403] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 4 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,404] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 4 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:53,650 INFO  [main] o.s.b.a.s.r.ReactiveUserDetailsServiceAutoConfiguration: 
+plantao-pet-kafka-ui   | 
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:53.661Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+
+
+plantao-pet-kafka-ui   | Using generated security password: 0f04cc5c-17b5-4982-aecd-6ca4d0476343
+plantao-pet-kafka      | [2026-05-01 14:34:53,673] INFO Creating topic service_request.refused with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+
+
+plantao-pet-kafka-ui   | 
+
+
+
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:53.694Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":5,"size":222}
+plantao-pet-kafka      | [2026-05-01 14:34:53,698] INFO [Controller id=1] New topics: [Set(service_request.refused)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service_request.refused,Some(YrstsGCYQ5utEG80KvkkBg),Map(service_request.refused-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+
+
+v View in Docker Desktop   o View Config   w Enable Watch   d Detach
+
+plantao-pet-kafka      | [2026-05-01 14:34:53,698] INFO [Controller id=1] New partition creation callback for service_request.refused-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:53,698] INFO [Controller id=1 epoch=1] Changed partition service_request.refused-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,699] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,699] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.refused-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,699] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,719] INFO [Controller id=1 epoch=1] Changed partition service_request.refused-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,719] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.refused', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service_request.refused-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,719] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,719] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,720] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.refused-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,720] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,720] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 5 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,720] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.refused', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 5 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,721] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 5 from controller 1 epoch 1 starting the become-leader transition for partition service_request.refused-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,721] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service_request.refused-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,721] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 5 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,727] INFO [LogLoader partition=service_request.refused-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:53,728] INFO Created log for partition service_request.refused-0 in /var/lib/kafka/data/service_request.refused-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:53,729] INFO [Partition service_request.refused-0 broker=1] No checkpointed highwatermark is found for partition service_request.refused-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,729] INFO [Partition service_request.refused-0 broker=1] Log loaded for partition service_request.refused-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:53,729] INFO [Broker id=1] Leader service_request.refused-0 with topic id Some(YrstsGCYQ5utEG80KvkkBg) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,746] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 5 from controller 1 epoch 1 for the become-leader transition for partition service_request.refused-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,747] INFO [Broker id=1] Finished LeaderAndIsr request in 27ms correlationId 5 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,749] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=YrstsGCYQ5utEG80KvkkBg, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 5 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,750] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service_request.refused', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service_request.refused-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 6 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,751] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 6 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,756] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 6 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:53,891 WARN  [main] c.p.k.u.c.a.DisabledAuthSecurityConfig: Authentication is disabled. Access will be unrestricted.
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:53.947Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+
+
+plantao-pet-kafka      | [2026-05-01 14:34:53,958] INFO Creating topic service_request.in_progress with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:53.979Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":7,"size":288}
+plantao-pet-kafka      | [2026-05-01 14:34:53,985] INFO [Controller id=1] New topics: [Set(service_request.in_progress)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service_request.in_progress,Some(6NbFf5MaQpSyEKs8gPC0-w),Map(service_request.in_progress-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:53,985] INFO [Controller id=1] New partition creation callback for service_request.in_progress-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:53,985] INFO [Controller id=1 epoch=1] Changed partition service_request.in_progress-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,985] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,986] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.in_progress-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:53,986] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,022] INFO [Controller id=1 epoch=1] Changed partition service_request.in_progress-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,022] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.in_progress', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service_request.in_progress-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,022] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,023] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,024] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.in_progress-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,024] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 7 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,025] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,025] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.in_progress', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 7 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,027] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 7 from controller 1 epoch 1 starting the become-leader transition for partition service_request.in_progress-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,027] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service_request.in_progress-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,027] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 7 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,041] INFO [LogLoader partition=service_request.in_progress-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:54,046] INFO Created log for partition service_request.in_progress-0 in /var/lib/kafka/data/service_request.in_progress-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,047] INFO [Partition service_request.in_progress-0 broker=1] No checkpointed highwatermark is found for partition service_request.in_progress-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,047] INFO [Partition service_request.in_progress-0 broker=1] Log loaded for partition service_request.in_progress-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,047] INFO [Broker id=1] Leader service_request.in_progress-0 with topic id Some(6NbFf5MaQpSyEKs8gPC0-w) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,087] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 7 from controller 1 epoch 1 for the become-leader transition for partition service_request.in_progress-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,090] INFO [Broker id=1] Finished LeaderAndIsr request in 66ms correlationId 7 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,091] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=6NbFf5MaQpSyEKs8gPC0-w, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 7 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,093] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service_request.in_progress', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service_request.in_progress-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 8 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,093] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 8 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,096] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 8 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:54,227 INFO  [main] o.s.b.a.e.w.EndpointLinksResolver: Exposing 3 endpoint(s) beneath base path '/actuator'
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:54.339Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka      | [2026-05-01 14:34:54,350] INFO Creating topic service.completed with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:54.369Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":9,"size":344}
+plantao-pet-kafka      | [2026-05-01 14:34:54,373] INFO [Controller id=1] New topics: [HashSet(service.completed)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service.completed,Some(NlqXU1B6SsqMP3I7Z2nG_A),Map(service.completed-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:54,373] INFO [Controller id=1] New partition creation callback for service.completed-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:54,373] INFO [Controller id=1 epoch=1] Changed partition service.completed-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,373] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,373] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service.completed-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,374] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,393] INFO [Controller id=1 epoch=1] Changed partition service.completed-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,393] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service.completed', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service.completed-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,393] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,394] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,395] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service.completed-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,395] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,396] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 9 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,397] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service.completed', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 9 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,399] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 9 from controller 1 epoch 1 starting the become-leader transition for partition service.completed-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,399] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service.completed-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,400] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 9 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,407] INFO [LogLoader partition=service.completed-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:54,409] INFO Created log for partition service.completed-0 in /var/lib/kafka/data/service.completed-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,410] INFO [Partition service.completed-0 broker=1] No checkpointed highwatermark is found for partition service.completed-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,410] INFO [Partition service.completed-0 broker=1] Log loaded for partition service.completed-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,410] INFO [Broker id=1] Leader service.completed-0 with topic id Some(NlqXU1B6SsqMP3I7Z2nG_A) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,426] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 9 from controller 1 epoch 1 for the become-leader transition for partition service.completed-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,428] INFO [Broker id=1] Finished LeaderAndIsr request in 32ms correlationId 9 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,430] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=NlqXU1B6SsqMP3I7Z2nG_A, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 9 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,432] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service.completed', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service.completed-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 10 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,432] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 10 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,433] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 10 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:54.646Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka      | [2026-05-01 14:34:54,657] INFO Creating topic service_request.expired with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+
+
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:54.678Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":11,"size":406}
+plantao-pet-kafka      | [2026-05-01 14:34:54,686] INFO [Controller id=1] New topics: [HashSet(service_request.expired)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(service_request.expired,Some(7hC3U_uUSxy4EJuMiW5irQ),Map(service_request.expired-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:54,686] INFO [Controller id=1] New partition creation callback for service_request.expired-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:54,686] INFO [Controller id=1 epoch=1] Changed partition service_request.expired-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,687] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,687] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.expired-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,687] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,714] INFO [Controller id=1 epoch=1] Changed partition service_request.expired-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,715] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.expired', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition service_request.expired-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,715] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,715] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,716] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition service_request.expired-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,716] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,717] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 11 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,717] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='service_request.expired', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 11 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,720] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 11 from controller 1 epoch 1 starting the become-leader transition for partition service_request.expired-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,720] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(service_request.expired-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,721] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 11 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,727] INFO [LogLoader partition=service_request.expired-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:54,728] INFO Created log for partition service_request.expired-0 in /var/lib/kafka/data/service_request.expired-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:54,729] INFO [Partition service_request.expired-0 broker=1] No checkpointed highwatermark is found for partition service_request.expired-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,729] INFO [Partition service_request.expired-0 broker=1] Log loaded for partition service_request.expired-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:54,729] INFO [Broker id=1] Leader service_request.expired-0 with topic id Some(7hC3U_uUSxy4EJuMiW5irQ) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,739] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 11 from controller 1 epoch 1 for the become-leader transition for partition service_request.expired-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,740] INFO [Broker id=1] Finished LeaderAndIsr request in 23ms correlationId 11 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,742] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=7hC3U_uUSxy4EJuMiW5irQ, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 11 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,745] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='service_request.expired', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition service_request.expired-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 12 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,745] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 12 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:54,746] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 12 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:54,966 INFO  [main] o.s.b.w.e.n.NettyWebServer: Netty started on port 8080
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:54.973Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka      | [2026-05-01 14:34:54,991] INFO Creating topic review.created with configuration {} and initial partition assignment HashMap(0 -> ArrayBuffer(1)) (kafka.zk.AdminZkClient)
+plantao-pet-kafka-ui   | 2026-05-01 14:34:54,997 INFO  [main] c.p.k.u.KafkaUiApplication: Started KafkaUiApplication in 6.275 seconds (process running for 7.404)
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:55.016Z","logger":"kafkajs","message":"[Connection] Response Metadata(key: 3, version: 6)","broker":"kafka:9092","clientId":"plantao-pet-api","error":"There is no leader for this topic-partition as we are in the middle of a leadership election","correlationId":13,"size":459}
+plantao-pet-kafka      | [2026-05-01 14:34:55,020] INFO [Controller id=1] New topics: [HashSet(review.created)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(review.created,Some(lg7eCFsSRf-JN1G0z19BPg),Map(review.created-0 -> ReplicaAssignment(replicas=1, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:55,020] INFO [Controller id=1] New partition creation callback for review.created-0 (kafka.controller.KafkaController)
+plantao-pet-kafka      | [2026-05-01 14:34:55,021] INFO [Controller id=1 epoch=1] Changed partition review.created-0 state from NonExistentPartition to NewPartition with assigned replicas 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,021] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,021] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition review.created-0 from NonExistentReplica to NewReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,021] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,042] INFO [Controller id=1 epoch=1] Changed partition review.created-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1, leaderEpoch=0, isr=List(1), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,042] TRACE [Controller id=1 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='review.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1 for partition review.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,042] INFO [Controller id=1 epoch=1] Sending LeaderAndIsr request to broker 1 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,043] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet(1) for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,043] TRACE [Controller id=1 epoch=1] Changed state of replica 1 for partition review.created-0 from NewReplica to OnlineReplica (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,043] INFO [Controller id=1 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,044] INFO [Broker id=1] Handling LeaderAndIsr request correlationId 13 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,044] TRACE [Broker id=1] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='review.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], partitionEpoch=0, replicas=[1], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 13 from controller 1 epoch 1 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,045] TRACE [Broker id=1] Handling LeaderAndIsr request correlationId 13 from controller 1 epoch 1 starting the become-leader transition for partition review.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,045] INFO [ReplicaFetcherManager on broker 1] Removed fetcher for partitions Set(review.created-0) (kafka.server.ReplicaFetcherManager)
+plantao-pet-kafka      | [2026-05-01 14:34:55,045] INFO [Broker id=1] Stopped fetchers as part of LeaderAndIsr request correlationId 13 from controller 1 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,060] INFO [LogLoader partition=review.created-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+plantao-pet-kafka      | [2026-05-01 14:34:55,062] INFO Created log for partition review.created-0 in /var/lib/kafka/data/review.created-0 with properties {} (kafka.log.LogManager)
+plantao-pet-kafka      | [2026-05-01 14:34:55,062] INFO [Partition review.created-0 broker=1] No checkpointed highwatermark is found for partition review.created-0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:55,062] INFO [Partition review.created-0 broker=1] Log loaded for partition review.created-0 with initial high watermark 0 (kafka.cluster.Partition)
+plantao-pet-kafka      | [2026-05-01 14:34:55,063] INFO [Broker id=1] Leader review.created-0 with topic id Some(lg7eCFsSRf-JN1G0z19BPg) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1], adding replicas [] and removing replicas []. Previous leader epoch was -1. (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,081] TRACE [Broker id=1] Completed LeaderAndIsr request correlationId 13 from controller 1 epoch 1 for the become-leader transition for partition review.created-0 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,082] INFO [Broker id=1] Finished LeaderAndIsr request in 38ms correlationId 13 from controller 1 for 1 partitions (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,084] TRACE [Controller id=1 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=lg7eCFsSRf-JN1G0z19BPg, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 13 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,086] TRACE [Broker id=1] Cached leader info UpdateMetadataPartitionState(topicName='review.created', partitionIndex=0, controllerEpoch=1, leader=1, leaderEpoch=0, isr=[1], zkVersion=0, replicas=[1], offlineReplicas=[]) for partition review.created-0 in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 14 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,086] INFO [Broker id=1] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1 epoch 1 with correlation id 14 (state.change.logger)
+plantao-pet-kafka      | [2026-05-01 14:34:55,087] TRACE [Controller id=1 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 14 sent to broker kafka:29092 (id: 1 rack: null) (state.change.logger)
+plantao-pet-api        | {"level":"INFO","timestamp":"2026-05-01T14:34:55.344Z","logger":"kafkajs","message":"[Consumer] Starting","groupId":"plantao-pet-group"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:55.347Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:55.641Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka-ui   | 2026-05-01 14:34:55,943 DEBUG [parallel-2] c.p.k.u.s.ClustersStatisticsScheduler: Start getting metrics for kafkaCluster: plantao-pet
+plantao-pet-kafka-ui   | 2026-05-01 14:34:55,973 INFO  [parallel-2] o.a.k.c.a.AdminClientConfig: AdminClientConfig values: 
+plantao-pet-kafka-ui   |        auto.include.jmx.reporter = true
+plantao-pet-kafka-ui   |        bootstrap.servers = [kafka:29092]
+plantao-pet-kafka-ui   |        client.dns.lookup = use_all_dns_ips
+plantao-pet-kafka-ui   |        client.id = kafka-ui-admin-1777646095-1
+plantao-pet-kafka-ui   |        connections.max.idle.ms = 300000
+plantao-pet-kafka-ui   |        default.api.timeout.ms = 60000
+plantao-pet-kafka-ui   |        metadata.max.age.ms = 300000
+plantao-pet-kafka-ui   |        metric.reporters = []
+plantao-pet-kafka-ui   |        metrics.num.samples = 2
+plantao-pet-kafka-ui   |        metrics.recording.level = INFO
+plantao-pet-kafka-ui   |        metrics.sample.window.ms = 30000
+plantao-pet-kafka-ui   |        receive.buffer.bytes = 65536
+plantao-pet-kafka-ui   |        reconnect.backoff.max.ms = 1000
+plantao-pet-kafka-ui   |        reconnect.backoff.ms = 50
+plantao-pet-kafka-ui   |        request.timeout.ms = 30000
+plantao-pet-kafka-ui   |        retries = 2147483647
+plantao-pet-kafka-ui   |        retry.backoff.ms = 100
+plantao-pet-kafka-ui   |        sasl.client.callback.handler.class = null
+plantao-pet-kafka-ui   |        sasl.jaas.config = null
+plantao-pet-kafka-ui   |        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+plantao-pet-kafka-ui   |        sasl.kerberos.min.time.before.relogin = 60000
+plantao-pet-kafka-ui   |        sasl.kerberos.service.name = null
+plantao-pet-kafka-ui   |        sasl.kerberos.ticket.renew.jitter = 0.05
+plantao-pet-kafka-ui   |        sasl.kerberos.ticket.renew.window.factor = 0.8
+plantao-pet-kafka-ui   |        sasl.login.callback.handler.class = null
+plantao-pet-kafka-ui   |        sasl.login.class = null
+plantao-pet-kafka-ui   |        sasl.login.connect.timeout.ms = null
+plantao-pet-kafka-ui   |        sasl.login.read.timeout.ms = null
+plantao-pet-kafka-ui   |        sasl.login.refresh.buffer.seconds = 300
+plantao-pet-kafka-ui   |        sasl.login.refresh.min.period.seconds = 60
+plantao-pet-kafka-ui   |        sasl.login.refresh.window.factor = 0.8
+plantao-pet-kafka-ui   |        sasl.login.refresh.window.jitter = 0.05
+plantao-pet-kafka-ui   |        sasl.login.retry.backoff.max.ms = 10000
+plantao-pet-kafka-ui   |        sasl.login.retry.backoff.ms = 100
+plantao-pet-kafka-ui   |        sasl.mechanism = GSSAPI
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:56.119Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnplantao-pet-kafka-ui   | 9:7)"} sasl.oauthbearer.clock.skew.seconds = 30
+plantao-pet-kafka-ui   |        sasl.oauthbearer.expected.audience = null
+plantao-pet-kafka-ui   |        sasl.oauthbearer.expected.issuer = null
+plantao-pet-kafka-ui   |        sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+plantao-pet-kafka-ui   |        sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+plantao-pet-kafka-ui   |        sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+plantao-pet-kafka-ui   |        sasl.oauthbearer.jwks.endpoint.url = null
+plantao-pet-kafka-ui   |        sasl.oauthbearer.scope.claim.name = scope
+plantao-pet-kafka-ui   |        sasl.oauthbearer.sub.claim.name = sub
+plantao-pet-kafka-ui   |        sasl.oauthbearer.token.endpoint.url = null
+plantao-pet-kafka-ui   |        security.protocol = PLAINTEXT
+plantao-pet-kafka-ui   |        security.providers = null
+plantao-pet-kafka-ui   |        send.buffer.bytes = 131072
+plantao-pet-kafka-ui   |        socket.connection.setup.timeout.max.ms = 30000
+plantao-pet-kafka-ui   |        socket.connection.setup.timeout.ms = 10000
+plantao-pet-kafka-ui   |        ssl.cipher.suites = null
+plantao-pet-kafka-ui   |        ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+plantao-pet-kafka-ui   |        ssl.endpoint.identification.algorithm = https
+plantao-pet-kafka-ui   |        ssl.engine.factory.class = null
+plantao-pet-kafka-ui   |        ssl.key.password = null
+plantao-pet-kafka-ui   |        ssl.keymanager.algorithm = SunX509
+plantao-pet-kafka-ui   |        ssl.keystore.certificate.chain = null
+plantao-pet-kafka-ui   |        ssl.keystore.key = null
+plantao-pet-kafka-ui   |        ssl.keystore.location = null
+plantao-pet-kafka-ui   |        ssl.keystore.password = null
+plantao-pet-kafka-ui   |        ssl.keystore.type = JKS
+plantao-pet-kafka-ui   |        ssl.protocol = TLSv1.3
+plantao-pet-kafka-ui   |        ssl.provider = null
+plantao-pet-kafka-ui   |        ssl.secure.random.implementation = null
+plantao-pet-kafka-ui   |        ssl.trustmanager.algorithm = PKIX
+plantao-pet-kafka-ui   |        ssl.truststore.certificates = null
+plantao-pet-kafka-ui   |        ssl.truststore.location = null
+plantao-pet-kafka-ui   |        ssl.truststore.password = null
+plantao-pet-kafka-ui   |        ssl.truststore.type = JKS
+plantao-pet-kafka-ui   | 
+plantao-pet-kafka-ui   | 2026-05-01 14:34:56,114 INFO  [parallel-2] o.a.k.c.u.AppInfoParser: Kafka version: 3.5.0
+plantao-pet-kafka-ui   | 2026-05-01 14:34:56,115 INFO  [parallel-2] o.a.k.c.u.AppInfoParser: Kafka commitId: c97b88d5db4de28d
+plantao-pet-kafka-ui   | 2026-05-01 14:34:56,116 INFO  [parallel-2] o.a.k.c.u.AppInfoParser: Kafka startTimeMs: 1777646096111
+plantao-pet-kafka-ui   | 2026-05-01 14:34:56,634 DEBUG [parallel-7] c.p.k.u.s.ClustersStatisticsScheduler: Metrics updated for cluster: plantao-pet
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:57.147Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:34:58.890Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:02.397Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:09.577Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka-ui   | 2026-05-01 14:35:25,007 DEBUG [parallel-8] c.p.k.u.s.ClustersStatisticsScheduler: Start getting metrics for kafkaCluster: plantao-pet
+plantao-pet-kafka-ui   | 2026-05-01 14:35:25,086 DEBUG [parallel-9] c.p.k.u.s.ClustersStatisticsScheduler: Metrics updated for cluster: plantao-pet
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:25.249Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka-ui   | 2026-05-01 14:35:55,033 DEBUG [parallel-10] c.p.k.u.s.ClustersStatisticsScheduler: Start getting metrics for kafkaCluster: plantao-pet
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:55.304Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:55.333Z","logger":"kafkajs","message":"[Consumer] Crash: KafkaJSNumberOfRetriesExceeded: Connection error: ","groupId":"plantao-pet-group","retryCount":8,"stack":"KafkaJSNonRetriableError\n  Caused by: KafkaJSConnectionError: Connection error: \n    at Socket.onError (/app/node_modules/kafkajs/src/network/connection.js:210:23)\n    at Socket.emit (node:events:524:28)\n    at emitErrorNT (node:internal/streams/destroy:169:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:128:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)"}
+plantao-pet-api        | {"level":"INFO","timestamp":"2026-05-01T14:35:55.338Z","logger":"kafkajs","message":"[Consumer] Stopped","groupId":"plantao-pet-group"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:35:55.340Z","logger":"kafkajs","message":"[Consumer] Restarting the consumer in 30000ms","retryCount":8,"retryTime":30000,"groupId":"plantao-pet-group"}
+plantao-pet-kafka-ui   | 2026-05-01 14:35:55,355 DEBUG [parallel-11] c.p.k.u.s.ClustersStatisticsScheduler: Metrics updated for cluster: plantao-pet
+plantao-pet-api        | [CRON] Job de expiração de solicitações agendado (a cada hora)
+plantao-pet-api        | [SERVER] Plantão Pet API rodando na porta 3000
+plantao-pet-api        | [SERVER] Documentação: http://localhost:3000/api-docs
+plantao-pet-postgres   | 2026-05-01 14:36:10.437 UTC [112] ERROR:  relation "public.Owner" does not exist at character 177
+plantao-pet-postgres   | 2026-05-01 14:36:10.437 UTC [112] STATEMENT:  SELECT "public"."Owner"."id", "public"."Owner"."name", "public"."Owner"."phone", "public"."Owner"."address", "public"."Owner"."passwordHash", "public"."Owner"."createdAt" FROM "public"."Owner" WHERE ("public"."Owner"."phone" = $1 AND 1=1) LIMIT $2 OFFSET $3
+plantao-pet-api        | [ERROR] PrismaClientKnownRequestError: 
+plantao-pet-api        | Invalid `prisma.owner.findUnique()` invocation in
+plantao-pet-api        | /app/src/repositories/owners.repository.js:5:45
+plantao-pet-api        | 
+plantao-pet-api        |   2 
+plantao-pet-api        |   3 const prisma = require('../prisma/client');
+plantao-pet-api        |   4 
+plantao-pet-api        | → 5 const findByPhone = (phone) => prisma.owner.findUnique(
+plantao-pet-api        | The table `public.Owner` does not exist in the current database.
+plantao-pet-api        |     at $n.handleRequestError (/app/node_modules/@prisma/client/runtime/library.js:121:7315)
+plantao-pet-api        |     at $n.handleAndLogRequestError (/app/node_modules/@prisma/client/runtime/library.js:121:6623)
+plantao-pet-api        |     at $n.request (/app/node_modules/@prisma/client/runtime/library.js:121:6307)
+plantao-pet-api        |     at async l (/app/node_modules/@prisma/client/runtime/library.js:130:9633)
+plantao-pet-api        |     at async Object.registerOwner (/app/src/services/auth.service.js:10:20)
+plantao-pet-api        |     at async /app/src/controllers/auth.controller.js:7:16 {
+plantao-pet-api        |   code: 'P2021',
+plantao-pet-api        |   clientVersion: '5.22.0',
+plantao-pet-api        |   meta: { modelName: 'Owner', table: 'public.Owner' }
+plantao-pet-api        | }
+plantao-pet-kafka-ui   | 2026-05-01 14:36:24,990 DEBUG [parallel-12] c.p.k.u.s.ClustersStatisticsScheduler: Start getting metrics for kafkaCluster: plantao-pet
+plantao-pet-kafka-ui   | 2026-05-01 14:36:25,115 DEBUG [parallel-13] c.p.k.u.s.ClustersStatisticsScheduler: Metrics updated for cluster: plantao-pet
+plantao-pet-api        | {"level":"INFO","timestamp":"2026-05-01T14:36:25.328Z","logger":"kafkajs","message":"[Consumer] Starting","groupId":"plantao-pet-group"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:25.355Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:25.657Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:26.287Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:27.526Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:29.828Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:34.009Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-api        | {"level":"ERROR","timestamp":"2026-05-01T14:36:44.052Z","logger":"kafkajs","message":"[Connection] Connection error: ","broker":"localhost:9092","clientId":"plantao-pet-api","stack":"AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1122:18)\n    at afterConnectMultiple (node:net:1689:7)"}
+plantao-pet-kafka-ui   | 2026-05-01 14

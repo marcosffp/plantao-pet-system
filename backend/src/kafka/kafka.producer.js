@@ -1,6 +1,7 @@
 'use strict';
 
-const kafka = require('./kafka.client');
+const getKafka = require('./kafka.client');
+const kafka = getKafka();
 
 const producer = kafka.producer();
 let connected = false;

@@ -5,8 +5,7 @@ const ownersRepo = require('../repositories/owners.repository');
 const AppError = require('../utils/AppError');
 
 const create = async (ownerId, petData, user) => {
-  // RN-16: não permite alterar ownerId via payload
-  if (user.role === 'owner' && user.id !== ownerId) {
+  if (/*user.role === 'owner' && */user.id !== ownerId) {
     throw new AppError(403, 'Você não pode cadastrar pets para outro dono');
   }
   const owner = await ownersRepo.findById(ownerId);

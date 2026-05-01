@@ -13,7 +13,7 @@ const findById = async (id) => {
 };
 
 const updateStatus = async (id, status, user) => {
-  if (user.role === 'caregiver' && user.id !== id) {
+  if (/*user.role === 'caregiver' &&*/ user.id !== id) {
     throw new AppError(403, 'Você só pode atualizar seu próprio status');
   }
   const caregiver = await caregiversRepo.findById(id);
