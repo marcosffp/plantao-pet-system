@@ -105,3 +105,14 @@ enum CaregiverStatus {
   ACTIVE
   INACTIVE
 }
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  userRole  String
+  eventType String
+  payload   Json
+  requestId String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}

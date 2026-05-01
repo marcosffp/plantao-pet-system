@@ -845,6 +845,94 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "notifications",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjYzRmMmNhLWE5ZTgtNGJmYy05NjYyLTFhMjY4ZDhkYzQyMiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NzE5MTYsImV4cCI6MTc3ODI3NjcxNn0.umof4ACwcFeqTiKCL2NjfV5dXzekgXAyc7Bfob_HDEo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "# Listar Notificações\n\n## Descrição\n\nRetorna as notificações do usuário autenticado (owner ou caregiver).  \nÉ possível filtrar apenas notificações **não lidas** utilizando query params.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/notifications](http://localhost:3000/notifications)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Query Params\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `unread` | boolean | Não | Se `true`, retorna apenas notificações não lidas | `true` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p2l6qw\"\nGET /notifications?unread=true\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de notificações do usuário.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"1f1e18bb-b16c-4850-ae19-767bbce6f989\",\n      \"userId\": \"dcc4f2ca-a9e8-4bfc-9662-1a268d8dc422\",\n      \"userRole\": \"caregiver\",\n      \"eventType\": \"service_request.created\",\n      \"payload\": {\n        \"petName\": \"Refffx\",\n        \"requestId\": \"0c559606-a5a4-45de-91aa-a3f4ed425ee6\",\n        \"scheduledAt\": \"2026-05-10T10:00:00.000Z\",\n        \"serviceType\": \"WALK_30MIN\",\n        \"meetingAddress\": \"Rua das Flores, 123, Centro\"\n      },\n      \"requestId\": \"0c559606-a5a4-45de-91aa-a3f4ed425ee6\",\n      \"readAt\": null,\n      \"createdAt\": \"2026-05-01T21:46:15.231Z\"\n    }\n  ]\n}\n\n ```\n\n---\n\n## Campos Importantes\n\n| Campo | Descrição |\n| --- | --- |\n| `eventType` | Tipo do evento (ex: `service_request.created`, `accepted`, etc.) |\n| `payload` | Dados relacionados ao evento |\n| `readAt` | Data de leitura (`null` = não lida) |\n| `createdAt` | Data de criação da notificação |\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/notifications/{id}/read",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjYzRmMmNhLWE5ZTgtNGJmYy05NjYyLTFhMjY4ZDhkYzQyMiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NzIyODcsImV4cCI6MTc3ODI3NzA4N30.gFXHwnq0JEsDPut_zzk2K-5G_i76m2A7ypId_ltHqCg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\r\n  \"rating\": 5,\r\n  \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/notifications/1f1e18bb-b16c-4850-ae19-767bbce6f989/read",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "notifications",
+                "1f1e18bb-b16c-4850-ae19-767bbce6f989",
+                "read"
+              ]
+            },
+            "description": "# Marcar Notificação como Lida\n\n## Descrição\n\nPermite marcar uma notificação específica como lida.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/notifications/:id/read](http://localhost:3000/notifications/:id/read)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da notificação | `\"1f1e18bb-b16c-4850-ae19-767bbce6f989\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p1l3qw\"\nPATCH /notifications/1f1e18bb-b16c-4850-ae19-767bbce6f989/read\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Notificação marcada como lida.\n    \n\n``` json\n{\n  \"message\": \"Notificação marcada como lida\"\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Notificação não pertence ao usuário.\n    \n\n``` json\n{\n  \"error\": \"Acesso negado\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n``` json\n{\n  \"error\": \"Notificação não encontrada\"\n}\n\n ```"
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }

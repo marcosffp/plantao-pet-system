@@ -29,6 +29,8 @@ const create = async ({ serviceRequestId, rating, comment }, user) => {
     caregiverId: request.caregiverId,
     newRating: rating,
     averageRating,
+    comment,
+    requestId: serviceRequestId,
   });
 
   return review;

@@ -1,8 +1,11 @@
 'use strict';
 
 const getKafka = require('./kafka.client');
-const kafka = getKafka();
+const caregiversRepo = require('../repositories/caregivers.repository');
+const notificationsRepo = require('../repositories/notifications.repository');
+const { emitToUser } = require('../socket/socket');
 
+const kafka = getKafka();
 const consumer = kafka.consumer({ groupId: 'plantao-pet-group' });
 
 const TOPICS = [
@@ -15,34 +18,128 @@ const TOPICS = [
   'review.created',
 ];
 
+const saveAndEmit = async ({ userId, userRole, eventType, requestId, socketEvent, socketPayload }) => {
+  const dup = await notificationsRepo.existsDuplicate(userId, eventType, requestId);
+  if (dup) {
+    console.log(`[KAFKA] Duplicata ignorada: ${eventType} para userId=${userId}`);
+    return;
+  }
+  await notificationsRepo.create({ userId, userRole, eventType, payload: socketPayload, requestId: requestId ?? null });
+  emitToUser(userRole, userId, socketEvent, socketPayload);
+};
+
 const handlers = {
-  'service_request.created': (payload) => {
+  'service_request.created': async (payload) => {
     console.log('[KAFKA] service_request.created recebido:', payload);
-    console.log(`[NOTIFY] Nova solicitação de serviço criada: ${payload.serviceType} para pet "${payload.petName}" em ${payload.meetingAddress}`);
+    const caregivers = await caregiversRepo.findAllActive();
+    for (const caregiver of caregivers) {
+      await saveAndEmit({
+        userId: caregiver.id,
+        userRole: 'caregiver',
+        eventType: 'service_request.created',
+        requestId: payload.requestId,
+        socketEvent: 'new_request',
+        socketPayload: {
+          requestId: payload.requestId,
+          serviceType: payload.serviceType,
+          petName: payload.petName,
+          meetingAddress: payload.meetingAddress,
+          scheduledAt: payload.scheduledAt,
+        },
+      });
+    }
   },
-  'service_request.accepted': (payload) => {
+
+  'service_request.accepted': async (payload) => {
     console.log('[KAFKA] service_request.accepted recebido:', payload);
-    console.log(`[NOTIFY] Solicitação ${payload.requestId} aceita pelo cuidador ${payload.caregiverName} — notificar dono ${payload.ownerId}`);
+    await saveAndEmit({
+      userId: payload.ownerId,
+      userRole: 'owner',
+      eventType: 'service_request.accepted',
+      requestId: payload.requestId,
+      socketEvent: 'request_accepted',
+      socketPayload: {
+        requestId: payload.requestId,
+        caregiverName: payload.caregiverName,
+        caregiverPhone: payload.caregiverPhone,
+      },
+    });
   },
-  'service_request.refused': (payload) => {
+
+  'service_request.refused': async (payload) => {
     console.log('[KAFKA] service_request.refused recebido:', payload);
-    console.log(`[NOTIFY] Solicitação ${payload.requestId} recusada — voltando para OPEN`);
+    await saveAndEmit({
+      userId: payload.ownerId,
+      userRole: 'owner',
+      eventType: 'service_request.refused',
+      requestId: payload.requestId,
+      socketEvent: 'request_refused',
+      socketPayload: {
+        requestId: payload.requestId,
+        newStatus: 'OPEN',
+      },
+    });
   },
-  'service_request.in_progress': (payload) => {
+
+  'service_request.in_progress': async (payload) => {
     console.log('[KAFKA] service_request.in_progress recebido:', payload);
-    console.log(`[NOTIFY] Serviço iniciado em ${payload.startedAt} — notificar dono ${payload.ownerId}`);
+    await saveAndEmit({
+      userId: payload.ownerId,
+      userRole: 'owner',
+      eventType: 'service_request.in_progress',
+      requestId: payload.requestId,
+      socketEvent: 'service_started',
+      socketPayload: {
+        requestId: payload.requestId,
+        startedAt: payload.startedAt,
+      },
+    });
   },
-  'service.completed': (payload) => {
+
+  'service.completed': async (payload) => {
     console.log('[KAFKA] service.completed recebido:', payload);
-    console.log(`[NOTIFY] Serviço concluído em ${payload.completedAt} — notificar dono ${payload.ownerId} para avaliar`);
+    await saveAndEmit({
+      userId: payload.ownerId,
+      userRole: 'owner',
+      eventType: 'service.completed',
+      requestId: payload.requestId,
+      socketEvent: 'service_completed',
+      socketPayload: {
+        requestId: payload.requestId,
+        completedAt: payload.completedAt,
+      },
+    });
   },
-  'service_request.expired': (payload) => {
+
+  'service_request.expired': async (payload) => {
     console.log('[KAFKA] service_request.expired recebido:', payload);
-    console.log(`[NOTIFY] Solicitação ${payload.requestId} expirada em ${payload.expiredAt}`);
+    await saveAndEmit({
+      userId: payload.ownerId,
+      userRole: 'owner',
+      eventType: 'service_request.expired',
+      requestId: payload.requestId,
+      socketEvent: 'request_expired',
+      socketPayload: {
+        requestId: payload.requestId,
+        expiredAt: payload.expiredAt,
+      },
+    });
   },
-  'review.created': (payload) => {
+
+  'review.created': async (payload) => {
     console.log('[KAFKA] review.created recebido:', payload);
-    console.log(`[NOTIFY] Nova avaliação para cuidador ${payload.caregiverId}: nota ${payload.newRating} — média agora ${payload.averageRating}`);
+    await saveAndEmit({
+      userId: payload.caregiverId,
+      userRole: 'caregiver',
+      eventType: 'review.created',
+      requestId: payload.requestId,
+      socketEvent: 'new_review',
+      socketPayload: {
+        rating: payload.newRating,
+        comment: payload.comment,
+        newAverageRating: payload.averageRating,
+      },
+    });
   },
 };
 
@@ -51,6 +148,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const start = async () => {
   await consumer.connect();
   console.log('[KAFKA] Consumer conectado');
+
   let subscribed = false;
   let attempts = 0;
   while (!subscribed) {
@@ -62,7 +160,7 @@ const start = async () => {
       console.log('[KAFKA] Consumer inscrito nos tópicos');
     } catch (err) {
       attempts++;
-      console.warn(`[KAFKA] Aguardando tópicos ficarem disponíveis (tentativa ${attempts})...`);
+      console.warn(`[KAFKA] Aguardando tópicos (tentativa ${attempts})...`);
       await sleep(3000);
     }
   }
@@ -72,9 +170,9 @@ const start = async () => {
       try {
         const payload = JSON.parse(message.value.toString());
         const handler = handlers[topic];
-        if (handler) handler(payload);
+        if (handler) await handler(payload);
       } catch (err) {
-        console.error(`[KAFKA] Erro ao processar mensagem do tópico "${topic}":`, err.message);
+        console.error(`[KAFKA] Erro ao processar "${topic}":`, err.message);
       }
     },
   });

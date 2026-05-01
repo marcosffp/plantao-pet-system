@@ -88,6 +88,7 @@ const refuse = async (id, user) => {
     requestId: id,
     caregiverId: user.id,
     refusedAt: new Date().toISOString(),
+    ownerId: request.ownerId,
   });
 
   return updated;

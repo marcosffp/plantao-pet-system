@@ -12,6 +12,7 @@ const petsDirectRoutes = require('./routes/pets-direct.routes');
 const caregiversRoutes = require('./routes/caregivers.routes');
 const serviceRequestsRoutes = require('./routes/service-requests.routes');
 const reviewsRoutes = require('./routes/reviews.routes');
+const notificationsRoutes = require('./routes/notifications.routes');
 const errorMiddleware = require('./middlewares/error.middleware');
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/pets', petsDirectRoutes);
 app.use('/caregivers', caregiversRoutes);
 app.use('/service-requests', serviceRequestsRoutes);
 app.use('/reviews', reviewsRoutes);
+app.use('/notifications', notificationsRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 

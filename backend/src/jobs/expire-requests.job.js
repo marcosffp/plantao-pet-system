@@ -23,6 +23,7 @@ const start = () => {
         await producer.publish('service_request.expired', {
           requestId: request.id,
           expiredAt: new Date().toISOString(),
+          ownerId: request.ownerId,
         });
       }
     } catch (err) {
