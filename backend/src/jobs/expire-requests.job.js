@@ -4,7 +4,6 @@ const cron = require('node-cron');
 const serviceRequestsRepo = require('../repositories/service-requests.repository');
 const producer = require('../kafka/kafka.producer');
 
-// RN-03: expira solicitações OPEN após 24h, rodando a cada hora
 const start = () => {
   cron.schedule('0 * * * *', async () => {
     console.log('[CRON] Verificando solicitações expiradas...');
