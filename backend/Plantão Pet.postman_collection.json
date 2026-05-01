@@ -1,0 +1,857 @@
+{
+  "info": {
+    "_postman_id": "192cf980-3da1-4cbe-92cd-0610a1ab9c90",
+    "name": "Plantão Pet",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39118356"
+  },
+  "item": [
+    {
+      "name": "owner",
+      "item": [
+        {
+          "name": "/owners/me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyYzFkM2M1LTJmZDAtNGUxMi1hYzNkLThjY2I2ZWEwNjc0YyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzY0OTU3NSwiZXhwIjoxNzc4MjU0Mzc1fQ.68PPWo3S4FXbXB6aMOwteUvua6pCoNrDr0sIbl9BRdI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/owners/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "owners",
+                "me"
+              ]
+            },
+            "description": "# Perfil do Proprietário Autenticado\n\n## Descrição\n\nRetorna os dados do proprietário (owner) atualmente autenticado no sistema.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/owners/me](http://localhost:3000/owners/me)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body\n\n- Não possui body.\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Dados do proprietário retornados com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"name\": \"Marcos\",\n    \"email\": \"marcosalb4@email.com\",\n    \"phone\": \"31999533572\",\n    \"address\": \"Rua das Flores, 123, Boa Esperança\",\n    \"createdAt\": \"2026-05-01T15:32:55.716Z\"\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token de autenticação não fornecido\"\n}\n\n ```\n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Acesso restrito a proprietários.\n    \n\n``` json\n{\n  \"error\": \"Acesso restrito a donos de pets\"\n}\n\n\n ```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "caregivers",
+      "item": [
+        {
+          "name": "/caregivers/",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg2OTEsImV4cCI6MTc3ODI2MzQ5MX0.02a8CqpUIej65oVrGn2XVgLDqiEUkMIBIJ75vbKSoF8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/caregivers/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "caregivers",
+                ""
+              ]
+            },
+            "description": "# Listagem de Cuidadores\n\n## Descrição\n\nRetorna a lista de cuidadores ativos cadastrados no sistema.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/caregivers/](http://localhost:3000/caregivers/)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não _(ajuste aqui se depois exigir auth)_\n    \n- Tipo: —\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body\n\n- Não possui body.\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de cuidadores retornada com sucesso.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\",\n      \"email\": \"maria@email.com\",\n      \"phone\": \"11988880000\",\n      \"neighborhoods\": [\"Centro\", \"Vila Madalena\"],\n      \"services\": [\"WALK_30MIN\", \"HOME_VISIT\"],\n      \"averageRating\": 0,\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"2026-05-01T15:13:30.914Z\"\n    }\n  ]\n}\n\n ```\n\n---\n\n## Campos da Resposta\n\n| Campo | Tipo | Descrição |\n| --- | --- | --- |\n| `id` | string (UUID) | Identificador do cuidador |\n| `name` | string | Nome do cuidador |\n| `email` | string | E-mail do cuidador |\n| `phone` | string | Telefone |\n| `neighborhoods` | string\\[\\] | Bairros atendidos |\n| `services` | enum\\[\\] | Serviços oferecidos |\n| `averageRating` | number | Média das avaliações |\n| `status` | string | Status do cuidador (`ACTIVE`, etc.) |\n| `createdAt` | string (ISO) | Data de criação |\n\n---\n\n## Erros\n\n#### 500 Internal Server Error\n\n- Descrição: Erro inesperado no servidor.\n    \n\n``` json\n{\n  \"error\": \"Erro interno do servidor\"\n}\n\n ```\n\n---"
+          },
+          "response": []
+        },
+        {
+          "name": "/caregivers/{id}",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/caregivers/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "caregivers",
+                ""
+              ]
+            },
+            "description": "# Buscar Cuidador por ID\n\n## Descrição\n\nRetorna os dados de um cuidador específico a partir do seu identificador.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/caregivers/:id](http://localhost:3000/caregivers/:id)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não _(ajuste se precisar)_\n    \n- Tipo: —\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID do cuidador | `\"716a9776-66f1-4420-83c9-730945c4b68b\"` |\n\n---\n\n### Exemplo de Requisição\n\n```\nGET /caregivers/716a9776-66f1-4420-83c9-730945c4b68b\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Cuidador encontrado com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"name\": \"Maria Cuidadora\",\n    \"email\": \"maria@email.com\",\n    \"phone\": \"11988880000\",\n    \"neighborhoods\": [\"Centro\", \"Vila Madalena\"],\n    \"services\": [\"WALK_30MIN\", \"HOME_VISIT\"],\n    \"averageRating\": 0,\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2026-05-01T15:13:30.914Z\"\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 404 Not Found\n\n- Descrição: Cuidador não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Cuidador não encontrado\"\n}\n\n ```\n\n#### 400 Bad Request\n\n- Descrição: ID inválido.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/caregivers/status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTE5ODUsImV4cCI6MTc3ODI1Njc4NX0.wiAPhUnenKi51PZuoCgZcGdg53kepKrpO51uZAe2J1U",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"INACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/caregivers/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "caregivers",
+                "status"
+              ]
+            },
+            "description": "# Atualizar Status do Cuidador\n\n## Descrição\n\nAtualiza o status do cuidador autenticado no sistema.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/caregivers/status](http://localhost:3000/caregivers/status)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `status` | string | Sim | Valores permitidos: `ACTIVE`, `INACTIVE` | `\"INACTIVE\"` |\n\n---\n\n### Exemplo de Body\n\n``` json\n{\n  \"status\": \"INACTIVE\"\n}\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Status atualizado com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"6f22f84f-c7a4-4eb8-ac6c-1f854516c036\",\n    \"name\": \"Maria Cuidadora\",\n    \"status\": \"INACTIVE\"\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não informado ou inválido.\n    \n\n``` json\n{\n  \"error\": \"Não autorizado\"\n}\n\n ```\n\n#### 404 Not Found\n\n- Descrição: Cuidador não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Cuidador não encontrado\"\n}\n\n ```\n\n#### 400 Bad Request\n\n- Descrição: Status inválido ou não informado.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/caregivers/{id}/reviews",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTE5ODUsImV4cCI6MTc3ODI1Njc4NX0.wiAPhUnenKi51PZuoCgZcGdg53kepKrpO51uZAe2J1U",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"INACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/caregivers/{{caregiverId}}/reviews?caregiverId=716a9776-66f1-4420-83c9-730945c4b68b",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "caregivers",
+                "{{caregiverId}}",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "caregiverId",
+                  "value": "716a9776-66f1-4420-83c9-730945c4b68b",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "# Listar Avaliações de um Cuidador\n\n## Descrição\n\nRetorna todas as avaliações recebidas por um cuidador específico.  \nInclui informações da avaliação e do proprietário que realizou o feedback.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/caregivers/:id/reviews](http://localhost:3000/caregivers/:id/reviews)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não\n    \n\n---\n\n## Request\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID do cuidador | `\"716a9776-66f1-4420-83c9-730945c4b68b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p3l7qw\"\nGET /caregivers/716a9776-66f1-4420-83c9-730945c4b68b/reviews\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de avaliações do cuidador.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"2359d1e1-951b-42cf-928d-0e51a7a7be3c\",\n      \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"rating\": 5,\n      \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\",\n      \"createdAt\": \"2026-05-01T18:32:10.774Z\",\n      \"owner\": {\n        \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n        \"name\": \"Marcos\"\n      }\n    }\n  ]\n}\n\n ```\n\n---\n\n## Erros\n\n#### 404 Not Found\n\n- Descrição: Cuidador não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Cuidador não encontrado\"\n}\n\n\n\n ```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "/auth/caregiver/register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Maria Cuidadora\",\r\n  \"email\": \"mariac@email.com\",\r\n  \"phone\": \"31998432711\",\r\n  \"neighborhoods\": [\r\n    \"Centro\",\r\n    \"Vila Madalena\"\r\n  ],\r\n  \"services\": [\r\n    \"WALK_30MIN\",\r\n    \"HOME_VISIT\"\r\n  ],\r\n  \"password\": \"senha123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/caregiver/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "caregiver",
+                "register"
+              ]
+            },
+            "description": "# Cadastro de Cuidador\n\n## Descrição\n\nRegistra um novo cuidador (caregiver) no sistema e retorna um token JWT para autenticação.\n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/auth/caregiver/register](http://localhost:3000/auth/caregiver/register)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não\n    \n- Tipo: —\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `name` | string | Sim | Mínimo 2, máximo 100 caracteres | `\"Ana Souza\"` |\n| `email` | string | Sim | E-mail válido | `\"ana@email.com\"` |\n| `phone` | string | Sim | Mínimo 10, máximo 15 caracteres | `\"11999998888\"` |\n| `password` | string | Sim | Mínimo 6 caracteres | `\"senha123\"` |\n| `neighborhoods` | string\\[\\] | Sim | Mínimo 1, máximo 5 bairros | `[\"Centro\", \"Savassi\"]` |\n| `services` | enum\\[\\] | Sim | Mínimo 1, máximo 4 serviços | `[\"WALK_1H\", \"HOSTING\"]` |\n\n---\n\n### Campo `neighborhoods`\n\nLista de bairros atendidos pelo cuidador.\n\n- Mínimo: 1\n    \n- Máximo: 5\n    \n\n**Exemplo:**\n\n``` json\n[\"Centro\", \"Savassi\", \"Funcionários\"]\n\n ```\n\n---\n\n### Campo `services`\n\nLista de serviços oferecidos pelo cuidador.\n\n**Valores aceitos:**\n\n| Valor | Descrição |\n| --- | --- |\n| `WALK_30MIN` | Passeio de 30 minutos |\n| `WALK_1H` | Passeio de 1 hora |\n| `HOME_VISIT` | Visita domiciliar |\n| `HOSTING` | Hospedagem |\n\n- Mínimo: 1\n    \n- Máximo: 4\n    \n\n**Exemplo:**\n\n``` json\n[\"WALK_30MIN\", \"HOME_VISIT\"]\n\n ```\n\n---\n\n### Exemplo de Body\n\n``` json\n{\n  \"name\": \"Ana Souza\",\n  \"email\": \"ana.souza@email.com\",\n  \"phone\": \"11999998888\",\n  \"password\": \"senha123\",\n  \"neighborhoods\": [\"Centro\", \"Savassi\"],\n  \"services\": [\"WALK_1H\", \"HOSTING\"]\n}\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 201 Created\n    \n- Descrição: Cuidador criado com sucesso. Retorna os dados do caregiver e o token JWT.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"4659d77d-3d3b-4ce1-98c3-b721053f165b\",\n    \"name\": \"Ana Souza\",\n    \"email\": \"ana.souza@email.com\",\n    \"phone\": \"11999998888\",\n    \"neighborhoods\": [\"Centro\", \"Savassi\"],\n    \"services\": [\"WALK_1H\", \"HOSTING\"],\n    \"createdAt\": \"2026-05-01T15:24:27.812Z\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}\n\n ```\n\n---\n\n### Erros\n\n#### 409 Conflict\n\n- Descrição: E-mail já cadastrado.\n    \n\n``` json\n{\n  \"error\": \"Email já cadastrado\"\n}\n\n ```\n\n#### 409 Conflict\n\n- Descrição: Telefone já cadastrado.\n    \n\n``` json\n{\n  \"error\": \"Telefone já cadastrado\"\n}\n\n ```\n\n#### 400 Bad Request\n\n- Descrição: Um ou mais campos não atendem às regras de validação.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/auth/owner/register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Marcos\",\r\n  \"email\": \"marcosalb4@email.com\",\r\n  \"phone\": \"31999533572\",\r\n  \"address\": \"Rua das Flores, 123, Boa Esperança\",\r\n  \"password\": \"123senha\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/owner/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "owner",
+                "register"
+              ]
+            },
+            "description": "# Cadastro de Proprietário\n\n## Descrição\n\nRegistra um novo proprietário (owner) no sistema e retorna um token JWT para autenticação.\n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/auth/owner/register](http://localhost:3000/auth/owner/register)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não\n    \n- Tipo: —\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `name` | string | Sim | Mínimo 2, máximo 100 caracteres | `\"Marcos\"` |\n| `email` | string | Sim | E-mail válido | `\"marcos@email.com\"` |\n| `phone` | string | Sim | Mínimo 10, máximo 15 caracteres | `\"11999990000\"` |\n| `address` | string | Sim | Mínimo 5, máximo 200 caracteres | `\"Rua das Flores, 123\"` |\n| `password` | string | Sim | Mínimo 6 caracteres | `\"senha123\"` |\n\n### Exemplo de Body\n\n``` json\n{\n  \"name\": \"Marcos\",\n  \"email\": \"marcos@email.com\",\n  \"phone\": \"11999990000\",\n  \"address\": \"Rua das Flores, 123, Boa Esperança\",\n  \"password\": \"senha123\"\n}\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 201 Created\n    \n- Descrição: Proprietário criado com sucesso. Retorna os dados do owner e o token JWT.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"4659d77d-3d3b-4ce1-98c3-b721053f165b\",\n    \"name\": \"Marcos\",\n    \"email\": \"marcos@email.com\",\n    \"phone\": \"11999990000\",\n    \"address\": \"Rua das Flores, 123, Boa Esperança\",\n    \"createdAt\": \"2026-05-01T15:24:27.812Z\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}\n\n ```\n\n---\n\n### Erros\n\n#### 409 Conflict\n\n- Descrição: E-mail já cadastrado.\n    \n\n``` json\n{\n  \"error\": \"Email já cadastrado\"\n}\n\n ```\n\n#### 409 Conflict\n\n- Descrição: Telefone já cadastrado.\n    \n\n``` json\n{\n  \"error\": \"Telefone já cadastrado\"\n}\n\n ```\n\n#### 400 Bad Request\n\n- Descrição: Um ou mais campos não atendem às regras de validação.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/auth/owner/login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"marcosalb4@email.com\",\r\n  \"password\": \"123senha\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/owner/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "owner",
+                "login"
+              ]
+            },
+            "description": "# Login de Proprietário\n\n## Descrição\n\nAutentica um proprietário (owner) no sistema e retorna um token JWT para uso nas requisições protegidas.\n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/auth/owner/login](http://localhost:3000/auth/owner/login)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não\n    \n- Tipo: —\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `email` | string | Sim | Deve ser um e-mail válido | `\"dono@exemplo.com\"` |\n| `password` | string | Sim | Mínimo 1 caractere | `\"minhasenha123\"` |\n\n### Exemplo de Body\n\n``` json\n{\n  \"email\": \"dono@exemplo.com\",\n  \"password\": \"minhasenha123\"\n}\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Autenticação realizada com sucesso. Retorna o token JWT.\n    \n\n``` json\n{\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}\n\n ```\n\n---\n\n### Erros\n\n#### 401 Unauthorized\n\n- Descrição: Credenciais inválidas.\n    \n\n``` json\n{\n  \"error\": \"Credenciais inválidas\"\n}\n\n ```\n\n#### 400 Bad Request\n\n- Descrição: Um ou mais campos não atendem às regras de validação.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/auth/caregiver/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"maria@email.com\",\r\n  \"password\": \"senha123\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/caregiver/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "caregiver",
+                "login"
+              ]
+            },
+            "description": "# Login de Cuidador\n\n## Descrição\n\nAutentica um cuidador (caregiver) no sistema e retorna um token JWT para uso nas requisições protegidas.\n\n---\n\n## Endpoint\n\n* Método: POST\n* URL: [http://localhost:3000/auth/caregiver/login](http://localhost:3000/auth/caregiver/login)\n\n---\n\n## Autenticação\n\n* Necessária: Não\n* Tipo: —\n\n---\n\n## Request\n\n### Headers\n\n```json\n{}\n```\n\n### Body (JSON)\n\n| Campo      | Tipo   | Obrigatório | Regras             | Exemplo                |\n| ---------- | ------ | ----------- | ------------------ | ---------------------- |\n| `email`    | string | Sim         | E-mail válido      | `\"cuidador@email.com\"` |\n| `password` | string | Sim         | Mínimo 1 caractere | `\"123senha\"`           |\n\n---\n\n### Exemplo de Body\n\n```json\n{\n  \"email\": \"cuidador@email.com\",\n  \"password\": \"123senha\"\n}\n```\n\n---\n\n## Response\n\n### Sucesso\n\n* Status: 200 OK\n* Descrição: Autenticação realizada com sucesso. Retorna o token JWT.\n\n```json\n{\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}\n```\n\n---\n\n### Erros\n\n#### 401 Unauthorized\n\n* Descrição: Credenciais inválidas (e-mail não encontrado ou senha incorreta).\n\n```json\n{\n  \"error\": \"Credenciais inválidas\"\n}\n```\n\n#### 400 Bad Request\n\n* Descrição: Um ou mais campos não atendem às regras de validação.\n\n```json\n{\n  \"error\": \"Erro de validação\"\n}\n```\n"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "pets",
+      "item": [
+        {
+          "name": "/owners/pets",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyYzFkM2M1LTJmZDAtNGUxMi1hYzNkLThjY2I2ZWEwNjc0YyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzY0OTU3NSwiZXhwIjoxNzc4MjU0Mzc1fQ.68PPWo3S4FXbXB6aMOwteUvua6pCoNrDr0sIbl9BRdI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Nino\",\r\n  \"species\": \"CAT\",\r\n  \"breed\": \"Siamese\",\r\n  \"age\": 1,\r\n  \"specialNotes\": \"Muito brincalhão e gosta de subir nos móveis\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/owners/pets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "owners",
+                "pets"
+              ]
+            },
+            "description": "# Cadastro de Pet\n\n## Descrição\n\nRegistra um novo pet para o proprietário autenticado no sistema.\n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/owners/pets](http://localhost:3000/owners/pets)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `name` | string | Sim | Mínimo 1, máximo 10 caracteres | `\"Rex\"` |\n| `species` | enum | Sim | Valores: `DOG`, `CAT`, `OTHER` | `\"DOG\"` |\n| `breed` | string | Sim | Mínimo 1 caractere | `\"Labrador\"` |\n| `age` | number | Sim | Inteiro, mínimo 0, máximo 30 | `3` |\n| `specialNotes` | string | Não | Campo opcional | `\"Alérgico a frango\"` |\n\n---\n\n### Exemplo de Body\n\n``` json\n{\n  \"name\": \"Rex\",\n  \"species\": \"DOG\",\n  \"breed\": \"Labrador\",\n  \"age\": 3,\n  \"specialNotes\": \"Alérgico a frango\"\n}\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 201 Created\n    \n- Descrição: Pet criado com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"b2932820-2a63-4b04-8dcc-d26472416425\",\n    \"name\": \"Rex\",\n    \"species\": \"DOG\",\n    \"breed\": \"Labrador\",\n    \"age\": 3,\n    \"specialNotes\": \"Alérgico a frango\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"createdAt\": \"2026-05-01T16:42:06.299Z\"\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Acesso restrito a proprietários.\n    \n\n``` json\n{\n  \"error\": \"Acesso restrito a donos de pets\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Proprietário não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Dono não encontrado\"\n}\n\n ```\n\n---\n\n#### 400 Bad Request\n\n- Descrição: Erro de validação nos campos enviados.\n    \n\n``` json\n{\n  \"error\": \"Erro de validação\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/owners/pets",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyYzFkM2M1LTJmZDAtNGUxMi1hYzNkLThjY2I2ZWEwNjc0YyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzY0OTU3NSwiZXhwIjoxNzc4MjU0Mzc1fQ.68PPWo3S4FXbXB6aMOwteUvua6pCoNrDr0sIbl9BRdI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/owners/pets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "owners",
+                "pets"
+              ]
+            },
+            "description": "# Listagem de Pets do Proprietário\n\n## Descrição\n\nRetorna a lista de pets cadastrados para o proprietário autenticado.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/owners/pets](http://localhost:3000/owners/pets)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body\n\n- Não possui body.\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de pets retornada com sucesso.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"b2932820-2a63-4b04-8dcc-d26472416425\",\n      \"name\": \"Rex\",\n      \"species\": \"DOG\",\n      \"breed\": \"Labrador\",\n      \"age\": 3,\n      \"specialNotes\": \"Alérgico a frango\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"createdAt\": \"2026-05-01T16:42:06.299Z\"\n    },\n    {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\",\n      \"age\": 1,\n      \"specialNotes\": \"Muito brincalhão e gosta de subir nos móveis\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"createdAt\": \"2026-05-01T16:46:47.676Z\"\n    }\n  ]\n}\n\n ```\n\n---\n\n## Campos da Resposta\n\n| Campo | Tipo | Descrição |\n| --- | --- | --- |\n| `id` | string (UUID) | Identificador do pet |\n| `name` | string | Nome do pet |\n| `species` | enum | Tipo (`DOG`, `CAT`, `OTHER`) |\n| `breed` | string | Raça |\n| `age` | number | Idade |\n| `specialNotes` | string | Observações especiais |\n| `ownerId` | string (UUID) | ID do proprietário |\n| `createdAt` | string (ISO) | Data de criação |\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Acesso restrito a proprietários.\n    \n\n``` json\n{\n  \"error\": \"Acesso restrito a donos de pets\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Proprietário não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Dono não encontrado\"\n}\n\n ```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "service_requests",
+      "item": [
+        {
+          "name": "/service-requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyYzFkM2M1LTJmZDAtNGUxMi1hYzNkLThjY2I2ZWEwNjc0YyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzY0OTU3NSwiZXhwIjoxNzc4MjU0Mzc1fQ.68PPWo3S4FXbXB6aMOwteUvua6pCoNrDr0sIbl9BRdI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\r\n  \"serviceType\": \"WALK_30MIN\",\r\n  \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\r\n  \"meetingAddress\": \"Rua das Flores, 123, Centro\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests"
+              ]
+            },
+            "description": "# Criação de Solicitação de Serviço\n\n## Descrição\n\nCria uma nova solicitação de serviço para um pet do proprietário autenticado. A solicitação fica disponível para cuidadores aceitarem.\n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/service-requests](http://localhost:3000/service-requests)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `petId` | string (UUID) | Sim | Deve ser um UUID válido | `\"b2932820-2a63-4b04-8dcc-d26472416425\"` |\n| `serviceType` | enum | Sim | Valores: `WALK_30MIN`, `WALK_1H`, `HOME_VISIT`, `HOSTING` | `\"WALK_30MIN\"` |\n| `scheduledAt` | string (ISO 8601) | Sim | Deve ser data futura com pelo menos 2h de antecedência | `\"2026-05-10T10:00:00.000Z\"` |\n| `meetingAddress` | string | Sim | Mínimo 5, máximo 200 caracteres | `\"Rua das Flores, 123, Centro\"` |\n\n---\n\n### Exemplo de Body\n\n``` json\n{\n  \"petId\": \"b2932820-2a63-4b04-8dcc-d26472416425\",\n  \"serviceType\": \"WALK_30MIN\",\n  \"scheduledAt\": \"2026-05-10T10:00:00.000Z\",\n  \"meetingAddress\": \"Rua das Flores, 123, Centro\"\n}\n\n ```\n\n---\n\n## Regras de Negócio\n\n- O pet deve existir\n    \n- O pet deve pertencer ao usuário autenticado\n    \n- O agendamento deve ter **mínimo de 2 horas de antecedência**\n    \n- O pet não pode ter uma solicitação ativa\n    \n- A solicitação expira automaticamente em **24 horas** (`expiresAt`)\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 201 Created\n    \n- Descrição: Solicitação criada com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"a3bc4d62-90f7-44b8-8614-219d468b748a\",\n    \"petId\": \"b2932820-2a63-4b04-8dcc-d26472416425\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": null,\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-10T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"OPEN\",\n    \"expiresAt\": \"2026-05-02T16:51:46.928Z\",\n    \"createdAt\": \"2026-05-01T16:51:46.937Z\",\n    \"pet\": {\n      \"id\": \"b2932820-2a63-4b04-8dcc-d26472416425\",\n      \"name\": \"Rex\",\n      \"species\": \"DOG\",\n      \"breed\": \"Labrador\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": null,\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: O pet não pertence ao usuário autenticado.\n    \n\n``` json\n{\n  \"error\": \"Este pet não pertence a você\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Pet não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Pet não encontrado\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Já existe uma solicitação ativa para este pet.\n    \n\n``` json\n{\n  \"error\": \"Pet já possui uma solicitação ativa\"\n}\n\n ```\n\n---\n\n#### 400 Bad Request\n\n- Descrição: Erro de validação ou agendamento inválido.\n    \n\n``` json\n{\n  \"error\": \"O agendamento deve ser feito com pelo menos 2 horas de antecedência\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/my",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTQ2MzMsImV4cCI6MTc3ODI1OTQzM30.Sy6eF1eHarmNj8QvistCNGc0cV9eT7Pm7jW1Sw7BR2s",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "my"
+              ]
+            },
+            "description": "# Listar Solicitações do Usuário\n\n## Descrição\n\nRetorna a lista de solicitações de serviço do usuário autenticado.\n\n- Se for **owner**, retorna as solicitações criadas por ele\n    \n- Se for **caregiver**, retorna as solicitações associadas a ele\n    \n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/service-requests/my](http://localhost:3000/service-requests/my)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body\n\n- Não possui body.\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de solicitações retornada com sucesso.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n      \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"caregiverId\": null,\n      \"serviceType\": \"WALK_30MIN\",\n      \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n      \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n      \"status\": \"OPEN\",\n      \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n      \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n      \"pet\": {\n        \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n        \"name\": \"Nino\",\n        \"species\": \"CAT\",\n        \"breed\": \"Siamese\"\n      },\n      \"owner\": {\n        \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n        \"name\": \"Marcos\",\n        \"phone\": \"31999533572\"\n      },\n      \"caregiver\": null,\n      \"review\": null\n    }\n  ]\n}\n\n ```\n\n📌 Quando não houver registros:\n\n``` json\n{\n  \"data\": []\n}\n\n ```\n\n---\n\n## Campos da Resposta\n\n| Campo | Tipo | Descrição |\n| --- | --- | --- |\n| `id` | string (UUID) | Identificador da solicitação |\n| `petId` | string | ID do pet |\n| `ownerId` | string | ID do dono |\n| `caregiverId` | string | null | ID do cuidador |\n| `serviceType` | enum | Tipo de serviço |\n| `scheduledAt` | string (ISO) | Data agendada |\n| `meetingAddress` | string | Endereço |\n| `status` | string | Status (`OPEN`, etc.) |\n| `expiresAt` | string (ISO) | Expiração da solicitação |\n| `createdAt` | string (ISO) | Data de criação |\n| `pet` | object | Dados básicos do pet |\n| `owner` | object | Dados básicos do dono |\n| `caregiver` | object | null | Dados do cuidador |\n| `review` | object | null | Avaliação |\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTQ2MzMsImV4cCI6MTc3ODI1OTQzM30.Sy6eF1eHarmNj8QvistCNGc0cV9eT7Pm7jW1Sw7BR2s",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/?id= eca135e5-5ffc-4d30-a821-6c3919226d5b",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": " eca135e5-5ffc-4d30-a821-6c3919226d5b",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "# Buscar Solicitação por ID\n\n## Descrição\n\nRetorna os dados de uma solicitação de serviço específica a partir do seu identificador.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/service-requests/:id](http://localhost:3000/service-requests/:id)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"eca135e5-5ffc-4d30-a821-6c3919226d5b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p3l8qx\"\nGET /service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Solicitação encontrada com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": null,\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"OPEN\",\n    \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n    \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": null,\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Regras de Acesso\n\n- Usuário deve estar autenticado\n    \n- Pode acessar:\n    \n    - O **dono** da solicitação\n        \n    - O **cuidador** associado\n        \n    - _(ou regras abertas, dependendo da sua implementação)_\n        \n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Usuário não tem permissão para acessar esta solicitação.\n    \n\n``` json\n{\n  \"error\": \"Acesso negado\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n💡 **Importante (teu backend hoje):**  \nEle está retornando uma lista (`data: []`). Isso indica que você provavelmente está usando um `findMany` em vez de `findById`.\n\nSe quiser corrigir:\n\n``` js\nconst findById = async (id) => {\n  const request = await serviceRequestsRepo.findById(id);\n  if (!request) throw new AppError(404, 'Solicitação não encontrada');\n  return request;\n};\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}/accept",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcxNmE5Nzc2LTY2ZjEtNDQyMC04M2M5LTczMDk0NWM0YjY4YiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg4ODEsImV4cCI6MTc3ODI2MzY4MX0.Ei8VzM_0m8ghIT6_r8ckG7YjTticm8wnQois4ddUx4M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/accept",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "4cf4751e-a187-4f52-b761-168c0517fca0",
+                "accept"
+              ]
+            },
+            "description": "# Aceitar Solicitação de Serviço\n\n## Descrição\n\nPermite que um cuidador aceite uma solicitação de serviço disponível.  \nAo aceitar, a solicitação tem seu status alterado para **ACCEPTED** e o cuidador passa a ser o responsável pelo atendimento.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/accept](http://localhost:3000/service-requests/:id/accept)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"eca135e5-5ffc-4d30-a821-6c3919226d5b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p2l8qw\"\nPATCH /service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b/accept\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- A solicitação deve estar com status **OPEN**\n    \n- O cuidador deve estar com status **ACTIVE**\n    \n- O cuidador pode ter no máximo **3 atendimentos simultâneos**\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Solicitação aceita com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"ACCEPTED\",\n    \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n    \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\",\n      \"phone\": \"11988880000\"\n    },\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Cuidador inativo ou sem permissão.\n    \n\n``` json\n{\n  \"error\": \"Cuidador inativo não pode aceitar solicitações\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação não está disponível ou limite atingido.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não está aberta para aceite\"\n}\n\n ```\n\n``` json\n{\n  \"error\": \"Limite de atendimentos simultâneos atingido\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}/refuse",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcxNmE5Nzc2LTY2ZjEtNDQyMC04M2M5LTczMDk0NWM0YjY4YiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg4ODEsImV4cCI6MTc3ODI2MzY4MX0.Ei8VzM_0m8ghIT6_r8ckG7YjTticm8wnQois4ddUx4M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b/refuse",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "eca135e5-5ffc-4d30-a821-6c3919226d5b",
+                "refuse"
+              ]
+            },
+            "description": "# Recusar Solicitação de Serviço\n\n## Descrição\n\nPermite que um cuidador recuse uma solicitação de serviço previamente aceita.  \nAo recusar, a solicitação volta para o status **OPEN** e fica disponível para outros cuidadores.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/refuse](http://localhost:3000/service-requests/:id/refuse)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"eca135e5-5ffc-4d30-a821-6c3919226d5b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p8l3qw\"\nPATCH /service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b/refuse\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- O cuidador deve estar autenticado\n    \n- Pode recusar se:\n    \n    - A solicitação estiver **ACCEPTED** e for do próprio cuidador\n        \n    - Ou ainda estiver **OPEN** (dependendo da regra implementada)\n        \n- Ao recusar:\n    \n    - `status` volta para **OPEN**\n        \n    - `caregiverId` é removido (`null`)\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Solicitação recusada com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": null,\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"OPEN\",\n    \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n    \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": null,\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Apenas cuidadores podem realizar esta ação.\n    \n\n``` json\n{\n  \"error\": \"Acesso restrito a cuidadores\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação não pode ser recusada no status atual.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não pode ser recusada neste status\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}/cancel",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcxNmE5Nzc2LTY2ZjEtNDQyMC04M2M5LTczMDk0NWM0YjY4YiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg4ODEsImV4cCI6MTc3ODI2MzY4MX0.Ei8VzM_0m8ghIT6_r8ckG7YjTticm8wnQois4ddUx4M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b/cancel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "eca135e5-5ffc-4d30-a821-6c3919226d5b",
+                "cancel"
+              ]
+            },
+            "description": "# Cancelar Solicitação de Serviço\n\n## Descrição\n\nPermite que o proprietário (owner) cancele uma solicitação de serviço.  \nA solicitação só pode ser cancelada quando estiver com status **OPEN**.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/cancel](http://localhost:3000/service-requests/:id/cancel)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (owner)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInT5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"eca135e5-5ffc-4d30-a821-6c3919226d5b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p7l2qw\"\nPATCH /service-requests/eca135e5-5ffc-4d30-a821-6c3919226d5b/cancel\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- Deve pertencer ao proprietário autenticado\n    \n- Só pode ser cancelada se estiver com status **OPEN**\n    \n- Após cancelamento:\n    \n    - `status` → **CANCELLED**\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Solicitação cancelada com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": null,\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"CANCELLED\",\n    \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n    \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": null,\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Solicitação não pode ser cancelada neste status ou não pertence ao usuário.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não pode ser cancelada neste status\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}/start",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcxNmE5Nzc2LTY2ZjEtNDQyMC04M2M5LTczMDk0NWM0YjY4YiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg4ODEsImV4cCI6MTc3ODI2MzY4MX0.Ei8VzM_0m8ghIT6_r8ckG7YjTticm8wnQois4ddUx4M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/start",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "4cf4751e-a187-4f52-b761-168c0517fca0",
+                "start"
+              ]
+            },
+            "description": "# Iniciar Serviço\n\n## Descrição\n\nPermite que o cuidador responsável inicie a execução de uma solicitação de serviço.  \nO status da solicitação é alterado de **ACCEPTED** para **IN_PROGRESS**.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/start](http://localhost:3000/service-requests/:id/start)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"4cf4751e-a187-4f52-b761-168c0517fca0\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p4l9qw\"\nPATCH /service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/start\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- Deve estar com status **ACCEPTED**\n    \n- Apenas o **cuidador atribuído** pode iniciar o serviço\n    \n- Após iniciar:\n    \n    - `status` → **IN_PROGRESS**\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Serviço iniciado com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"IN_PROGRESS\",\n    \"expiresAt\": \"2026-05-02T18:21:12.232Z\",\n    \"createdAt\": \"2026-05-01T18:21:12.240Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\",\n      \"phone\": \"11988880000\"\n    },\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Usuário não é o cuidador atribuído à solicitação.\n    \n\n``` json\n{\n  \"error\": \"Apenas o cuidador atribuído pode iniciar o serviço\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação não está no status correto para iniciar.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não está aceita\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests/{id}/complete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcxNmE5Nzc2LTY2ZjEtNDQyMC04M2M5LTczMDk0NWM0YjY4YiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTg4ODEsImV4cCI6MTc3ODI2MzY4MX0.Ei8VzM_0m8ghIT6_r8ckG7YjTticm8wnQois4ddUx4M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/start",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests",
+                "4cf4751e-a187-4f52-b761-168c0517fca0",
+                "start"
+              ]
+            },
+            "description": "# Concluir Serviço\n\n## Descrição\n\nPermite que o cuidador responsável finalize a execução de uma solicitação de serviço.  \nO status da solicitação é alterado de **IN_PROGRESS** para **COMPLETED**.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/complete](http://localhost:3000/service-requests/:id/complete)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"4cf4751e-a187-4f52-b761-168c0517fca0\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p6l2qw\"\nPATCH /service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/complete\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- Deve estar com status **IN_PROGRESS**\n    \n- Apenas o **cuidador atribuído** pode concluir o serviço\n    \n- Após conclusão:\n    \n    - `status` → **COMPLETED**\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Serviço concluído com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"COMPLETED\",\n    \"expiresAt\": \"2026-05-02T18:21:12.232Z\",\n    \"createdAt\": \"2026-05-01T18:21:12.240Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\",\n      \"phone\": \"11988880000\"\n    },\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Usuário não é o cuidador atribuído à solicitação.\n    \n\n``` json\n{\n  \"error\": \"Apenas o cuidador atribuído pode concluir o serviço\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação não está no status correto para conclusão.\n    \n\n``` json\n{\n  \"error\": \"Serviço não está em andamento\"\n}\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "/service-requests",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZmMjJmODRmLWM3YTQtNGViOC1hYzZjLTFmODU0NTE2YzAzNiIsInJvbGUiOiJjYXJlZ2l2ZXIiLCJpYXQiOjE3Nzc2NTQ2MzMsImV4cCI6MTc3ODI1OTQzM30.Sy6eF1eHarmNj8QvistCNGc0cV9eT7Pm7jW1Sw7BR2s",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "service-requests"
+              ]
+            },
+            "description": "# Listar Solicitações Abertas\n\n## Descrição\n\nRetorna a lista de solicitações de serviço com status **OPEN**, disponíveis para cuidadores aceitarem.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/service-requests](http://localhost:3000/service-requests)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body\n\n- Não possui body.\n    \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de solicitações abertas retornada com sucesso.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"eca135e5-5ffc-4d30-a821-6c3919226d5b\",\n      \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"caregiverId\": null,\n      \"serviceType\": \"WALK_30MIN\",\n      \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n      \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n      \"status\": \"OPEN\",\n      \"expiresAt\": \"2026-05-02T17:38:38.152Z\",\n      \"createdAt\": \"2026-05-01T17:38:38.159Z\",\n      \"pet\": {\n        \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n        \"name\": \"Nino\",\n        \"species\": \"CAT\",\n        \"breed\": \"Siamese\"\n      },\n      \"owner\": {\n        \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n        \"name\": \"Marcos\",\n        \"phone\": \"31999533572\"\n      },\n      \"caregiver\": null,\n      \"review\": null\n    }\n  ]\n}\n\n ```\n\n---\n\n## Regras de Acesso\n\n- Apenas usuários com role **`caregiver`** podem acessar este endpoint\n    \n- Retorna apenas solicitações com status **`OPEN`**\n    \n- Solicitações expiradas não devem aparecer (dependendo da regra do backend)\n    \n\n---\n\n## Campos da Resposta\n\n| Campo | Tipo | Descrição |\n| --- | --- | --- |\n| `id` | string (UUID) | Identificador da solicitação |\n| `petId` | string | ID do pet |\n| `ownerId` | string | ID do dono |\n| `caregiverId` | string | null | ID do cuidador |\n| `serviceType` | enum | Tipo de serviço |\n| `scheduledAt` | string (ISO) | Data agendada |\n| `meetingAddress` | string | Endereço |\n| `status` | string | Status (`OPEN`) |\n| `expiresAt` | string (ISO) | Data de expiração |\n| `createdAt` | string (ISO) | Data de criação |\n| `pet` | object | Dados básicos do pet |\n| `owner` | object | Dados básicos do dono |\n| `caregiver` | object | null | Cuidador (sempre null aqui) |\n| `review` | object | null | Avaliação |\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Acesso restrito a cuidadores.\n    \n\n``` json\n{\n  \"error\": \"Acesso restrito a cuidadores\"\n}\n\n ```"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "reviews",
+      "item": [
+        {
+          "name": "reviews",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyYzFkM2M1LTJmZDAtNGUxMi1hYzNkLThjY2I2ZWEwNjc0YyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzY2MDMxMCwiZXhwIjoxNzc4MjY1MTEwfQ.P--NZilGv-AOgSck_SXyzgmt7rpXOUa4wCdesZsjBiw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\r\n  \"rating\": 5,\r\n  \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "reviews"
+              ]
+            },
+            "description": "# Criar Avaliação (Review)\n\n## Descrição\n\nPermite que o proprietário (owner) avalie um cuidador após a conclusão de um serviço.  \nA avaliação só pode ser realizada se a solicitação estiver com status **COMPLETED** e ainda não tiver sido avaliada.\n\nApós a criação:\n\n- A avaliação é registrada\n    \n- A média de avaliações do cuidador é recalculada\n    \n\n---\n\n## Endpoint\n\n- Método: POST\n    \n- URL: [http://localhost:3000/reviews](http://localhost:3000/reviews)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (owner)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Body (JSON)\n\n| Campo | Tipo | Obrigatório | Regras | Exemplo |\n| --- | --- | --- | --- | --- |\n| `serviceRequestId` | string (UUID) | Sim | Deve ser um UUID válido | `\"4cf4751e-a187-4f52-b761-168c0517fca0\"` |\n| `rating` | number | Sim | Inteiro de 1 a 5 | `5` |\n| `comment` | string | Sim | Texto livre | `\"Excelente cuidador, muito atencioso com o Rex!\"` |\n\n---\n\n### Exemplo de Body\n\n``` json\n{\n  \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n  \"rating\": 5,\n  \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\"\n}\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- Deve pertencer ao proprietário autenticado\n    \n- Deve estar com status **COMPLETED**\n    \n- Só pode existir **uma avaliação por solicitação**\n    \n- Após criar:\n    \n    - Média do cuidador é recalculada\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 201 Created\n    \n- Descrição: Avaliação criada com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"2359d1e1-951b-42cf-928d-0e51a7a7be3c\",\n    \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"rating\": 5,\n    \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\",\n    \"createdAt\": \"2026-05-01T18:32:10.774Z\",\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\"\n    },\n    \"caregiver\": {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\"\n    }\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 400 Bad Request\n\n- Descrição: Serviço ainda não foi concluído.\n    \n\n``` json\n{\n  \"error\": \"Serviço ainda não foi concluído\"\n}\n\n ```\n\n---\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Usuário não tem permissão para avaliar esta solicitação.\n    \n\n``` json\n{\n  \"error\": \"Você não pode avaliar esta solicitação\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação já foi avaliada anteriormente.\n    \n\n``` json\n{\n  \"error\": \"Esta solicitação já foi avaliada\"\n}\n\n ```"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

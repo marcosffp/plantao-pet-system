@@ -10,17 +10,11 @@ const router = Router();
 
 /**
  * @swagger
- * /owners/{ownerId}/pets:
+ * /owners/pets:
  *   post:
- *     summary: Cadastrar pet para o dono
+ *     summary: Cadastrar pet para o dono autenticado
  *     tags: [Pets]
  *     security: [{ bearerAuth: [] }]
- *     parameters:
- *       - in: path
- *         name: ownerId
- *         required: true
- *         schema: { type: string, format: uuid }
- *         description: ID do dono
  *     requestBody:
  *       required: true
  *       content:
@@ -69,23 +63,17 @@ const router = Router();
  *       401:
  *         description: Token ausente ou inválido
  *       403:
- *         description: Acesso negado
+ *         description: Acesso restrito a donos
  */
-router.post('/:ownerId/pets', authenticate, requireOwner, validate(createPetSchema), petsController.create);
+router.post('/pets', authenticate, requireOwner, validate(createPetSchema), petsController.create);
 
 /**
  * @swagger
- * /owners/{ownerId}/pets:
+ * /owners/pets:
  *   get:
- *     summary: Listar pets do dono
+ *     summary: Listar pets do dono autenticado
  *     tags: [Pets]
  *     security: [{ bearerAuth: [] }]
- *     parameters:
- *       - in: path
- *         name: ownerId
- *         required: true
- *         schema: { type: string, format: uuid }
- *         description: ID do dono
  *     responses:
  *       200:
  *         description: Lista de pets
@@ -109,7 +97,9 @@ router.post('/:ownerId/pets', authenticate, requireOwner, validate(createPetSche
  *                       createdAt: { type: string, format: date-time }
  *       401:
  *         description: Token ausente ou inválido
+ *       403:
+ *         description: Acesso restrito a donos
  */
-router.get('/:ownerId/pets', authenticate, petsController.findByOwnerId);
+router.get('/pets', authenticate, requireOwner, petsController.findMine);
 
 module.exports = router;

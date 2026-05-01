@@ -4,19 +4,13 @@ const petsRepo = require('../repositories/pets.repository');
 const ownersRepo = require('../repositories/owners.repository');
 const AppError = require('../utils/AppError');
 
-const create = async (ownerId, petData, user) => {
-  if (/*user.role === 'owner' && */user.id !== ownerId) {
-    throw new AppError(403, 'Você não pode cadastrar pets para outro dono');
-  }
-  const owner = await ownersRepo.findById(ownerId);
+const create = async (petData, user) => {
+  const owner = await ownersRepo.findById(user.id);
   if (!owner) throw new AppError(404, 'Dono não encontrado');
-
-  return petsRepo.create({ ...petData, ownerId });
+  return petsRepo.create({ ...petData, ownerId: user.id });
 };
 
 const findByOwnerId = async (ownerId) => {
-  const owner = await ownersRepo.findById(ownerId);
-  if (!owner) throw new AppError(404, 'Dono não encontrado');
   return petsRepo.findByOwnerId(ownerId);
 };
 

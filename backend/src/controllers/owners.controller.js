@@ -3,9 +3,9 @@
 const ownersService = require('../services/owners.service');
 const asyncHandler = require('../utils/asyncHandler');
 
-const findById = asyncHandler(async (req, res) => {
-  const data = await ownersService.findById(req.params.id);
+const getMe = asyncHandler(async (req, res) => {
+  const data = await ownersService.findById(req.user.id);
   res.status(200).json({ data });
 });
 
-module.exports = { findById };
+module.exports = { getMe };

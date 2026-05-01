@@ -14,6 +14,7 @@ CREATE TYPE "CaregiverStatus" AS ENUM ('ACTIVE', 'INACTIVE');
 CREATE TABLE "Owner" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "address" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
@@ -40,6 +41,7 @@ CREATE TABLE "Pet" (
 CREATE TABLE "Caregiver" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "neighborhoods" TEXT[],
@@ -81,7 +83,13 @@ CREATE TABLE "Review" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Owner_email_key" ON "Owner"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Owner_phone_key" ON "Owner"("phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Caregiver_email_key" ON "Caregiver"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Caregiver_phone_key" ON "Caregiver"("phone");

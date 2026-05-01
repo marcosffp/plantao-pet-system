@@ -4,12 +4,12 @@ const petsService = require('../services/pets.service');
 const asyncHandler = require('../utils/asyncHandler');
 
 const create = asyncHandler(async (req, res) => {
-  const data = await petsService.create(req.params.ownerId, req.body, req.user);
+  const data = await petsService.create(req.body, req.user);
   res.status(201).json({ data });
 });
 
-const findByOwnerId = asyncHandler(async (req, res) => {
-  const data = await petsService.findByOwnerId(req.params.ownerId);
+const findMine = asyncHandler(async (req, res) => {
+  const data = await petsService.findByOwnerId(req.user.id);
   res.status(200).json({ data });
 });
 
@@ -18,4 +18,4 @@ const findById = asyncHandler(async (req, res) => {
   res.status(200).json({ data });
 });
 
-module.exports = { create, findByOwnerId, findById };
+module.exports = { create, findMine, findById };

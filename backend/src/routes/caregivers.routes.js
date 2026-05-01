@@ -14,6 +14,7 @@ const router = Router();
  *   get:
  *     summary: Listar cuidadores ativos
  *     tags: [Caregivers]
+ *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200:
  *         description: Lista de cuidadores com status ACTIVE
@@ -29,6 +30,7 @@ const router = Router();
  *                     properties:
  *                       id: { type: string }
  *                       name: { type: string }
+ *                       email: { type: string }
  *                       phone: { type: string }
  *                       neighborhoods: { type: array, items: { type: string } }
  *                       services: { type: array, items: { type: string } }
@@ -36,57 +38,15 @@ const router = Router();
  *                       status: { type: string }
  *                       createdAt: { type: string, format: date-time }
  */
-router.get('/', caregiversController.findAll);
+router.get('/', authenticate, caregiversController.findAll);
 
 /**
  * @swagger
- * /caregivers/{id}:
- *   get:
- *     summary: Buscar cuidador por ID
- *     tags: [Caregivers]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: string, format: uuid }
- *         description: ID do cuidador
- *     responses:
- *       200:
- *         description: Cuidador encontrado
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     id: { type: string }
- *                     name: { type: string }
- *                     phone: { type: string }
- *                     neighborhoods: { type: array, items: { type: string } }
- *                     services: { type: array, items: { type: string } }
- *                     averageRating: { type: number }
- *                     status: { type: string }
- *                     createdAt: { type: string, format: date-time }
- *       404:
- *         description: Cuidador não encontrado
- */
-router.get('/:id', caregiversController.findById);
-
-/**
- * @swagger
- * /caregivers/{id}/status:
+ * /caregivers/status:
  *   patch:
- *     summary: Atualizar status do cuidador (ACTIVE ou INACTIVE)
+ *     summary: Atualizar status do cuidador autenticado (ACTIVE ou INACTIVE)
  *     tags: [Caregivers]
  *     security: [{ bearerAuth: [] }]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: string, format: uuid }
- *         description: ID do cuidador
  *     requestBody:
  *       required: true
  *       content:
@@ -109,14 +69,56 @@ router.get('/:id', caregiversController.findById);
  *               properties:
  *                 data:
  *                   type: object
+ *                   properties:
+ *                     id: { type: string }
+ *                     name: { type: string }
+ *                     status: { type: string }
  *       400:
  *         description: Status inválido
  *       401:
  *         description: Token ausente ou inválido
  *       403:
- *         description: Apenas cuidadores podem alterar o próprio status
+ *         description: Acesso restrito a cuidadores
  */
-router.patch('/:id/status', authenticate, requireCaregiver, validate(updateStatusSchema), caregiversController.updateStatus);
+router.patch('/status', authenticate, requireCaregiver, validate(updateStatusSchema), caregiversController.updateStatus);
+
+/**
+ * @swagger
+ * /caregivers/{id}:
+ *   get:
+ *     summary: Buscar cuidador por ID
+ *     tags: [Caregivers]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID do cuidador
+ *     responses:
+ *       200:
+ *         description: Cuidador encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id: { type: string }
+ *                     name: { type: string }
+ *                     email: { type: string }
+ *                     phone: { type: string }
+ *                     neighborhoods: { type: array, items: { type: string } }
+ *                     services: { type: array, items: { type: string } }
+ *                     averageRating: { type: number }
+ *                     status: { type: string }
+ *                     createdAt: { type: string, format: date-time }
+ *       404:
+ *         description: Cuidador não encontrado
+ */
+router.get('/:id', authenticate, caregiversController.findById);
 
 /**
  * @swagger
@@ -124,6 +126,7 @@ router.patch('/:id/status', authenticate, requireCaregiver, validate(updateStatu
  *   get:
  *     summary: Listar avaliações do cuidador
  *     tags: [Caregivers]
+ *     security: [{ bearerAuth: [] }]
  *     parameters:
  *       - in: path
  *         name: id
@@ -152,6 +155,6 @@ router.patch('/:id/status', authenticate, requireCaregiver, validate(updateStatu
  *       404:
  *         description: Cuidador não encontrado
  */
-router.get('/:id/reviews', caregiversController.findReviews);
+router.get('/:id/reviews', authenticate, caregiversController.findReviews);
 
 module.exports = router;

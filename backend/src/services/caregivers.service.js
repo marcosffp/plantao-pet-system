@@ -12,13 +12,10 @@ const findById = async (id) => {
   return caregiver;
 };
 
-const updateStatus = async (id, status, user) => {
-  if (/*user.role === 'caregiver' &&*/ user.id !== id) {
-    throw new AppError(403, 'Você só pode atualizar seu próprio status');
-  }
-  const caregiver = await caregiversRepo.findById(id);
+const updateStatus = async (status, user) => {
+  const caregiver = await caregiversRepo.findById(user.id);
   if (!caregiver) throw new AppError(404, 'Cuidador não encontrado');
-  return caregiversRepo.updateStatus(id, status);
+  return caregiversRepo.updateStatus(user.id, status);
 };
 
 const findReviews = async (id) => {

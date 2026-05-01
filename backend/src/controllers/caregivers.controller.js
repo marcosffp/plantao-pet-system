@@ -14,7 +14,7 @@ const findById = asyncHandler(async (req, res) => {
 });
 
 const updateStatus = asyncHandler(async (req, res) => {
-  const data = await caregiversService.updateStatus(req.params.id, req.body.status, req.user);
+  const data = await caregiversService.updateStatus(req.body.status, req.user);
   res.status(200).json({ data });
 });
 

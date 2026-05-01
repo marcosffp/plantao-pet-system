@@ -139,6 +139,48 @@ router.get('/my', authenticate, serviceRequestsController.findMine);
  *     responses:
  *       200:
  *         description: Solicitação encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id: { type: string }
+ *                     serviceType: { type: string }
+ *                     scheduledAt: { type: string, format: date-time }
+ *                     meetingAddress: { type: string }
+ *                     status: { type: string, enum: [OPEN, ACCEPTED, IN_PROGRESS, COMPLETED, CANCELLED, REFUSED] }
+ *                     expiresAt: { type: string, format: date-time }
+ *                     createdAt: { type: string, format: date-time }
+ *                     pet:
+ *                       type: object
+ *                       properties:
+ *                         id: { type: string }
+ *                         name: { type: string }
+ *                         species: { type: string }
+ *                         breed: { type: string }
+ *                     owner:
+ *                       type: object
+ *                       properties:
+ *                         id: { type: string }
+ *                         name: { type: string }
+ *                         phone: { type: string }
+ *                     caregiver:
+ *                       type: object
+ *                       nullable: true
+ *                       properties:
+ *                         id: { type: string }
+ *                         name: { type: string }
+ *                         phone: { type: string }
+ *                     review:
+ *                       type: object
+ *                       nullable: true
+ *                       properties:
+ *                         id: { type: string }
+ *                         rating: { type: integer }
+ *                         comment: { type: string }
  *       401:
  *         description: Token ausente ou inválido
  *       404:
