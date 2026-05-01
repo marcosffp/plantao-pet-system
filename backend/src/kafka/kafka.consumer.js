@@ -46,29 +46,38 @@ const handlers = {
   },
 };
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const start = async () => {
-  try {
-    await consumer.connect();
-    console.log('[KAFKA] Consumer conectado');
-
-    for (const topic of TOPICS) {
-      await consumer.subscribe({ topic, fromBeginning: false });
+  await consumer.connect();
+  console.log('[KAFKA] Consumer conectado');
+  let subscribed = false;
+  let attempts = 0;
+  while (!subscribed) {
+    try {
+      for (const topic of TOPICS) {
+        await consumer.subscribe({ topic, fromBeginning: false });
+      }
+      subscribed = true;
+      console.log('[KAFKA] Consumer inscrito nos tópicos');
+    } catch (err) {
+      attempts++;
+      console.warn(`[KAFKA] Aguardando tópicos ficarem disponíveis (tentativa ${attempts})...`);
+      await sleep(3000);
     }
-
-    await consumer.run({
-      eachMessage: async ({ topic, message }) => {
-        try {
-          const payload = JSON.parse(message.value.toString());
-          const handler = handlers[topic];
-          if (handler) handler(payload);
-        } catch (err) {
-          console.error(`[KAFKA] Erro ao processar mensagem do tópico "${topic}":`, err.message);
-        }
-      },
-    });
-  } catch (err) {
-    console.error('[KAFKA] Falha ao iniciar consumer:', err.message);
   }
+
+  await consumer.run({
+    eachMessage: async ({ topic, message }) => {
+      try {
+        const payload = JSON.parse(message.value.toString());
+        const handler = handlers[topic];
+        if (handler) handler(payload);
+      } catch (err) {
+        console.error(`[KAFKA] Erro ao processar mensagem do tópico "${topic}":`, err.message);
+      }
+    },
+  });
 };
 
 const disconnect = async () => {

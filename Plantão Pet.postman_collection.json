@@ -177,7 +177,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/caregivers/{{caregiverId}}/reviews?caregiverId=716a9776-66f1-4420-83c9-730945c4b68b",
+              "raw": "http://localhost:3000/caregivers/716a9776-66f1-4420-83c9-730945c4b68b/reviews",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -185,15 +185,8 @@
               "port": "3000",
               "path": [
                 "caregivers",
-                "{{caregiverId}}",
+                "716a9776-66f1-4420-83c9-730945c4b68b",
                 "reviews"
-              ],
-              "query": [
-                {
-                  "key": "caregiverId",
-                  "value": "716a9776-66f1-4420-83c9-730945c4b68b",
-                  "type": "text"
-                }
               ]
             },
             "description": "# Listar Avaliações de um Cuidador\n\n## Descrição\n\nRetorna todas as avaliações recebidas por um cuidador específico.  \nInclui informações da avaliação e do proprietário que realizou o feedback.\n\n---\n\n## Endpoint\n\n- Método: GET\n    \n- URL: [http://localhost:3000/caregivers/:id/reviews](http://localhost:3000/caregivers/:id/reviews)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Não\n    \n\n---\n\n## Request\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID do cuidador | `\"716a9776-66f1-4420-83c9-730945c4b68b\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p3l7qw\"\nGET /caregivers/716a9776-66f1-4420-83c9-730945c4b68b/reviews\n\n ```\n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Lista de avaliações do cuidador.\n    \n\n``` json\n{\n  \"data\": [\n    {\n      \"id\": \"2359d1e1-951b-42cf-928d-0e51a7a7be3c\",\n      \"serviceRequestId\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n      \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"rating\": 5,\n      \"comment\": \"Excelente cuidador, muito atencioso com o Rex!\",\n      \"createdAt\": \"2026-05-01T18:32:10.774Z\",\n      \"owner\": {\n        \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n        \"name\": \"Marcos\"\n      }\n    }\n  ]\n}\n\n ```\n\n---\n\n## Erros\n\n#### 404 Not Found\n\n- Descrição: Cuidador não encontrado.\n    \n\n``` json\n{\n  \"error\": \"Cuidador não encontrado\"\n}\n\n\n\n ```"
@@ -749,7 +742,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/start",
+              "raw": "http://localhost:3000/service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/complete",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -758,7 +751,7 @@
               "path": [
                 "service-requests",
                 "4cf4751e-a187-4f52-b761-168c0517fca0",
-                "start"
+                "complete"
               ]
             },
             "description": "# Concluir Serviço\n\n## Descrição\n\nPermite que o cuidador responsável finalize a execução de uma solicitação de serviço.  \nO status da solicitação é alterado de **IN_PROGRESS** para **COMPLETED**.\n\n---\n\n## Endpoint\n\n- Método: PATCH\n    \n- URL: [http://localhost:3000/service-requests/:id/complete](http://localhost:3000/service-requests/:id/complete)\n    \n\n---\n\n## Autenticação\n\n- Necessária: Sim\n    \n- Tipo: Bearer Token (caregiver)\n    \n\n---\n\n## Request\n\n### Headers\n\n``` json\n{\n  \"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n### Parâmetros de Rota\n\n| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |\n| --- | --- | --- | --- | --- |\n| `id` | string (UUID) | Sim | ID da solicitação | `\"4cf4751e-a187-4f52-b761-168c0517fca0\"` |\n\n---\n\n### Exemplo de Requisição\n\n``` id=\"p6l2qw\"\nPATCH /service-requests/4cf4751e-a187-4f52-b761-168c0517fca0/complete\n\n ```\n\n---\n\n## Regras de Negócio\n\n- A solicitação deve existir\n    \n- Deve estar com status **IN_PROGRESS**\n    \n- Apenas o **cuidador atribuído** pode concluir o serviço\n    \n- Após conclusão:\n    \n    - `status` → **COMPLETED**\n        \n\n---\n\n## Response\n\n### Sucesso\n\n- Status: 200 OK\n    \n- Descrição: Serviço concluído com sucesso.\n    \n\n``` json\n{\n  \"data\": {\n    \"id\": \"4cf4751e-a187-4f52-b761-168c0517fca0\",\n    \"petId\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n    \"ownerId\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n    \"caregiverId\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n    \"serviceType\": \"WALK_30MIN\",\n    \"scheduledAt\": \"2026-05-12T10:00:00.000Z\",\n    \"meetingAddress\": \"Rua das Flores, 123, Centro\",\n    \"status\": \"COMPLETED\",\n    \"expiresAt\": \"2026-05-02T18:21:12.232Z\",\n    \"createdAt\": \"2026-05-01T18:21:12.240Z\",\n    \"pet\": {\n      \"id\": \"172dd05a-6fa2-4362-b987-d9c8638ad7d7\",\n      \"name\": \"Nino\",\n      \"species\": \"CAT\",\n      \"breed\": \"Siamese\"\n    },\n    \"owner\": {\n      \"id\": \"b2c1d3c5-2fd0-4e12-ac3d-8ccb6ea0674c\",\n      \"name\": \"Marcos\",\n      \"phone\": \"31999533572\"\n    },\n    \"caregiver\": {\n      \"id\": \"716a9776-66f1-4420-83c9-730945c4b68b\",\n      \"name\": \"Maria Cuidadora\",\n      \"phone\": \"11988880000\"\n    },\n    \"review\": null\n  }\n}\n\n ```\n\n---\n\n## Erros\n\n#### 401 Unauthorized\n\n- Descrição: Token não fornecido, inválido ou expirado.\n    \n\n``` json\n{\n  \"error\": \"Token inválido ou expirado\"\n}\n\n ```\n\n---\n\n#### 403 Forbidden\n\n- Descrição: Usuário não é o cuidador atribuído à solicitação.\n    \n\n``` json\n{\n  \"error\": \"Apenas o cuidador atribuído pode concluir o serviço\"\n}\n\n ```\n\n---\n\n#### 404 Not Found\n\n- Descrição: Solicitação não encontrada.\n    \n\n``` json\n{\n  \"error\": \"Solicitação não encontrada\"\n}\n\n ```\n\n---\n\n#### 409 Conflict\n\n- Descrição: Solicitação não está no status correto para conclusão.\n    \n\n``` json\n{\n  \"error\": \"Serviço não está em andamento\"\n}\n\n ```"
