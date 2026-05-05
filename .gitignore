@@ -50,6 +50,7 @@ coverage/
 **/docker-compose.override.*.yml
 **/Dockerfile.override
 **/Dockerfile.override.*
+docs/arquivoImplementacao
 
 # Postman
 plantao-pet.postman_collection.json
