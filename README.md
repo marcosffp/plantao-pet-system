@@ -6,7 +6,7 @@ O **Plantão Pet** é uma plataforma de matchmaking entre donos de pets e cuidad
 
 A arquitetura do sistema adota uma abordagem moderna orientada a eventos (Event-Driven Architecture), com forte separação de responsabilidades. O back-end provê a API, persistência e mensageria assíncrona, enquanto clientes móveis consomem esses serviços.
 
-![Diagrama de Arquitetura](docs/images/Arquitetura.drawio.png)
+![Diagrama de Arquitetura](docs/images/Arquitetura.jpg)
 
 ### Principais Componentes:
 - **Apps Cliente (Flutter):** Temos dois aplicativos nativos em Flutter, um para o **Dono (Owner)** do pet e outro para o **Cuidador (Caregiver)**. Eles se comunicam com a API via HTTP (REST) e recebem eventos assíncronos em tempo real via WebSocket.
