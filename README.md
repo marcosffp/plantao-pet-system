@@ -52,3 +52,26 @@ A coleção inclui exemplos de fluxos completos, como:
 - Avaliação de cuidadores pelos donos.
 
 Certifique-se de que o backend esteja em execução antes de realizar os testes.
+
+## Como Rodar a Aplicação com Docker
+
+Para rodar a aplicação utilizando Docker, siga os passos abaixo:
+
+1. Certifique-se de que o Docker e o Docker Compose estão instalados em sua máquina.
+2. No terminal, navegue até o diretório `backend` do projeto:
+   ```bash
+   cd backend
+   ```
+3. Execute o comando para iniciar os containers em segundo plano:
+   ```bash
+   docker-compose up -d
+   ```
+4. Após a execução do comando, verifique se os containers foram criados e estão em execução:
+   ```bash
+   docker ps
+   ```
+   Certifique-se de que os containers necessários estão listados e em execução.
+5. Acesse a aplicação no navegador através do seguinte endereço:
+   [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
+
+Pronto! A aplicação estará rodando e você poderá acessar a documentação da API no link acima.
