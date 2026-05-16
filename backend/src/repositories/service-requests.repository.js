@@ -25,13 +25,10 @@ const findByCaregiver = (caregiverId) =>
 const findActivePetRequest = (petId) =>
   prisma.serviceRequest.findFirst({ where: { petId, status: { in: ['OPEN', 'ACCEPTED'] } } });
 
-const findExpired = () =>
-  prisma.serviceRequest.findMany({ where: { status: 'OPEN', expiresAt: { lte: new Date() } } });
-
 const updateStatus = (id, status, extra = {}) =>
   prisma.serviceRequest.update({ where: { id }, data: { status, ...extra }, include });
 
 const bulkCancel = (ids) =>
   prisma.serviceRequest.updateMany({ where: { id: { in: ids } }, data: { status: 'CANCELLED' } });
 
-module.exports = { create, findById, findOpenRequests, findByOwner, findByCaregiver, findActivePetRequest, findExpired, updateStatus, bulkCancel };
+module.exports = { create, findById, findOpenRequests, findByOwner, findByCaregiver, findActivePetRequest, updateStatus, bulkCancel };

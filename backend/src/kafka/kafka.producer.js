@@ -10,7 +10,7 @@ const connect = async () => {
   if (!connected) {
     await producer.connect();
     connected = true;
-    console.log('[KAFKA] Producer conectado');
+    console.log('\x1b[32m[KAFKA PROD]\x1b[0m Producer conectado');
   }
 };
 
@@ -21,9 +21,9 @@ const publish = async (topic, payload) => {
       topic,
       messages: [{ value: JSON.stringify(payload) }],
     });
-    console.log(`[KAFKA] Evento publicado no tópico "${topic}":`, payload);
+    console.log(`\x1b[32m[KAFKA SEND]\x1b[0m Evento publicado no tópico [${topic}]`);
   } catch (err) {
-    console.error(`[KAFKA] Falha ao publicar no tópico "${topic}":`, err.message);
+    console.error(`\x1b[31m[KAFKA ERR]\x1b[0m Falha ao publicar no tópico [${topic}]:`, err.message);
   }
 };
 
