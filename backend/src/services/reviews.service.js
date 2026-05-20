@@ -27,7 +27,6 @@ const create = async ({ serviceRequestId, rating, comment }, user) => {
 
   await producer.publish('review.created', {
     caregiverId: request.caregiverId,
-    newRating: rating,
     averageRating,
     comment,
     requestId: serviceRequestId,

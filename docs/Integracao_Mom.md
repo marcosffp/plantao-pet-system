@@ -189,7 +189,6 @@ review.created
 ```json
 {
   "caregiverId": "dcc4f2ca-a9e8-4bfc-9662-1a268d8dc422",
-  "newRating": 5,
   "averageRating": 5,
   "comment": "Excelente cuidador, muito atencioso com o Rex!",
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0"
@@ -224,7 +223,7 @@ payload: { requestId: '2306bc83...', completedAt: '2026-05-16T12:44:54.552Z', ca
 
 [KAFKA SEND] Evento publicado no tópico "review.created"
 [KAFKA RECV] Recebido [review.created]
-payload: { caregiverId: 'dcc4f2ca...', newRating: 5, averageRating: 5, comment: 'Excelente cuidador, muito atencioso com o Rex!', requestId: '2306bc83...' }
+payload: { caregiverId: 'dcc4f2ca...', averageRating: 5, comment: 'Excelente cuidador, muito atencioso com o Rex!', requestId: '2306bc83...' }
 ```
 
 ## 6. Demonstração de Comunicação Assíncrona

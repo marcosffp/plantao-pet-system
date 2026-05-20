@@ -120,7 +120,6 @@ const handlers = {
       requestId: payload.requestId,
       socketEvent: 'new_review',
       socketPayload: {
-        rating: payload.newRating,
         comment: payload.comment,
         newAverageRating: payload.averageRating,
       },
