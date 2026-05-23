@@ -91,6 +91,10 @@ review.created
 }
 ```
 
+**Evidência no Kafka UI:**
+
+![service_request.created no Kafka UI](images/service_request_created.png)
+
 ---
 
 ### 5.2 `service_request.accepted`
@@ -111,6 +115,10 @@ review.created
   "ownerId": "e5c93a04-575a-4d0b-a6f7-cef76e908691"
 }
 ```
+
+**Evidência no Kafka UI:**
+
+![service_request.accepted no Kafka UI](images/service_request_accepted.png)
 
 ---
 
@@ -133,6 +141,10 @@ review.created
 }
 ```
 
+**Evidência no Kafka UI:**
+
+![service_request.refused no Kafka UI](images/service_request_refused.png)
+
 ---
 
 ### 5.4 `service_request.in_progress`
@@ -152,6 +164,10 @@ review.created
   "ownerId": "e5c93a04-575a-4d0b-a6f7-cef76e908691"
 }
 ```
+
+**Evidência no Kafka UI:**
+
+![service_request.in_progress no Kafka UI](images/service_request_in_progress.png)
 
 ---
 
@@ -174,6 +190,10 @@ review.created
 }
 ```
 
+**Evidência no Kafka UI:**
+
+![service.completed no Kafka UI](images/service_completed.png)
+
 ---
 
 ### 5.6 `review.created`
@@ -194,6 +214,10 @@ review.created
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0"
 }
 ```
+
+**Evidência no Kafka UI:**
+
+![review.created no Kafka UI](images/review_created.png)
 
 ---
 
