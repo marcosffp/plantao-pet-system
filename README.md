@@ -20,6 +20,7 @@
 ## 📑 Sumário
 
 - [Sobre o projeto](#-sobre-o-projeto)
+- [Vídeo de apresentação do fluxo mom](#-vídeo-de-apresentação)
 - [Arquitetura](#-arquitetura)
 - [Estrutura de módulos](#-estrutura-de-módulos)
 - [Estrutura de pastas](#-estrutura-de-pastas)
@@ -46,6 +47,14 @@ O projeto é composto por três repositórios integrados:
 | `backend/` | Node.js + Express | API REST, PostgreSQL, Kafka, WebSocket |
 | `plantao-pet-owner-app/` | Flutter/Dart | App do Dono (cliente) |
 | `plantao-pet-caregiver-app/` | Flutter/Dart | App do Cuidador (prestador) |
+
+---
+
+## 🎥 Vídeo de Apresentação
+
+> **Professor, para facilitar a avaliação do projeto, a demonstração do fluxo das mensagens pode ser acessada pelo link abaixo:**
+
+### 👉 [Assistir Vídeo de Apresentação](https://drive.google.com/file/d/12Vf2aGwrp9X9751zxPZRw6eRGAjnw2HE/view?usp=sharing)
 
 ---
 
