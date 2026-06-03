@@ -10,4 +10,6 @@ const createPetSchema = z.object({
   specialNotes: z.string().optional(),
 });
 
-module.exports = { createPetSchema };
+const updatePetSchema = createPetSchema.partial();
+
+module.exports = { createPetSchema, updatePetSchema };

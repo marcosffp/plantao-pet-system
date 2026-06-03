@@ -9,4 +9,8 @@ const findByOwnerId = (ownerId) =>
 
 const findById = (id) => prisma.pet.findUnique({ where: { id } });
 
-module.exports = { create, findByOwnerId, findById };
+const update = (id, data) => prisma.pet.update({ where: { id }, data });
+
+const remove = (id) => prisma.pet.delete({ where: { id } });
+
+module.exports = { create, findByOwnerId, findById, update, remove };

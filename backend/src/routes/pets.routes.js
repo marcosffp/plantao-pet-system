@@ -4,7 +4,7 @@ const { Router } = require('express');
 const petsController = require('../controllers/pets.controller');
 const { authenticate, requireOwner } = require('../middlewares/auth.middleware');
 const validate = require('../middlewares/validate.middleware');
-const { createPetSchema } = require('../schemas/pet.schema');
+const { createPetSchema, updatePetSchema } = require('../schemas/pet.schema');
 
 const router = Router();
 
@@ -101,5 +101,9 @@ router.post('/pets', authenticate, requireOwner, validate(createPetSchema), pets
  *         description: Acesso restrito a donos
  */
 router.get('/pets', authenticate, requireOwner, petsController.findMine);
+
+router.put('/pets/:petId', authenticate, requireOwner, validate(updatePetSchema), petsController.update);
+
+router.delete('/pets/:petId', authenticate, requireOwner, petsController.remove);
 
 module.exports = router;

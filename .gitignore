@@ -13,13 +13,13 @@ yarn-error.log*
 .env.local
 .env.*.local
 
-# Flutter dependencies
+# Flutter dependencies (gerados — não commitar)
 **/build/
 **/.dart_tool/
 **/.flutter-plugins
 **/.flutter-plugins-dependencies
 **/.packages
-**/pubspec.lock
+# pubspec.lock NÃO está aqui: Flutter apps devem commitar o lock para builds reproduzíveis
 
 # IDE files
 .vscode/

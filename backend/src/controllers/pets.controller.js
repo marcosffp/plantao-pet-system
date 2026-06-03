@@ -18,4 +18,14 @@ const findById = asyncHandler(async (req, res) => {
   res.status(200).json({ data });
 });
 
-module.exports = { create, findMine, findById };
+const update = asyncHandler(async (req, res) => {
+  const data = await petsService.update(req.params.petId, req.body, req.user);
+  res.status(200).json({ data });
+});
+
+const remove = asyncHandler(async (req, res) => {
+  await petsService.remove(req.params.petId, req.user);
+  res.status(204).send();
+});
+
+module.exports = { create, findMine, findById, update, remove };

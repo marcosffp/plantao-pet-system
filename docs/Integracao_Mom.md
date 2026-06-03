@@ -1,3 +1,5 @@
+<img width="1600" style="height:auto; border-radius: 12px;" alt="banner" src="images/banner.png" />
+
 # Documentação de Integração com MOM — Plantão Pet
 
 ---
@@ -298,3 +300,8 @@ Um mecanismo de **deduplicação** (`notificationsRepo.existsDuplicate`) garante
 | 4 | Cuidador inicia serviço | `service_request.in_progress` | Owner |
 | 5 | Cuidador conclui serviço | `service.completed` | Owner |
 | 6 | Owner avalia serviço | `review.created` | Cuidador avaliado |
+
+<div align="center">
+  <img width="70%" alt="pucminas" src="images/banner-institucional.svg"/>
+</div>
+<p align="center">Fonte do banner: <a href="https://github.com/joaopauloaramuni">João Paulo Carneiro Aramuni</a></p>
