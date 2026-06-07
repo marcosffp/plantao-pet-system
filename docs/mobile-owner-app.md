@@ -40,20 +40,44 @@ Cadastro → Login → Home (solicitações)
 
 ## Arquitetura
 
-O app segue **Clean Architecture** com três camadas bem separadas:
+O app segue **Clean Architecture**, com dependências sempre apontando para dentro: as telas conhecem os providers, os providers conhecem os repositórios/serviços, e os repositórios conhecem os modelos — nunca o caminho inverso.
 
+```mermaid
+flowchart TB
+    subgraph Presentation["presentation/ — UI + estado"]
+        Screens["screens/<br/>login, home, pets, criar solicitação,<br/>detalhe, notificações, perfil, avaliação"]
+        Widgets["widgets/<br/>PetCard · ServiceRequestCard · StatusBadge"]
+        Providers["providers/ (ChangeNotifier)<br/>AuthProvider · PetProvider<br/>ServiceRequestProvider · NotificationProvider"]
+    end
+
+    subgraph Data["data/ — acesso à API"]
+        Repositories["repositories/<br/>AuthRepository · PetRepository<br/>ServiceRequestRepository · ReviewRepository<br/>NotificationRepository"]
+        Models["models/<br/>AuthUser · Pet · ServiceRequest<br/>AppNotification · Review"]
+    end
+
+    subgraph Services["services/ — tempo real"]
+        SocketService["SocketService<br/>(socket_io_client)"]
+    end
+
+    subgraph Core["core/ — transversal"]
+        CoreItems["theme · constants · utils (TokenStorage)"]
+    end
+
+    Widgets --> Screens
+    Screens --> Providers
+    Providers --> Repositories
+    Providers --> SocketService
+    Repositories --> Models
+
+    Repositories -- "HTTP REST (pacote http)" --> Backend[("Backend REST<br/>Node.js/Express")]
+    SocketService -- "WebSocket (Socket.IO)" --> Backend
+
+    Screens -.-> Core
+    Providers -.-> Core
+    Repositories -.-> Core
 ```
-lib/
-├── core/               ← transversal (tema, constantes, utilitários)
-├── data/               ← modelos + repositórios (acesso à API)
-│   ├── models/
-│   └── repositories/
-├── presentation/       ← UI + estado
-│   ├── providers/      ← ChangeNotifier (estado reativo)
-│   ├── screens/
-│   └── widgets/
-└── services/           ← Socket.IO
-```
+
+> Estrutura de pastas correspondente em [Estrutura de pastas](#estrutura-de-pastas).
 
 **Gerenciamento de estado:** `provider` com `ChangeNotifier`. Cada domínio tem seu próprio provider (`AuthProvider`, `PetProvider`, `ServiceRequestProvider`, `NotificationProvider`).
 
@@ -484,6 +508,31 @@ O backend autentica o socket pelo token e adiciona o cliente na sala `owner:<id>
 | `request_refused` | `service_request.refused` | Atualiza status + notificação |
 | `service_started` | `service_request.in_progress` | Atualiza status + notificação |
 | `service_completed` | `service.completed` | Atualiza status + notificação + habilita avaliação |
+
+### Fluxo de atualização assíncrona (sem polling)
+
+O diagrama abaixo mostra como uma mudança de estado feita pelo cuidador chega ao app do dono **sem nenhuma ação manual** (sem polling): o backend publica o evento no Kafka, o consumidor encaminha via Socket.IO para a sala `owner:<id>`, e o `ServiceRequestProvider`/`NotificationProvider` atualizam a UI reativamente.
+
+```mermaid
+sequenceDiagram
+    actor Dono as App do Dono (Flutter)
+    participant API as Backend REST
+    participant Kafka as Kafka (MOM)
+    participant WS as Socket.IO Gateway
+    actor Cuidador as App do Cuidador (Flutter)
+
+    Dono->>API: POST /service-requests (cria solicitação)
+    API->>Kafka: publica "service_request.created"
+    Kafka-->>WS: consome evento
+    WS-->>Cuidador: emite "new_request" (sala caregiver:*)
+
+    Cuidador->>API: PATCH /service-requests/:id/accept
+    API->>Kafka: publica "service_request.accepted"
+    Kafka-->>WS: consome evento
+    WS-->>Dono: emite "request_accepted" (sala owner:<id>)
+
+    Note over Dono: ServiceRequestProvider.listenToSocket<br/>recarrega a solicitação e<br/>NotificationProvider adiciona alerta —<br/>tela atualiza via notifyListeners(), sem polling
+```
 
 ---
 
