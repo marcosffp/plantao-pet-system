@@ -19,7 +19,7 @@ class ServiceRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emoji = AppConstants.speciesEmoji[request.pet.species] ?? '🐾';
+    final iconColor = AppConstants.speciesColor(request.pet.species);
     final serviceLabel = AppConstants.serviceTypeLabels[request.serviceType] ?? request.serviceType;
     final dateStr = DateFormat('dd MMM, yyyy', 'pt_BR').format(request.scheduledAt.toLocal());
     final timeStr = DateFormat('HH:mm').format(request.scheduledAt.toLocal());
@@ -42,7 +42,15 @@ class ServiceRequestCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(emoji, style: const TextStyle(fontSize: 28)),
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: AppConstants.speciesIconWidget(request.pet.species, size: 18, color: iconColor),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -76,7 +84,7 @@ class ServiceRequestCard extends StatelessWidget {
                   Container(
                     width: 20,
                     height: 20,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),

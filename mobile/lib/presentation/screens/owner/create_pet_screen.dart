@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/pet_model.dart';
 import '../../providers/auth_provider.dart';
@@ -25,9 +26,9 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
   bool get _isEditing => widget.pet != null;
 
   static final _speciesOptions = [
-    ('DOG', 'Cão', '🐕'),
-    ('CAT', 'Gato', '🐈'),
-    ('OTHER', 'Outro', '🐾'),
+    ('DOG', 'Cão'),
+    ('CAT', 'Gato'),
+    ('OTHER', 'Outro'),
   ];
 
   @override
@@ -90,7 +91,7 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(err ?? (_isEditing ? 'Erro ao editar pet' : 'Erro ao cadastrar pet')),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -118,12 +119,13 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               Row(
                 children: _speciesOptions.map((opt) {
                   final selected = _species == opt.$1;
+                  final color = AppConstants.speciesColor(opt.$1);
                   return Expanded(
                     child: GestureDetector(
                       onTap: () => setState(() => _species = opt.$1),
                       child: Container(
                         margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
                           color: selected ? AppColors.primaryLight : AppColors.surface,
                           borderRadius: BorderRadius.circular(12),
@@ -134,14 +136,29 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
                         ),
                         child: Column(
                           children: [
-                            Text(opt.$3, style: const TextStyle(fontSize: 28)),
-                            const SizedBox(height: 4),
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? color.withOpacity(0.15)
+                                    : AppColors.background,
+                                shape: BoxShape.circle,
+                              ),
+                              child: AppConstants.speciesIconWidget(
+                                opt.$1,
+                                size: 18,
+                                color: selected ? color : AppColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
                             Text(
                               opt.$2,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: selected ? AppColors.primary : AppColors.textSecondary,
-                                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                                fontWeight:
+                                    selected ? FontWeight.w600 : FontWeight.normal,
                               ),
                             ),
                           ],
@@ -156,7 +173,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _nameCtrl,
-                style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(hintText: 'Ex: Rex, Luna'),
                 validator: (v) => v == null || v.isEmpty ? 'Nome obrigatório' : null,
               ),
@@ -165,7 +181,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _breedCtrl,
-                style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(hintText: 'Ex: Golden Retriever'),
                 validator: (v) => v == null || v.isEmpty ? 'Raça obrigatória' : null,
               ),
@@ -175,7 +190,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               TextFormField(
                 controller: _ageCtrl,
                 keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(hintText: 'Ex: 3'),
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Idade obrigatória';
@@ -189,7 +203,6 @@ class _CreatePetScreenState extends State<CreatePetScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _notesCtrl,
-                style: const TextStyle(color: Colors.white),
                 maxLines: 3,
                 decoration: const InputDecoration(
                   hintText: 'Alergias, medicamentos, comportamento...',

@@ -38,7 +38,7 @@ class _PetsScreenState extends State<PetsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text('Deletar'),
           ),
         ],
@@ -53,7 +53,7 @@ class _PetsScreenState extends State<PetsScreen> {
     if (!ok && mounted) {
       final err = context.read<PetProvider>().error;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err ?? 'Erro ao deletar pet'), backgroundColor: Colors.red),
+        SnackBar(content: Text(err ?? 'Erro ao deletar pet'), backgroundColor: AppColors.error),
       );
     }
   }
@@ -139,7 +139,7 @@ class _PetsScreenState extends State<PetsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('🐾', style: TextStyle(fontSize: 48)),
+                        const Icon(Icons.pets, size: 56, color: AppColors.divider),
                         const SizedBox(height: 12),
                         const Text(
                           'Nenhum pet cadastrado',

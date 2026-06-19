@@ -1,88 +1,118 @@
 <img width="1600" style="height:auto; border-radius: 12px;" alt="banner" src="images/banner.png" />
 
-# Documentação de Integração com MOM — Plantão Pet
+# Integração com MOM — Apache Kafka
+
+> Documentação da comunicação assíncrona do **Plantão Pet** via Apache Kafka e sua integração com Socket.IO para entrega de notificações em tempo real.
 
 ---
 
-## 1. Visão Geral
+## Sumário
 
-O sistema **Plantão Pet** utiliza **Apache Kafka** como middleware orientado a mensagens (MOM). Toda comunicação assíncrona entre os módulos do backend é realizada via tópicos Kafka, sem chamadas REST diretas entre os serviços. O consumer e o producer operam de forma desacoplada: o producer publica eventos em tópicos e o consumer processa cada mensagem de forma independente, notificando os usuários via WebSocket (Socket.IO).
-
----
-
-## 2. Tecnologia Utilizada
-
-| Item | Valor |
-|---|---|
-| MOM escolhido | Apache Kafka |
-| Biblioteca cliente | `kafkajs` |
-| Group ID do consumer | `plantao-pet-group` |
-| Serialização | JSON (string) |
-| Padrão de mensageria | Publish/Subscribe (tópicos) |
-| Notificação em tempo real | Socket.IO (emitido pelo consumer) |
-| Deduplicação | Verificação de duplicatas no repositório antes de salvar/emitir |
+- [O que é MOM e por que usamos Kafka](#o-que-é-mom-e-por-que-usamos-kafka)
+- [Visão geral da arquitetura assíncrona](#visão-geral-da-arquitetura-assíncrona)
+- [Configuração do Kafka](#configuração-do-kafka)
+- [Tópicos e eventos](#tópicos-e-eventos)
+- [Fluxo completo ponta a ponta](#fluxo-completo-ponta-a-ponta)
+- [Integração com Socket.IO](#integração-com-socketio)
+- [Persistência e deduplicação de notificações](#persistência-e-deduplicação-de-notificações)
+- [Desafios de implementação](#desafios-de-implementação)
+- [Evidências de funcionamento](#evidências-de-funcionamento)
 
 ---
 
-## 3. Arquitetura de Comunicação Assíncrona
+## O que é MOM e por que usamos Kafka
+
+**MOM (Message-Oriented Middleware)** é um padrão de comunicação em que componentes de software trocam informações por meio de mensagens enviadas a um intermediário (broker), em vez de chamadas diretas entre si. Isso desacopla quem produz a informação de quem a consome.
+
+No Plantão Pet, quando um cuidador conclui um serviço, o backend precisa:
+1. Salvar o novo status no banco de dados
+2. Gravar uma notificação para o dono
+3. Enviar essa notificação via WebSocket para o app do dono em tempo real
+
+Em vez de fazer tudo isso sequencialmente no mesmo código que processa o `PATCH /complete`, o backend **publica um evento no Kafka** (`service.completed`) e segue em frente. O consumer Kafka, rodando de forma independente, recebe esse evento, grava a notificação e emite via Socket.IO — sem que o código de negócio precise saber qualquer detalhe dessa entrega.
+
+**Por que Kafka especificamente?**
+
+| Critério | Kafka | Alternativas (RabbitMQ, Redis Pub/Sub) |
+|---|---|---|
+| **Persistência** | Armazena mensagens em disco por período configurável — permite reprocessamento após falhas | Mensagens geralmente perdidas após consumo |
+| **Replay** | Consumer pode reprocessar histórico com `fromBeginning: true` | Não disponível nativamente |
+| **Escalabilidade** | Particionamento horizontal nativo para múltiplos consumers | Limitado |
+| **Durabilidade** | Mensagens sobrevivem a reinicializações do broker | Depende da configuração |
+
+---
+
+## Visão geral da arquitetura assíncrona
 
 ```
-[Serviço de Negócio]
-        │
-        │  producer.publish(topic, payload)
-        ▼
-  ┌─────────────┐
-  │  Apache     │   Tópico Kafka
-  │  Kafka      │──────────────────────────────────────┐
-  │  Broker     │                                      │
-  └─────────────┘                                      │
-                                                       ▼
-                                             [Kafka Consumer]
-                                                       │
-                                          handler[topic](payload)
-                                                       │
-                                          saveAndEmit(userId, event)
-                                                       │
-                                             ┌─────────┴─────────┐
-                                             ▼                   ▼
-                                    [notifications DB]    [Socket.IO emit]
-                                                               │
-                                                     ┌─────────┴─────────┐
-                                                     ▼                   ▼
-                                               [owner client]   [caregiver client]
+┌─────────────────────────────────┐
+│   Services (lógica de negócio)  │
+│                                 │
+│  service-requests.service.js    │
+│  reviews.service.js             │
+└──────────────┬──────────────────┘
+               │  producer.publish(topic, payload)
+               ▼
+┌──────────────────────────────────┐
+│         Apache Kafka (KRaft)     │
+│  ┌──────────────────────────┐   │
+│  │  Tópicos de domínio      │   │
+│  │  service_request.*       │   │
+│  │  service.completed       │   │
+│  │  review.created          │   │
+│  └──────────────────────────┘   │
+└──────────────┬───────────────────┘
+               │  consumer.run({ eachMessage })
+               ▼
+┌──────────────────────────────────────────────────────────┐
+│               Kafka Consumer (kafka.consumer.js)         │
+│                                                          │
+│  1. Verifica deduplicação (existsDuplicate)              │
+│  2. Persiste notificação no PostgreSQL                   │
+│  3. Emite evento via Socket.IO para o destinatário       │
+└──────────────────────────────────────────────────────────┘
+               │
+       ┌───────┴───────┐
+       ▼               ▼
+  [Notifications DB]  [Socket.IO]
+                           │
+                  ┌────────┴────────┐
+                  ▼                 ▼
+             [App Dono]       [App Cuidador]
 ```
 
-Não há nenhuma chamada REST do consumer para os serviços de negócio — a única comunicação é via Kafka.
+**Ponto-chave:** não existe nenhuma chamada REST direta do consumer para os services. A única comunicação é via tópicos Kafka. O consumer e o producer são módulos completamente independentes.
 
 ---
 
-## 4. Tópicos Configurados
+## Configuração do Kafka
 
-O consumer está inscrito nos seguintes tópicos:
+| Configuração | Valor | Onde definir |
+|---|---|---|
+| Broker | `localhost:9092` (local) / `kafka:29092` (Docker) | `.env` → `KAFKA_BROKER` |
+| Modo | KRaft (sem Zookeeper) | `docker-compose.yml` |
+| Client ID | `plantao-pet-api` | `kafka.client.js` |
+| Consumer Group | `plantao-pet-group` | `kafka.consumer.js` |
+| Serialização | JSON como string | Padrão da implementação |
 
-```
-service_request.created
-service_request.accepted
-service_request.refused
-service_request.in_progress
-service.completed
-review.created
-```
+**Singleton do producer:** o producer é instanciado uma única vez e reutilizado em toda a aplicação. Uma flag `connected` evita múltiplas chamadas a `connect()`.
+
+**Retry do consumer:** na inicialização, o consumer tenta se inscrever nos tópicos em loop com delay de 3 segundos, aguardando o Kafka estar disponível — necessário especialmente no boot do Docker.
 
 ---
 
-## 5. Tabela de Eventos
+## Tópicos e eventos
 
-### 5.1 `service_request.created`
+O sistema utiliza 6 tópicos, cada um correspondendo a um evento de domínio específico do ciclo de vida de uma solicitação.
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `service-requests.service.js` → `create()` |
-| **Consumidor** | `kafka.consumer.js` → handler `service_request.created` |
-| **Evento Socket emitido** | `new_request` (para todos os cuidadores ativos) |
-| **Destinatário** | Todos os `caregiver` com status ACTIVE |
+---
 
-**Payload JSON publicado:**
+### `service_request.created`
+
+**Publicado por:** `service-requests.service.js` → método `create()`
+**Quando:** dono cria uma nova solicitação de serviço
+
+**Payload:**
 ```json
 {
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0",
@@ -93,30 +123,41 @@ review.created
 }
 ```
 
+**Consumer — o que acontece:**
+1. Busca todos os cuidadores com status `ACTIVE` no banco
+2. Para cada cuidador: verifica deduplicação, grava notificação, emite via Socket.IO
+
+**Evento Socket.IO emitido:** `new_request`
+**Destinatário:** todos os cuidadores `ACTIVE` conectados (sala `caregiver:<id>` de cada um)
+
 **Evidência no Kafka UI:**
 
 ![service_request.created no Kafka UI](images/service_request_created.png)
 
 ---
 
-### 5.2 `service_request.accepted`
+### `service_request.accepted`
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `service-requests.service.js` → `accept()` |
-| **Consumidor** | `kafka.consumer.js` → handler `service_request.accepted` |
-| **Evento Socket emitido** | `request_accepted` |
-| **Destinatário** | `owner` da solicitação |
+**Publicado por:** `service-requests.service.js` → método `accept()`
+**Quando:** cuidador aceita uma solicitação
 
-**Payload JSON publicado:**
+**Payload:**
 ```json
 {
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0",
   "caregiverName": "Maria Cuidadora",
-  "caregiverPhone": "11988880000",
+  "caregiverPhone": "31988880000",
   "ownerId": "e5c93a04-575a-4d0b-a6f7-cef76e908691"
 }
 ```
+
+**Consumer — o que acontece:**
+1. Verifica deduplicação para o dono
+2. Grava notificação com `userId = ownerId`
+3. Emite evento Socket.IO para o dono
+
+**Evento Socket.IO emitido:** `request_accepted`
+**Destinatário:** dono da solicitação (sala `owner:<ownerId>`)
 
 **Evidência no Kafka UI:**
 
@@ -124,16 +165,12 @@ review.created
 
 ---
 
-### 5.3 `service_request.refused`
+### `service_request.refused`
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `service-requests.service.js` → `refuse()` |
-| **Consumidor** | `kafka.consumer.js` → handler `service_request.refused` |
-| **Evento Socket emitido** | `request_refused` |
-| **Destinatário** | `owner` da solicitação |
+**Publicado por:** `service-requests.service.js` → método `refuse()`
+**Quando:** cuidador recusa uma solicitação aceita (status volta para `OPEN`)
 
-**Payload JSON publicado:**
+**Payload:**
 ```json
 {
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0",
@@ -143,22 +180,21 @@ review.created
 }
 ```
 
+**Evento Socket.IO emitido:** `request_refused`
+**Destinatário:** dono da solicitação
+
 **Evidência no Kafka UI:**
 
 ![service_request.refused no Kafka UI](images/service_request_refused.png)
 
 ---
 
-### 5.4 `service_request.in_progress`
+### `service_request.in_progress`
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `service-requests.service.js` → `start()` |
-| **Consumidor** | `kafka.consumer.js` → handler `service_request.in_progress` |
-| **Evento Socket emitido** | `service_started` |
-| **Destinatário** | `owner` da solicitação |
+**Publicado por:** `service-requests.service.js` → método `start()`
+**Quando:** cuidador inicia o atendimento
 
-**Payload JSON publicado:**
+**Payload:**
 ```json
 {
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0",
@@ -167,22 +203,21 @@ review.created
 }
 ```
 
+**Evento Socket.IO emitido:** `service_started`
+**Destinatário:** dono da solicitação
+
 **Evidência no Kafka UI:**
 
 ![service_request.in_progress no Kafka UI](images/service_request_in_progress.png)
 
 ---
 
-### 5.5 `service.completed`
+### `service.completed`
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `service-requests.service.js` → `complete()` |
-| **Consumidor** | `kafka.consumer.js` → handler `service.completed` |
-| **Evento Socket emitido** | `service_completed` |
-| **Destinatário** | `owner` da solicitação |
+**Publicado por:** `service-requests.service.js` → método `complete()`
+**Quando:** cuidador conclui o serviço
 
-**Payload JSON publicado:**
+**Payload:**
 ```json
 {
   "requestId": "2306bc83-9a50-4acc-acbe-84d29adeb3a0",
@@ -192,22 +227,23 @@ review.created
 }
 ```
 
+**Evento Socket.IO emitido:** `service_completed`
+**Destinatário:** dono da solicitação
+
+No app, este evento habilita o botão de avaliação do cuidador.
+
 **Evidência no Kafka UI:**
 
 ![service.completed no Kafka UI](images/service_completed.png)
 
 ---
 
-### 5.6 `review.created`
+### `review.created`
 
-| Campo | Detalhe |
-|---|---|
-| **Produtor** | `reviews.service.js` → `create()` |
-| **Consumidor** | `kafka.consumer.js` → handler `review.created` |
-| **Evento Socket emitido** | `new_review` |
-| **Destinatário** | `caregiver` avaliado |
+**Publicado por:** `reviews.service.js` → método `create()`
+**Quando:** dono avalia o cuidador após a conclusão do serviço
 
-**Payload JSON publicado:**
+**Payload:**
 ```json
 {
   "caregiverId": "dcc4f2ca-a9e8-4bfc-9662-1a268d8dc422",
@@ -217,17 +253,49 @@ review.created
 }
 ```
 
+**Evento Socket.IO emitido:** `new_review`
+**Destinatário:** cuidador avaliado (sala `caregiver:<caregiverId>`)
+
+O campo `averageRating` já reflete a nova média calculada após esta avaliação.
+
 **Evidência no Kafka UI:**
 
 ![review.created no Kafka UI](images/review_created.png)
 
 ---
 
-## 6. Evidência de Funcionamento
+## Fluxo completo ponta a ponta
 
-### 6.1 Logs de Console (Fluxo Completo — 16/05/2026)
+O diagrama abaixo mostra todo o ciclo de uma solicitação, da criação à avaliação, com os eventos Kafka que fluem em cada etapa.
 
-O trecho abaixo demonstra o ciclo completo de uma solicitação, desde a criação até a avaliação, com producer e consumer operando de forma assíncrona:
+```
+Owner                      Backend                     Kafka              Caregiver
+  │                           │                          │                    │
+  │── POST /service-requests ─▶── cria registro ──── publish("service_request.created") ──▶ │
+  │                           │◀──────── consume ────────┤                    │
+  │                           │        [notifica todos cuidadores ACTIVE]      │
+  │                           │                    Socket.IO: new_request ───▶│
+  │                           │                                                │
+  │                           │◀── PATCH /:id/accept ─────────────────────────│
+  │                           │── ACCEPTED ─────── publish("service_request.accepted")        │
+  │                           │◀──────── consume ────────┤                    │
+  │◀── Socket.IO: request_accepted ──────────────────────┤                    │
+  │                           │                                                │
+  │                           │◀── PATCH /:id/start ──────────────────────────│
+  │                           │── IN_PROGRESS ─── publish("service_request.in_progress")      │
+  │◀── Socket.IO: service_started ───────────────────────┤                    │
+  │                           │                                                │
+  │                           │◀── PATCH /:id/complete ───────────────────────│
+  │                           │── COMPLETED ──── publish("service.completed")                 │
+  │◀── Socket.IO: service_completed ─────────────────────┤                    │
+  │                           │                                                │
+  │── POST /reviews ──────────▶── recalcula averageRating                     │
+  │                           │──────────────────── publish("review.created") ──────────────▶│
+  │                           │◀──────── consume ────────┤                    │
+  │                           │                    Socket.IO: new_review ────▶│
+```
+
+**Logs de console registrados durante o fluxo completo (16/05/2026):**
 
 ```
 [KAFKA SEND] Evento publicado no tópico "service_request.created"
@@ -252,54 +320,98 @@ payload: { requestId: '2306bc83...', completedAt: '2026-05-16T12:44:54.552Z', ca
 payload: { caregiverId: 'dcc4f2ca...', averageRating: 5, comment: 'Excelente cuidador, muito atencioso com o Rex!', requestId: '2306bc83...' }
 ```
 
-## 6. Demonstração de Comunicação Assíncrona
+---
 
-A ausência de chamada REST direta entre os serviços é garantida pela arquitetura:
+## Integração com Socket.IO
 
-1. O método `complete()` em `service-requests.service.js` chama apenas `producer.publish('service.completed', payload)` — não há `fetch`, `axios` ou qualquer chamada HTTP para outro serviço.
-2. O `kafka.consumer.js` recebe a mensagem via `consumer.run({ eachMessage })`, processa com o handler correspondente e emite via Socket.IO.
-3. O mesmo padrão se aplica a todos os outros tópicos: `reviews.service.js` publica `review.created` sem saber nada do consumer; o consumer processa e notifica o cuidador via socket.
+O consumer Kafka não entrega notificações diretamente ao usuário — ele delega essa responsabilidade ao Socket.IO, que mantém conexões WebSocket persistentes com os clientes Flutter.
 
-Evidência nos logs: a linha `[KAFKA SEND]` e a linha `[KAFKA RECV]` são geradas por módulos completamente separados (`kafka.producer.js` e `kafka.consumer.js`), sem nenhum acoplamento direto entre eles.
+### Como funciona a entrega
+
+1. App Flutter conecta ao Socket.IO com o token JWT como parâmetro de query: `ws://localhost:3000?token=<jwt>`
+2. Middleware do Socket.IO valida o token e identifica `{ id, role }` do usuário
+3. O socket é adicionado à sala `${role}:${userId}` (ex: `owner:abc123`, `caregiver:xyz789`)
+4. Quando o consumer Kafka processa um evento, chama `emitToUser(role, userId, event, data)`
+5. A mensagem é entregue apenas para o(s) socket(s) na sala correta — outros usuários não recebem
+
+### Mapeamento de tópicos para eventos Socket.IO
+
+| Tópico Kafka | Evento Socket.IO | Payload entregue ao cliente |
+|---|---|---|
+| `service_request.created` | `new_request` | `{ requestId, serviceType, petName, meetingAddress, scheduledAt }` |
+| `service_request.accepted` | `request_accepted` | `{ requestId, caregiverName, caregiverPhone }` |
+| `service_request.refused` | `request_refused` | `{ requestId, newStatus: 'OPEN' }` |
+| `service_request.in_progress` | `service_started` | `{ requestId, startedAt }` |
+| `service.completed` | `service_completed` | `{ requestId, completedAt }` |
+| `review.created` | `new_review` | `{ comment, newAverageRating }` |
+
+### Evento do app para o servidor
+
+O app Flutter também pode emitir um evento para o backend via Socket:
+
+| Evento | Quando é emitido | Dado enviado |
+|---|---|---|
+| `mark_read` | Usuário toca em uma notificação | `notificationId` (string UUID) |
 
 ---
 
-## 7. Relatório de Integração
+## Persistência e deduplicação de notificações
 
-### Escolha da Ferramenta
+### Por que persistir as notificações?
 
-O **Apache Kafka** foi escolhido em vez de RabbitMQ ou Redis Pub/Sub pelos seguintes motivos:
+Quando o consumer Kafka processa um evento, o usuário pode não estar com o app aberto. Sem persistência, a notificação seria perdida. Por isso, **toda notificação é gravada na tabela `Notification` do banco** antes de ser emitida via Socket.IO. Quando o usuário abrir o app, busca o histórico via `GET /notifications`.
 
-- **Persistência de mensagens:** Kafka armazena mensagens no disco por um período configurável. Isso permite que o consumer releia eventos em caso de falha ou reinicialização, sem perda de dados.
-- **Reprocessamento:** Com `fromBeginning: false`, o consumer processa apenas mensagens novas; caso necessário, pode ser configurado para reprocessar o histórico.
-- **Escalabilidade:** Kafka suporta múltiplas partições e múltiplos consumers no mesmo grupo, preparando o sistema para crescimento horizontal.
-- **Ecossistema maduro:** A biblioteca `kafkajs` tem API clara e boa integração com Node.js.
+### Deduplicação
 
-### Padrão Utilizado
+O Kafka pode entregar a mesma mensagem mais de uma vez em cenários de falha de rede ou timeout de commit. Para evitar notificações duplicadas, o consumer verifica antes de persistir:
 
-O padrão adotado é **Publish/Subscribe com tópicos nomeados por evento de domínio**. Cada mudança de estado relevante no fluxo de negócio gera um evento com nome semântico (ex.: `service_request.accepted`, `service.completed`). O consumer é único e centralizado, responsável por receber todos os eventos e despachar para os handlers corretos, que persistem a notificação no banco e emitem via Socket.IO para os clientes conectados.
+```js
+const isDuplicate = await notificationsRepo.existsDuplicate(userId, eventType, requestId);
+if (isDuplicate) return; // ignora silenciosamente
+```
 
-Um mecanismo de **deduplicação** (`notificationsRepo.existsDuplicate`) garante que, mesmo em caso de reentrega de mensagem pelo Kafka, a notificação não seja duplicada para o usuário.
-
-### Desafios Encontrados
-
-- **Disponibilidade dos tópicos na inicialização:** O consumer usa um loop de retry com `sleep(3000)` para aguardar os tópicos serem criados no broker antes de tentar se inscrever. Sem esse mecanismo, o serviço falhava na primeira inicialização do ambiente Docker.
-- **Singleton do producer:** O producer é instanciado uma única vez e reutilizado (`connected` flag). Múltiplas chamadas a `connect()` sem esse controle geravam erros de reconexão no `kafkajs`.
-- **Deduplicação de mensagens:** Kafka pode entregar a mesma mensagem mais de uma vez em caso de falha antes do commit do offset. A solução foi verificar duplicatas no banco de dados antes de persistir ou emitir qualquer notificação.
-- **Broadcast para cuidadores:** O evento `service_request.created` precisa ser enviado a todos os cuidadores ativos. Isso exigiu consulta ao repositório dentro do handler do consumer e iteração sobre a lista, publicando uma notificação individual para cada cuidador.
+A verificação usa a combinação `userId + eventType + requestId`. Se já existir um registro com esses três valores, a mensagem é descartada sem persistir ou emitir qualquer coisa.
 
 ---
 
-## 8. Resumo dos Momentos de Publicação no Fluxo de Negócio
+## Desafios de implementação
 
-| # | Ação do Usuário | Tópico Publicado | Quem Recebe |
+### 1. Disponibilidade dos tópicos na inicialização
+
+**Problema:** Na primeira execução do ambiente Docker, o broker Kafka ainda está inicializando quando o consumer tenta se inscrever nos tópicos, resultando em erro de conexão.
+
+**Solução:** O consumer usa um loop de retry com delay de 3 segundos entre tentativas. O healthcheck no `docker-compose.yml` também configura a `api` para aguardar o Kafka estar saudável antes de subir.
+
+### 2. Singleton do producer
+
+**Problema:** Múltiplas chamadas a `producer.connect()` sem controle causavam erros de reconexão no KafkaJS.
+
+**Solução:** O producer usa uma flag `connected` que garante que `connect()` é chamado apenas uma vez, e a mesma instância conectada é reutilizada em todas as publicações.
+
+### 3. Broadcast para múltiplos cuidadores
+
+**Problema:** O evento `service_request.created` precisa ser entregue a **todos** os cuidadores `ACTIVE`, não a um único destinatário como os demais eventos.
+
+**Solução:** O handler desse tópico busca todos os cuidadores `ACTIVE` no banco e itera sobre a lista, criando uma notificação individual e emitindo um socket para cada um.
+
+### 4. Desacoplamento total verificável
+
+**Garantia:** Em nenhum momento o consumer Kafka faz chamadas REST ou importa diretamente os services de negócio. Toda comunicação é unidirecional via tópicos. Isso é evidenciado nos logs: as linhas `[KAFKA SEND]` e `[KAFKA RECV]` são produzidas por módulos completamente distintos (`kafka.producer.js` e `kafka.consumer.js`), sem qualquer acoplamento direto entre eles.
+
+---
+
+## Evidências de funcionamento
+
+### Resumo dos momentos de publicação no ciclo de vida
+
+| # | Ação | Tópico Publicado | Quem Recebe |
 |---|---|---|---|
-| 1 | Owner cria solicitação | `service_request.created` | Todos os cuidadores ativos |
-| 2 | Cuidador aceita | `service_request.accepted` | Owner |
-| 3 | Cuidador recusa | `service_request.refused` | Owner |
-| 4 | Cuidador inicia serviço | `service_request.in_progress` | Owner |
-| 5 | Cuidador conclui serviço | `service.completed` | Owner |
-| 6 | Owner avalia serviço | `review.created` | Cuidador avaliado |
+| 1 | Dono cria solicitação | `service_request.created` | Todos os cuidadores `ACTIVE` |
+| 2 | Cuidador aceita | `service_request.accepted` | Dono da solicitação |
+| 3 | Cuidador recusa | `service_request.refused` | Dono da solicitação |
+| 4 | Cuidador inicia o serviço | `service_request.in_progress` | Dono da solicitação |
+| 5 | Cuidador conclui o serviço | `service.completed` | Dono da solicitação |
+| 6 | Dono avalia o cuidador | `review.created` | Cuidador avaliado |
 
 <div align="center">
   <img width="70%" alt="pucminas" src="images/banner-institucional.svg"/>

@@ -20,7 +20,7 @@ class StatusBadge extends StatelessWidget {
       case 'CANCELLED':
         return AppColors.statusCancelled;
       case 'REFUSED':
-        return AppColors.statusCancelled;
+        return AppColors.statusRefused;
       default:
         return AppColors.textSecondary;
     }
@@ -39,7 +39,7 @@ class StatusBadge extends StatelessWidget {
       case 'CANCELLED':
         return AppColors.statusCancelledBg;
       case 'REFUSED':
-        return AppColors.statusCancelledBg;
+        return AppColors.statusRefusedBg;
       default:
         return AppColors.statusCompletedBg;
     }

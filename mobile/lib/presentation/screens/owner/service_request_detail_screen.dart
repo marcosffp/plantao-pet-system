@@ -7,6 +7,7 @@ import '../../../data/models/service_request_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/service_request_provider.dart';
 import '../../widgets/status_badge.dart';
+import '../shared/caregiver_detail_screen.dart';
 import 'review_screen.dart';
 
 class ServiceRequestDetailScreen extends StatefulWidget {
@@ -37,7 +38,7 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Não')),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('Cancelar'),
           ),
         ],
@@ -52,14 +53,13 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
     final srProvider = context.watch<ServiceRequestProvider>();
     final req = srProvider.requests.firstWhere(
       (r) => r.id == _request.id,
       orElse: () => _request,
     );
 
-    final emoji = AppConstants.speciesEmoji[req.pet.species] ?? '🐾';
+    final iconColor = AppConstants.speciesColor(req.pet.species);
     final serviceLabel = AppConstants.serviceTypeLabels[req.serviceType] ?? req.serviceType;
     final dateStr = DateFormat('dd/MM/yyyy').format(req.scheduledAt.toLocal());
     final timeStr = DateFormat('HH:mm').format(req.scheduledAt.toLocal());
@@ -76,9 +76,12 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
                 if (v == 'cancel') _cancel();
               },
               itemBuilder: (_) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'cancel',
-                  child: Text('Cancelar solicitação', style: TextStyle(color: Colors.red)),
+                  child: Text(
+                    'Cancelar solicitação',
+                    style: TextStyle(color: AppColors.error),
+                  ),
                 ),
               ],
             ),
@@ -99,7 +102,15 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
                 children: [
                   Row(
                     children: [
-                      Text(emoji, style: const TextStyle(fontSize: 40)),
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: AppConstants.speciesIconWidget(req.pet.species, size: 22, color: iconColor),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -157,19 +168,19 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppColors.successBg,
+                  color: AppColors.successLight,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.successBorder),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.directions_walk, color: AppColors.statusInProgress, size: 20),
+                    const Icon(Icons.directions_walk, color: AppColors.success, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '${req.pet.name} está em passeio agora com ${req.caregiver!.name}',
                         style: const TextStyle(
-                          color: AppColors.statusInProgress,
+                          color: AppColors.success,
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
@@ -187,56 +198,71 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.divider),
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          req.caregiver!.initials,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
+                child: InkWell(
+                  onTap: req.caregiverId != null
+                      ? () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CaregiverDetailScreen(
+                                caregiverId: req.caregiverId!,
+                                caregiverName: req.caregiver?.name,
+                              ),
+                            ),
+                          )
+                      : null,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            req.caregiver!.initials,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            req.caregiver!.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.phone_outlined, size: 14, color: AppColors.primary),
-                              const SizedBox(width: 4),
-                              Text(
-                                req.caregiver!.phone,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.primary,
-                                ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              req.caregiver!.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.phone_outlined, size: 14, color: AppColors.primary),
+                                const SizedBox(width: 4),
+                                Text(
+                                  req.caregiver!.phone,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -263,7 +289,7 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.warningBg,
+                  color: AppColors.warningLight,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.warningBorder),
                 ),
@@ -285,7 +311,7 @@ class _ServiceRequestDetailScreenState extends State<ServiceRequestDetailScreen>
                             (i) => Icon(
                               i < req.review!.rating ? Icons.star : Icons.star_border,
                               size: 16,
-                              color: const Color(0xFFF59E0B),
+                              color: AppColors.ratingColor,
                             ),
                           ),
                         ),
@@ -380,7 +406,6 @@ class _ProgressTimeline extends StatelessWidget {
             final step = e.value;
             final isLast = i == steps.length - 1;
             final done = step.$2;
-            final isActive = done && !isLast;
 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,7 +416,7 @@ class _ProgressTimeline extends StatelessWidget {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: done ? AppColors.statusInProgress : AppColors.divider,
+                        color: done ? AppColors.success : AppColors.divider,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -404,7 +429,7 @@ class _ProgressTimeline extends StatelessWidget {
                       Container(
                         width: 2,
                         height: 36,
-                        color: done ? AppColors.statusInProgress : AppColors.divider,
+                        color: done ? AppColors.success : AppColors.divider,
                       ),
                   ],
                 ),

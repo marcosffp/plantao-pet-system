@@ -74,6 +74,33 @@ class AuthRepository {
     return AuthUser.fromJson(data, 'owner', token);
   }
 
+  Future<AuthUser> fetchCaregiverProfile(String caregiverId, String token) async {
+    final res = await http.get(
+      Uri.parse('$_base/caregivers/$caregiverId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode != 200) {
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao atualizar perfil');
+    }
+    return AuthUser.fromJson(body['data'] as Map<String, dynamic>, 'caregiver', token);
+  }
+
+  Future<void> updateCaregiverStatus(String status, String token) async {
+    final res = await http.patch(
+      Uri.parse('$_base/caregivers/status'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'status': status}),
+    );
+    if (res.statusCode != 200) {
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      throw Exception(body['message'] ?? 'Erro ao atualizar status');
+    }
+  }
+
   Future<AuthUser> registerCaregiver({
     required String name,
     required String email,

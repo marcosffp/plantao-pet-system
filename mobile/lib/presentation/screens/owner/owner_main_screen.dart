@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/notification_provider.dart';
 import '../../providers/service_request_provider.dart';
+import 'caregivers_screen.dart';
 import 'owner_home_screen.dart';
-import 'pets_screen.dart';
 import 'owner_notifications_screen.dart';
 import 'owner_profile_screen.dart';
+import 'pets_screen.dart';
 
 class OwnerMainScreen extends StatefulWidget {
   const OwnerMainScreen({super.key});
@@ -22,6 +22,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
   final _screens = const [
     OwnerHomeScreen(),
     PetsScreen(),
+    CaregiversScreen(),
     OwnerNotificationsScreen(),
     OwnerProfileScreen(),
   ];
@@ -63,6 +64,11 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
             icon: Icon(Icons.pets_outlined),
             activeIcon: Icon(Icons.pets),
             label: 'Pets',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.people_outline),
+            activeIcon: Icon(Icons.people),
+            label: 'Cuidadores',
           ),
           BottomNavigationBarItem(
             icon: Badge(

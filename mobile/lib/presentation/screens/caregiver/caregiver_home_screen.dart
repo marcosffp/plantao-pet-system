@@ -27,6 +27,7 @@ class CaregiverHomeScreen extends StatelessWidget {
           IconButton(
             onPressed: () => srProvider.loadOpen(auth.user!.token),
             icon: const Icon(Icons.refresh),
+            tooltip: 'Atualizar',
           ),
         ],
       ),
@@ -39,7 +40,7 @@ class CaregiverHomeScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('🐾', style: TextStyle(fontSize: 48)),
+                        Icon(Icons.pets, size: 56, color: AppColors.divider),
                         SizedBox(height: 12),
                         Text(
                           'Nenhuma solicitação aberta',
@@ -83,7 +84,7 @@ class _OpenRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emoji = AppConstants.speciesEmoji[request.pet.species] ?? '🐾';
+    final iconColor = AppConstants.speciesColor(request.pet.species);
     final serviceLabel = AppConstants.serviceTypeLabels[request.serviceType] ?? request.serviceType;
     final dateStr = DateFormat('dd/MM/yyyy HH:mm').format(request.scheduledAt.toLocal());
 
@@ -102,7 +103,15 @@ class _OpenRequestCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(emoji, style: const TextStyle(fontSize: 32)),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: AppConstants.speciesIconWidget(request.pet.species, size: 18, color: iconColor),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

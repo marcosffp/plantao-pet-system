@@ -24,6 +24,7 @@ const update = async (petId, petData, user) => {
   const pet = await petsRepo.findById(petId);
   if (!pet) throw new AppError(404, 'Pet não encontrado');
   if (pet.ownerId !== user.id) throw new AppError(403, 'Acesso negado');
+  if (petData.specialNotes === '') petData.specialNotes = null;
   return petsRepo.update(petId, petData);
 };
 

@@ -25,7 +25,7 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
       ),
     );
 
-    final emoji = AppConstants.speciesEmoji[req.pet.species] ?? '🐾';
+    final iconColor = AppConstants.speciesColor(req.pet.species);
     final serviceLabel = AppConstants.serviceTypeLabels[req.serviceType] ?? req.serviceType;
     final dateStr = DateFormat('dd/MM/yyyy').format(req.scheduledAt.toLocal());
     final timeStr = DateFormat('HH:mm').format(req.scheduledAt.toLocal());
@@ -52,7 +52,15 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(emoji, style: const TextStyle(fontSize: 40)),
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: AppConstants.speciesIconWidget(req.pet.species, size: 22, color: iconColor),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -122,7 +130,7 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Solicitação aceita!'),
-                          backgroundColor: Colors.green,
+                          backgroundColor: AppColors.success,
                         ),
                       );
                       Navigator.pop(context);
@@ -130,7 +138,7 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(srProvider.error ?? 'Erro ao aceitar'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.error,
                         ),
                       );
                     }
@@ -148,9 +156,11 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                     if (!context.mounted) return;
                     if (ok) Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-                  label: const Text('Recusar', style: TextStyle(color: Colors.red)),
-                  style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
+                  icon: const Icon(Icons.cancel_outlined, color: AppColors.error),
+                  label: const Text('Recusar', style: TextStyle(color: AppColors.error)),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.error),
+                  ),
                 ),
               ),
             ],
@@ -165,21 +175,21 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Serviço iniciado!'),
-                          backgroundColor: Colors.green,
+                          backgroundColor: AppColors.success,
                         ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(srProvider.error ?? 'Erro ao iniciar'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.error,
                         ),
                       );
                     }
                   },
                   icon: const Icon(Icons.play_circle_outline),
                   label: const Text('Iniciar Serviço'),
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.statusInProgress),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
                 ),
               ),
             ],
@@ -212,7 +222,7 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Serviço concluído!'),
-                          backgroundColor: Colors.green,
+                          backgroundColor: AppColors.success,
                         ),
                       );
                       Navigator.pop(context);
@@ -220,7 +230,7 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(srProvider.error ?? 'Erro ao concluir'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.error,
                         ),
                       );
                     }

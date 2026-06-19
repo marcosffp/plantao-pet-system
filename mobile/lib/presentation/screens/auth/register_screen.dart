@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
+import 'login_screen.dart' show RoleToggle;
 
 class RegisterScreen extends StatefulWidget {
   final bool initialIsOwner;
@@ -98,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(auth.error ?? 'Erro ao criar conta'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -131,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              _RoleToggle(
+              RoleToggle(
                 isOwner: _isOwner,
                 onChanged: (v) => setState(() {
                   _isOwner = v;
@@ -258,15 +259,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _passCtrl,
                 obscureText: _obscure,
-                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Mínimo 8 caracteres',
+                  hintText: 'Mínimo 6 caracteres',
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscure ? Icons.visibility_off : Icons.visibility,
                       color: AppColors.textHint,
                     ),
                     onPressed: () => setState(() => _obscure = !_obscure),
+                    tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
                   ),
                 ),
                 validator: (v) =>
@@ -276,18 +277,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.successBg,
+                  color: AppColors.successLight,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.successBorder),
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.shield_outlined, color: AppColors.statusInProgress, size: 20),
+                    Icon(Icons.shield_outlined, color: AppColors.success, size: 20),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Seus dados são protegidos e não serão compartilhados sem consentimento.',
-                        style: TextStyle(fontSize: 13, color: AppColors.statusInProgress),
+                        style: TextStyle(fontSize: 13, color: AppColors.success),
                       ),
                     ),
                   ],
@@ -354,83 +355,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextFormField(
         controller: controller,
         keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(hintText: hint),
         validator: validator,
       );
-}
-
-class _RoleToggle extends StatelessWidget {
-  final bool isOwner;
-  final ValueChanged<bool> onChanged;
-
-  const _RoleToggle({required this.isOwner, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: _ToggleButton(
-          label: 'Dono do Pet',
-          icon: Icons.favorite_border,
-          selected: isOwner,
-          onTap: () => onChanged(true),
-        )),
-        const SizedBox(width: 12),
-        Expanded(child: _ToggleButton(
-          label: 'Cuidador',
-          icon: Icons.star_border,
-          selected: !isOwner,
-          onTap: () => onChanged(false),
-        )),
-      ],
-    );
-  }
-}
-
-class _ToggleButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ToggleButton({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? AppColors.primary : AppColors.divider,
-            width: selected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: selected ? AppColors.primary : AppColors.textSecondary, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: selected ? AppColors.primary : AppColors.textSecondary,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

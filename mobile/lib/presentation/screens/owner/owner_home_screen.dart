@@ -96,7 +96,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('🐾', style: TextStyle(fontSize: 48)),
+                        const Icon(Icons.pets, size: 56, color: AppColors.divider),
                         const SizedBox(height: 12),
                         Text(
                           _filterIndex == 0

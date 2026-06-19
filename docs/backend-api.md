@@ -8,89 +8,81 @@
 
 ## Sumário
 
-- [Arquitetura](#arquitetura)
-- [Estrutura de módulos](#estrutura-de-módulos)
-- [Estrutura de pastas](#estrutura-de-pastas)
+- [Visão geral](#visão-geral)
+- [Arquitetura em camadas](#arquitetura-em-camadas)
 - [Modelo de dados](#modelo-de-dados)
-- [APIs e endpoints](#apis-e-endpoints)
-- [Eventos Kafka](#eventos-kafka)
+- [Autenticação e autorização](#autenticação-e-autorização)
+- [Endpoints da API](#endpoints-da-api)
+  - [Autenticação](#autenticação-auth)
+  - [Donos](#donos-owners)
+  - [Pets](#pets-ownerspecialpets-e-petsid)
+  - [Cuidadores](#cuidadores-caregivers)
+  - [Solicitações de serviço](#solicitações-de-serviço-service-requests)
+  - [Avaliações](#avaliações-reviews)
+  - [Notificações](#notificações-notifications)
 - [Regras de negócio](#regras-de-negócio)
+- [Eventos Kafka](#eventos-kafka)
+- [Tratamento de erros](#tratamento-de-erros)
 - [Infraestrutura Docker](#infraestrutura-docker)
 - [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Instalação e execução](#instalação-e-execução)
-- [Testes da API](#testes-da-api)
+- [Scripts disponíveis](#scripts-disponíveis)
 - [Tecnologias e dependências](#tecnologias-e-dependências)
 
 ---
 
-## Arquitetura
+## Visão geral
 
-A aplicação adota uma **arquitetura orientada a eventos (Event-Driven Architecture)** no backend, com Clean Architecture nas camadas internas. O backend expõe uma API REST consumida pelos apps Flutter e publica eventos de domínio no Kafka; o consumer Kafka recebe esses eventos e os despacha via Socket.IO para os clientes conectados.
+O backend é uma API REST que expõe todos os recursos do sistema — cadastro de usuários, gerenciamento de pets, ciclo de vida de solicitações de serviço, avaliações e notificações. Ele não possui interface visual própria; toda interação ocorre via HTTP (com o app Flutter) e via WebSocket (para eventos em tempo real).
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                       Apps Flutter                               │
-│           App Dono (Owner)  ·  App Cuidador (Caregiver)          │
-└────────────────────────┬────────────────────────┬────────────────┘
-                         │  REST HTTP/JSON         │  WebSocket (Socket.IO)
-┌────────────────────────▼────────────────────────▼────────────────┐
-│                        Backend (Node.js)                         │
-│  Routes → Controllers → Services → Repositories                  │
-│                  │ Kafka Producer                                 │
-└──────────────────┼───────────────────────────────────────────────┘
-                   │  Publish/Subscribe
-┌──────────────────▼───────────────────────────────────────────────┐
-│                      Apache Kafka (KRaft)                        │
-│           service_request.* · service.completed · review.*       │
-└──────────────────┬───────────────────────────────────────────────┘
-                   │  Kafka Consumer → Socket.IO emit
-┌──────────────────▼───────────────────────────────────────────────┐
-│                  Persistência (PostgreSQL 15)                     │
-│              Prisma ORM · Tabela Notification                    │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-**Diagrama completo:** `docs/images/Arquitetura.jpg`
-
-| Conexão | Protocolo | Formato |
-|---|---|---|
-| App Flutter → Backend | HTTP/REST | JSON |
-| Backend → PostgreSQL | TCP (Prisma ORM) | SQL |
-| Backend → Kafka | TCP (kafkajs) | JSON |
-| Kafka Consumer → Apps | WebSocket (Socket.IO) | JSON |
+Além de servir a API, o backend também atua como **publicador de eventos Kafka** (toda mudança de estado relevante vira um evento) e como **servidor Socket.IO** (onde esses eventos chegam aos clientes em tempo real após processamento pelo consumer Kafka).
 
 ---
 
-## Estrutura de módulos
+## Arquitetura em camadas
 
-| Módulo | Camada | Responsabilidade |
+O backend segue uma separação clara de responsabilidades. Cada camada tem uma função específica e não deve "pular" camadas:
+
+```
+Requisição HTTP
+       │
+  [Routes]          → Define as rotas e aplica middlewares (autenticação, validação)
+       │
+  [Controllers]     → Recebe req/res, delega ao service, serializa a resposta HTTP
+       │
+  [Services]        → Contém a lógica de negócio (regras, validações, publicação de eventos)
+       │
+  [Repositories]    → Único ponto de acesso ao banco de dados via Prisma
+       │
+  PostgreSQL
+```
+
+| Camada | Pasta | Responsabilidade |
 |---|---|---|
-| `routes/` | Apresentação | Definição das rotas Express e aplicação de middlewares |
-| `controllers/` | Apresentação | Recebe req/res, delega ao service, serializa resposta |
-| `services/` | Domínio | Lógica de negócio, validações e publicação de eventos Kafka |
-| `repositories/` | Infraestrutura | Acesso ao banco via Prisma Client |
-| `middlewares/` | Transversal | Autenticação JWT, tratamento de erros, validação Zod |
-| `kafka/` | Infraestrutura | Producer (publica eventos) e Consumer (recebe e despacha via Socket.IO) |
-| `socket/` | Infraestrutura | Configuração do Socket.IO e gerenciamento de salas por usuário |
-| `jobs/` | Agendamento | Cron job node-cron para expirar solicitações OPEN vencidas |
-| `schemas/` | Validação | Schemas Zod para validação de bodies de requisição |
-| `utils/` | Transversal | `AppError` e `asyncHandler` |
+| Rotas | `routes/` | Monta as URLs, aplica `authenticate`, `requireOwner`/`requireCaregiver` e `validate` |
+| Controllers | `controllers/` | Extrai dados do `req`, chama o service e retorna JSON via `res` |
+| Services | `services/` | Valida regras de negócio, orquestra repositórios, publica eventos Kafka |
+| Repositórios | `repositories/` | Executa queries Prisma — SELECT, INSERT, UPDATE, DELETE |
+| Middlewares | `middlewares/` | Autenticação JWT, tratamento global de erros, validação com Zod |
+| Schemas | `schemas/` | Definições Zod dos bodies de requisição (campos obrigatórios, limites, formatos) |
+| Kafka | `kafka/` | Producer (publica eventos) e Consumer (consome, grava notificação, emite via Socket.IO) |
+| Socket | `socket/` | Configura o Socket.IO, autentica conexões, gerencia salas por usuário |
+| Jobs | `jobs/` | Cron job que cancela automaticamente solicitações expiradas |
+| Utils | `utils/` | `AppError` (erro com status HTTP) e `asyncHandler` (wrapper para erros assíncronos) |
 
----
-
-## Estrutura de pastas
+### Estrutura de pastas
 
 ```
 backend/
 ├── src/
-│   ├── server.js
-│   ├── app.js
+│   ├── server.js                   ← Inicializa HTTP, Socket.IO e Kafka
+│   ├── app.js                      ← Configura Express, rotas e middlewares
 │   ├── prisma/
-│   │   └── client.js
+│   │   └── client.js               ← Singleton do Prisma Client
 │   ├── routes/
 │   │   ├── auth.routes.js
 │   │   ├── owners.routes.js
-│   │   ├── pets.routes.js
+│   │   ├── pets.routes.js          ← Rotas sob /owners/pets
+│   │   ├── pets-direct.routes.js   ← Rota GET /pets/:id
 │   │   ├── caregivers.routes.js
 │   │   ├── service-requests.routes.js
 │   │   ├── reviews.routes.js
@@ -115,11 +107,10 @@ backend/
 │       ├── AppError.js
 │       └── asyncHandler.js
 ├── prisma/
-│   └── schema.prisma
+│   └── schema.prisma               ← Modelos do banco de dados
 ├── docker-compose.yml
 ├── Dockerfile
-├── .env               ← não versionado
-├── .env.example       ← template público
+├── .env.example
 └── package.json
 ```
 
@@ -127,180 +118,777 @@ backend/
 
 ## Modelo de dados
 
-Armazenado no **PostgreSQL 15** via **Prisma ORM**.
+O banco de dados é PostgreSQL 15, gerenciado pelo Prisma ORM. O diagrama abaixo representa as entidades e seus relacionamentos.
 
 ![Diagrama do Banco de Dados](images/Diagrama_Entidades_Banco_Dados.png)
 
-### Entidades
+### Entidade: Owner (Dono do Pet)
 
-| Entidade | Descrição | Relações |
+Representa o usuário que possui animais e abre solicitações de serviço.
+
+| Campo | Tipo | Descrição |
 |---|---|---|
-| `Owner` | Dono do pet: nome, e-mail, telefone, endereço | 1:N com `Pet`, `ServiceRequest`, `Review` |
-| `Pet` | Animal do dono: espécie, raça, idade, notas especiais | N:1 com `Owner`, 1:N com `ServiceRequest` |
-| `Caregiver` | Cuidador: bairros de atuação, serviços oferecidos, média de avaliações | 1:N com `ServiceRequest`, `Review` |
-| `ServiceRequest` | Transação central: relaciona Dono, Cuidador e Pet com status e ciclo de vida completo | N:1 com `Owner`, `Pet`, `Caregiver`; 1:1 com `Review` |
-| `Review` | Avaliação pós-serviço: rating numérico e comentário; atualiza `averageRating` do cuidador | N:1 com `Owner`, `Caregiver`; 1:1 com `ServiceRequest` |
-| `Notification` | Histórico persistido de todas as notificações despachadas via Kafka + Socket.IO | — |
+| `id` | UUID | Identificador único gerado automaticamente |
+| `name` | String | Nome completo |
+| `email` | String (unique) | E-mail, usado como login — não pode repetir |
+| `phone` | String (unique) | Telefone — não pode repetir |
+| `address` | String | Endereço principal |
+| `passwordHash` | String | Senha hasheada com bcrypt (nunca retornada pela API) |
+| `createdAt` | DateTime | Data de criação do registro |
+
+**Relacionamentos:** possui vários `Pet`, várias `ServiceRequest` e vários `Review`.
+
+### Entidade: Pet
+
+Representa um animal de estimação cadastrado por um dono.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | UUID | Identificador único |
+| `name` | String | Nome do pet (máx. 10 caracteres) |
+| `species` | Enum | `DOG`, `CAT` ou `OTHER` |
+| `breed` | String | Raça do animal |
+| `age` | Int | Idade em anos (0 a 30) |
+| `specialNotes` | String? | Observações opcionais (alergias, medicamentos, comportamento) |
+| `ownerId` | UUID | FK para o dono — campo obrigatório |
+| `createdAt` | DateTime | Data de cadastro |
+
+**Relacionamentos:** pertence a um `Owner`; pode estar em várias `ServiceRequest`.
+
+### Entidade: Caregiver (Cuidador)
+
+Representa o prestador de serviços que aceita e executa os atendimentos.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | UUID | Identificador único |
+| `name` | String | Nome completo |
+| `email` | String (unique) | E-mail de login |
+| `phone` | String (unique) | Telefone de contato |
+| `passwordHash` | String | Senha hasheada |
+| `neighborhoods` | String[] | Lista de bairros onde atende (1 a 5) |
+| `services` | ServiceType[] | Tipos de serviço oferecidos (1 a 4 opções) |
+| `averageRating` | Float | Média de avaliações recebidas (0 a 5, recalculada a cada avaliação) |
+| `status` | Enum | `ACTIVE` (disponível) ou `INACTIVE` (fora de serviço) |
+| `createdAt` | DateTime | Data de cadastro |
+
+**Relacionamentos:** possui várias `ServiceRequest` aceitas e vários `Review` recebidos.
+
+### Entidade: ServiceRequest (Solicitação de Serviço)
+
+É o recurso central do sistema. Representa um pedido de atendimento criado pelo dono, que passa por estados até a conclusão.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | UUID | Identificador único |
+| `petId` | UUID | FK para o pet que será atendido |
+| `ownerId` | UUID | FK para o dono que criou a solicitação |
+| `caregiverId` | UUID? | FK para o cuidador (preenchido após aceitação) |
+| `serviceType` | Enum | Tipo de serviço: `WALK_30MIN`, `WALK_1H`, `HOME_VISIT`, `HOSTING` |
+| `scheduledAt` | DateTime | Data e hora agendadas para o atendimento |
+| `meetingAddress` | String | Endereço de encontro (5 a 200 caracteres) |
+| `status` | Enum | Ciclo de vida: `OPEN` → `ACCEPTED` → `IN_PROGRESS` → `COMPLETED` (ou `CANCELLED` / `REFUSED`) |
+| `expiresAt` | DateTime | Prazo de expiração: 24 horas após a criação. Solicitações `OPEN` expiradas são canceladas automaticamente |
+| `createdAt` | DateTime | Data de criação |
+
+**Ciclo de vida dos status:**
+
+```
+                    ┌──────────────────────────────┐
+                    │             OPEN             │ ← criada pelo dono
+                    └──────┬─────────────┬─────────┘
+                           │ aceitar      │ cancelar / expirar
+                           ▼             ▼
+                      ACCEPTED      CANCELLED
+                           │
+                           │ recusar (volta para OPEN)
+                           │ ou iniciar
+                           ▼
+                      IN_PROGRESS
+                           │
+                           │ concluir
+                           ▼
+                       COMPLETED    ← dono pode avaliar
+```
+
+### Entidade: Review (Avaliação)
+
+Criada pelo dono após o serviço ser concluído. Cada solicitação tem no máximo uma avaliação.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | UUID | Identificador único |
+| `serviceRequestId` | UUID (unique) | FK para a solicitação avaliada |
+| `ownerId` | UUID | FK para o dono que avaliou |
+| `caregiverId` | UUID | FK para o cuidador avaliado |
+| `rating` | Int | Nota de 1 a 5 |
+| `comment` | String | Comentário (1 a 500 caracteres) |
+| `createdAt` | DateTime | Data da avaliação |
+
+**Efeito colateral:** ao criar uma avaliação, o backend recalcula automaticamente o `averageRating` do cuidador com a média de todas as suas avaliações.
+
+### Entidade: Notification
+
+Registra todas as notificações entregues via Kafka + Socket.IO. Permite que o histórico seja consultado mesmo que o usuário não estivesse conectado no momento do evento.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | UUID | Identificador único |
+| `userId` | String | ID do usuário destinatário |
+| `userRole` | String | `owner` ou `caregiver` |
+| `eventType` | String | Tipo do evento Kafka que originou a notificação |
+| `payload` | JSON | Dados completos do evento |
+| `requestId` | String? | ID da solicitação relacionada (para deduplicação) |
+| `readAt` | DateTime? | Preenchido quando o usuário marca como lida (`null` = não lida) |
+| `createdAt` | DateTime | Data de criação |
 
 ### Enums
 
-| Enum | Valores |
-|---|---|
-| `Species` | `DOG`, `CAT`, `OTHER` |
-| `ServiceType` | `WALK_30MIN`, `WALK_1H`, `HOME_VISIT`, `HOSTING` |
-| `RequestStatus` | `OPEN`, `ACCEPTED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`, `REFUSED` |
-| `CaregiverStatus` | `ACTIVE`, `INACTIVE` |
+| Enum | Valores | Contexto |
+|---|---|---|
+| `Species` | `DOG`, `CAT`, `OTHER` | Espécie do pet |
+| `ServiceType` | `WALK_30MIN`, `WALK_1H`, `HOME_VISIT`, `HOSTING` | Tipo de serviço |
+| `RequestStatus` | `OPEN`, `ACCEPTED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`, `REFUSED` | Status da solicitação |
+| `CaregiverStatus` | `ACTIVE`, `INACTIVE` | Disponibilidade do cuidador |
 
 ---
 
-## APIs e endpoints
+## Autenticação e autorização
 
-Documentação interativa disponível em `http://localhost:3000/api-docs` após subir a aplicação.
+### Como funciona o JWT
+
+O sistema usa **JSON Web Tokens (JWT)** para autenticação. O fluxo é:
+
+1. O usuário faz login ou se cadastra → o backend gera um token JWT assinado com `JWT_SECRET`
+2. O token é enviado ao cliente Flutter, que o armazena com segurança (Keychain no iOS / EncryptedSharedPreferences no Android)
+3. Em todas as requisições subsequentes, o cliente envia o token no cabeçalho: `Authorization: Bearer <token>`
+4. O middleware `authenticate` valida a assinatura e extrai `{ id, role }` do payload — esses dados ficam disponíveis como `req.user`
+5. Middlewares adicionais (`requireOwner` ou `requireCaregiver`) verificam o `role` e bloqueiam acesso indevido
+
+**Validade:** O token expira após o prazo configurado em `JWT_EXPIRES_IN` (padrão: 7 dias). Após a expiração, o usuário precisa fazer login novamente.
+
+### Papéis (roles)
+
+| Role | Quem é | Acesso |
+|---|---|---|
+| `owner` | Dono do pet | Gerencia seus pets, abre e cancela solicitações, avalia cuidadores |
+| `caregiver` | Cuidador | Visualiza solicitações abertas, aceita/recusa/inicia/conclui atendimentos, gerencia seu status |
+
+### Respostas de erro de autenticação
+
+| Código | Situação |
+|---|---|
+| `401` | Token ausente, inválido ou expirado |
+| `403` | Token válido, mas role não autorizado para aquele endpoint |
+
+### Autenticação no Socket.IO
+
+A conexão WebSocket também é autenticada. O token JWT é enviado como parâmetro de query:
+
+```
+ws://localhost:3000?token=<jwt>
+```
+
+O middleware do Socket.IO valida o token e adiciona o cliente à sala `${role}:${userId}` (exemplo: `owner:abc123`). Todos os eventos são emitidos para salas específicas, garantindo que cada usuário receba apenas suas próprias notificações.
+
+---
+
+## Endpoints da API
+
+A documentação interativa completa está disponível em `http://localhost:3000/api-docs` (Swagger UI) após subir a aplicação.
+
+Convenções usadas nesta seção:
+- **Auth** indica qual middleware de autorização é exigido
+- Os bodies são JSON (`Content-Type: application/json`)
+- Respostas de sucesso sempre retornam `{ data: ... }`
+- Respostas de erro retornam `{ error: "mensagem" }` ou `{ message: "mensagem" }`
+
+---
 
 ### Autenticação (`/auth`)
 
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `POST` | `/auth/owner/register` | — | Registrar dono |
-| `POST` | `/auth/owner/login` | — | Login do dono → retorna `{ token }` |
-| `POST` | `/auth/caregiver/register` | — | Registrar cuidador |
-| `POST` | `/auth/caregiver/login` | — | Login do cuidador → retorna `{ token }` |
+Estes endpoints não exigem token. São o ponto de entrada para novos usuários e para obter o JWT de sessão.
 
-### Donos (`/owners`)
+#### `POST /auth/owner/register` — Cadastro de Dono
 
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `GET` | `/owners/:id` | JWT | Perfil do dono |
+Cria uma nova conta de dono do pet. Retorna os dados do perfil e um token JWT pronto para uso.
 
-### Pets (`/owners/pets`)
+**Body:**
+```json
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "phone": "31999990000",
+  "address": "Rua das Flores, 123, Centro, BH",
+  "password": "minhasenha123"
+}
+```
 
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `POST` | `/owners/pets` | JWT dono | Cadastrar pet |
-| `GET` | `/owners/pets` | JWT dono | Listar pets do dono autenticado |
-| `PUT` | `/owners/pets/:petId` | JWT dono | Editar pet (verifica propriedade) |
-| `DELETE` | `/owners/pets/:petId` | JWT dono | Deletar pet (verifica propriedade) |
-| `GET` | `/pets/:id` | JWT | Detalhe de um pet |
+| Campo | Validação |
+|---|---|
+| `name` | 2 a 100 caracteres |
+| `email` | Formato de e-mail válido, único no sistema |
+| `phone` | 10 a 15 dígitos, único no sistema |
+| `address` | 5 a 200 caracteres |
+| `password` | Mínimo 6 caracteres |
 
-### Cuidadores (`/caregivers`)
+**Resposta de sucesso — 201:**
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "31999990000",
+    "address": "Rua das Flores, 123, Centro, BH",
+    "createdAt": "2026-06-19T10:00:00.000Z",
+    "token": "<jwt>"
+  }
+}
+```
 
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `GET` | `/caregivers` | — | Listar cuidadores ativos |
-| `GET` | `/caregivers/:id` | — | Perfil do cuidador |
-| `PATCH` | `/caregivers/:id/status` | JWT cuidador | Atualizar status (`ACTIVE`/`INACTIVE`) |
-| `GET` | `/caregivers/:id/reviews` | — | Avaliações recebidas pelo cuidador |
-
-### Solicitações de Serviço (`/service-requests`)
-
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `POST` | `/service-requests` | JWT dono | Criar solicitação |
-| `GET` | `/service-requests` | JWT cuidador | Listar solicitações `OPEN` |
-| `GET` | `/service-requests/my` | JWT | Solicitações do usuário autenticado |
-| `GET` | `/service-requests/:id` | JWT | Detalhe de uma solicitação |
-| `PATCH` | `/service-requests/:id/accept` | JWT cuidador | Aceitar solicitação |
-| `PATCH` | `/service-requests/:id/refuse` | JWT cuidador | Recusar solicitação |
-| `PATCH` | `/service-requests/:id/cancel` | JWT dono | Cancelar solicitação |
-| `PATCH` | `/service-requests/:id/start` | JWT cuidador | Iniciar serviço |
-| `PATCH` | `/service-requests/:id/complete` | JWT cuidador | Concluir serviço |
-
-### Avaliações (`/reviews`)
-
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `POST` | `/reviews` | JWT dono | Criar avaliação pós-serviço |
-
-### Notificações (`/notifications`)
-
-| Método | Rota | Auth | Descrição |
-|---|---|---|---|
-| `GET` | `/notifications` | JWT | Listar notificações do usuário |
-| `PATCH` | `/notifications/:id/read` | JWT | Marcar notificação como lida |
+**Erros possíveis:** `409` se e-mail ou telefone já existirem, `400` se validação falhar.
 
 ---
 
-## Eventos Kafka
+#### `POST /auth/owner/login` — Login de Dono
 
-O consumer está inscrito no group `plantao-pet-group`. Cada evento é persistido na tabela `Notification` com deduplicação e despachado via Socket.IO para o cliente destinatário.
+Autentica o dono e retorna um novo token JWT.
 
-| Tópico | Produtor | Destinatário Socket.IO | Evento emitido |
-|---|---|---|---|
-| `service_request.created` | `service-requests.service` → `create()` | Todos os cuidadores ACTIVE | `new_request` |
-| `service_request.accepted` | `service-requests.service` → `accept()` | Owner da solicitação | `request_accepted` |
-| `service_request.refused` | `service-requests.service` → `refuse()` | Owner da solicitação | `request_refused` |
-| `service_request.in_progress` | `service-requests.service` → `start()` | Owner da solicitação | `service_started` |
-| `service.completed` | `service-requests.service` → `complete()` | Owner da solicitação | `service_completed` |
-| `review.created` | `reviews.service` → `create()` | Cuidador avaliado | `new_review` |
-
-### Fluxo completo ponta a ponta
-
+**Body:**
+```json
+{
+  "email": "joao@email.com",
+  "password": "minhasenha123"
+}
 ```
-Owner                    Backend                    Kafka              Caregiver
-  │                         │                         │                    │
-  │── POST /service-requests ▶──── OPEN ──── publish("service_request.created") ──▶ │
-  │                         │◀─────────── consume ────┤                    │
-  │                         │                    Socket.IO: new_request ──▶│
-  │                         │◀── PATCH /:id/accept ───────────────────────│
-  │                         │         ACCEPTED         │                    │
-  │◀── Socket.IO: request_accepted ─────────────────── │                   │
-  │                         │◀── PATCH /:id/start ─────────────────────── │
-  │◀── Socket.IO: service_started ──────────────────── │                   │
-  │                         │◀── PATCH /:id/complete ──────────────────── │
-  │◀── Socket.IO: service_completed ────────────────── │                   │
-  │── POST /reviews ────────▶── recalcula averageRating                    │
-  │                         │──── publish("review.created") ───────────────┤
-  │                         │                    Socket.IO: new_review ───▶│
+
+**Resposta de sucesso — 200:**
+```json
+{
+  "token": "<jwt>"
+}
 ```
+
+**Erros possíveis:** `401` se credenciais inválidas.
+
+---
+
+#### `POST /auth/caregiver/register` — Cadastro de Cuidador
+
+Cria uma nova conta de cuidador. O cuidador é criado com status `ACTIVE` por padrão.
+
+**Body:**
+```json
+{
+  "name": "Maria Cuidadora",
+  "email": "maria@email.com",
+  "phone": "31988880000",
+  "neighborhoods": ["Centro", "Savassi"],
+  "services": ["WALK_30MIN", "WALK_1H", "HOME_VISIT"],
+  "password": "senhasegura456"
+}
+```
+
+| Campo | Validação |
+|---|---|
+| `name` | 2 a 100 caracteres |
+| `email` | Formato de e-mail válido, único no sistema |
+| `phone` | 10 a 15 dígitos, único no sistema |
+| `neighborhoods` | Array com 1 a 5 bairros |
+| `services` | Array com 1 a 4 valores do enum `ServiceType` |
+| `password` | Mínimo 6 caracteres |
+
+**Resposta de sucesso — 201:**
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "Maria Cuidadora",
+    "email": "maria@email.com",
+    "phone": "31988880000",
+    "neighborhoods": ["Centro", "Savassi"],
+    "services": ["WALK_30MIN", "WALK_1H", "HOME_VISIT"],
+    "averageRating": 0,
+    "status": "ACTIVE",
+    "createdAt": "2026-06-19T10:00:00.000Z",
+    "token": "<jwt>"
+  }
+}
+```
+
+**Erros possíveis:** `409` se e-mail ou telefone já existirem, `400` se validação falhar.
+
+---
+
+#### `POST /auth/caregiver/login` — Login de Cuidador
+
+**Body:**
+```json
+{
+  "email": "maria@email.com",
+  "password": "senhasegura456"
+}
+```
+
+**Resposta de sucesso — 200:**
+```json
+{
+  "token": "<jwt>"
+}
+```
+
+---
+
+### Donos (`/owners`)
+
+#### `GET /owners/me` — Perfil do Dono Autenticado
+
+Retorna os dados do dono logado.
+
+**Auth:** Bearer token + role `owner`
+
+**Resposta de sucesso — 200:**
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "phone": "31999990000",
+    "address": "Rua das Flores, 123, Centro, BH",
+    "createdAt": "2026-06-19T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### Pets (`/owners/pets` e `/pets/:id`)
+
+Endpoints para gerenciamento dos pets do dono. Todos os endpoints de escrita verificam se o pet pertence ao dono autenticado.
+
+#### `POST /owners/pets` — Cadastrar Pet
+
+**Auth:** Bearer token + role `owner`
+
+**Body:**
+```json
+{
+  "name": "Rex",
+  "species": "DOG",
+  "breed": "Golden Retriever",
+  "age": 3,
+  "specialNotes": "Alérgico a frango"
+}
+```
+
+| Campo | Validação |
+|---|---|
+| `name` | 1 a 10 caracteres |
+| `species` | `DOG`, `CAT` ou `OTHER` |
+| `breed` | Ao menos 1 caractere |
+| `age` | Inteiro de 0 a 30 |
+| `specialNotes` | Opcional |
+
+**Resposta de sucesso — 201:** `{ "data": { Pet } }`
+
+---
+
+#### `GET /owners/pets` — Listar Pets do Dono
+
+Retorna todos os pets cadastrados pelo dono autenticado.
+
+**Auth:** Bearer token + role `owner`
+
+**Resposta de sucesso — 200:** `{ "data": [Pet, ...] }`
+
+---
+
+#### `PUT /owners/pets/:petId` — Editar Pet
+
+Atualiza os dados de um pet. Todos os campos são opcionais — apenas os enviados são alterados.
+
+**Auth:** Bearer token + role `owner`
+
+**Erros possíveis:** `403` se o pet não pertencer ao dono, `404` se não existir.
+
+---
+
+#### `DELETE /owners/pets/:petId` — Deletar Pet
+
+Remove o pet permanentemente.
+
+**Auth:** Bearer token + role `owner`
+
+**Resposta de sucesso — 204:** Sem corpo.
+
+**Erros possíveis:** `403` se o pet não pertencer ao dono, `404` se não existir.
+
+---
+
+#### `GET /pets/:id` — Buscar Pet por ID
+
+Retorna os dados de um pet específico pelo ID. Não exige role específico, apenas autenticação.
+
+**Auth:** Bearer token
+
+**Resposta de sucesso — 200:** `{ "data": { Pet } }`
+
+**Erros possíveis:** `404` se não existir.
+
+---
+
+### Cuidadores (`/caregivers`)
+
+#### `GET /caregivers` — Listar Cuidadores Ativos
+
+Retorna todos os cuidadores com status `ACTIVE`. Usado pelo dono para visualizar opções disponíveis.
+
+**Auth:** Bearer token
+
+**Resposta de sucesso — 200:**
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Maria Cuidadora",
+      "email": "maria@email.com",
+      "phone": "31988880000",
+      "neighborhoods": ["Centro", "Savassi"],
+      "services": ["WALK_30MIN", "WALK_1H"],
+      "averageRating": 4.5,
+      "status": "ACTIVE",
+      "createdAt": "2026-06-19T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /caregivers/:id` — Perfil de um Cuidador
+
+Retorna o perfil completo de um cuidador específico, incluindo rating e serviços.
+
+**Auth:** Bearer token
+
+**Erros possíveis:** `404` se não existir.
+
+---
+
+#### `GET /caregivers/:id/reviews` — Avaliações do Cuidador
+
+Retorna todas as avaliações recebidas por um cuidador, ordenadas por data.
+
+**Auth:** Bearer token
+
+**Erros possíveis:** `404` se o cuidador não existir.
+
+---
+
+#### `PATCH /caregivers/status` — Atualizar Status do Cuidador
+
+Permite que o cuidador alterne entre `ACTIVE` (disponível para aceitar solicitações) e `INACTIVE` (não aparece nas listagens, não pode aceitar novos atendimentos).
+
+**Auth:** Bearer token + role `caregiver`
+
+**Body:**
+```json
+{
+  "status": "INACTIVE"
+}
+```
+
+**Resposta de sucesso — 200:**
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "Maria Cuidadora",
+    "status": "INACTIVE"
+  }
+}
+```
+
+**Erros possíveis:** `400` se status inválido, `403` se não for cuidador.
+
+---
+
+### Solicitações de Serviço (`/service-requests`)
+
+Este é o grupo de endpoints mais complexo, pois gerencia o ciclo de vida completo de um atendimento.
+
+#### `POST /service-requests` — Criar Solicitação (Dono)
+
+O dono abre um pedido de atendimento para um de seus pets.
+
+**Auth:** Bearer token + role `owner`
+
+**Body:**
+```json
+{
+  "petId": "uuid-do-pet",
+  "serviceType": "WALK_30MIN",
+  "scheduledAt": "2026-06-20T10:00:00.000Z",
+  "meetingAddress": "Rua das Flores, 123, Centro"
+}
+```
+
+| Campo | Validação |
+|---|---|
+| `petId` | UUID válido de um pet existente que pertença ao dono |
+| `serviceType` | `WALK_30MIN`, `WALK_1H`, `HOME_VISIT` ou `HOSTING` |
+| `scheduledAt` | Data/hora ISO 8601; deve ser pelo menos 2 horas no futuro |
+| `meetingAddress` | 5 a 200 caracteres |
+
+**Efeitos:** cria a solicitação com status `OPEN` e `expiresAt` = agora + 24h. Publica evento `service_request.created` no Kafka → todos os cuidadores `ACTIVE` recebem notificação em tempo real.
+
+**Erros possíveis:**
+- `400` — `scheduledAt` menor que 2 horas no futuro
+- `403` — pet não pertence ao dono autenticado
+- `404` — pet não encontrado
+- `409` — o pet já possui uma solicitação `OPEN` ou `ACCEPTED` ativa
+
+---
+
+#### `GET /service-requests` — Listar Solicitações Abertas (Cuidador)
+
+Retorna todas as solicitações com status `OPEN`, ordenadas da mais recente para a mais antiga. Usado pelo cuidador para visualizar oportunidades de atendimento.
+
+**Auth:** Bearer token + role `caregiver`
+
+---
+
+#### `GET /service-requests/my` — Minhas Solicitações
+
+Retorna as solicitações do usuário autenticado, com comportamento diferente por role:
+
+- **Dono:** retorna todas as solicitações criadas por ele
+- **Cuidador:** retorna as solicitações que ele aceitou (vinculadas ao seu ID)
+
+**Auth:** Bearer token (qualquer role)
+
+---
+
+#### `GET /service-requests/:id` — Detalhes de uma Solicitação
+
+Retorna todos os dados de uma solicitação, incluindo informações do pet, dono, cuidador (se atribuído) e avaliação (se existir).
+
+**Auth:** Bearer token
+
+**Erros possíveis:** `404` se não existir.
+
+---
+
+#### `PATCH /service-requests/:id/accept` — Aceitar Solicitação (Cuidador)
+
+O cuidador aceita uma solicitação `OPEN`. A solicitação muda para `ACCEPTED` e o `caregiverId` é preenchido.
+
+**Auth:** Bearer token + role `caregiver`
+
+**Validações:**
+- Solicitação deve estar com status `OPEN`
+- Cuidador deve estar `ACTIVE`
+- Cuidador não pode ter mais de 3 solicitações `IN_PROGRESS` simultâneas
+
+**Efeito:** publica evento `service_request.accepted` → dono recebe notificação em tempo real com nome e telefone do cuidador.
+
+**Erros possíveis:** `403` cuidador inativo ou limite atingido, `404` solicitação não encontrada, `409` status incorreto.
+
+---
+
+#### `PATCH /service-requests/:id/refuse` — Recusar Solicitação (Cuidador)
+
+O cuidador devolve uma solicitação `ACCEPTED` para o status `OPEN`, liberando-a para outros cuidadores aceitarem.
+
+**Auth:** Bearer token + role `caregiver`
+
+**Efeito:** publica evento `service_request.refused` → dono é notificado.
+
+---
+
+#### `PATCH /service-requests/:id/cancel` — Cancelar Solicitação (Dono)
+
+O dono cancela uma solicitação. Só é possível cancelar quando o status é `OPEN`.
+
+**Auth:** Bearer token + role `owner`
+
+**Erros possíveis:** `403` se não for o dono da solicitação ou status não for `OPEN`.
+
+---
+
+#### `PATCH /service-requests/:id/start` — Iniciar Serviço (Cuidador)
+
+O cuidador inicia o atendimento. Muda o status de `ACCEPTED` para `IN_PROGRESS`.
+
+**Auth:** Bearer token + role `caregiver`
+
+**Validação:** apenas o cuidador atribuído à solicitação pode iniciar.
+
+**Efeito:** publica evento `service_request.in_progress` → dono recebe notificação.
+
+---
+
+#### `PATCH /service-requests/:id/complete` — Concluir Serviço (Cuidador)
+
+O cuidador marca o serviço como concluído. Muda o status de `IN_PROGRESS` para `COMPLETED`.
+
+**Auth:** Bearer token + role `caregiver`
+
+**Validação:** apenas o cuidador atribuído pode concluir.
+
+**Efeito:** publica evento `service.completed` → dono recebe notificação e o botão de avaliar é habilitado no app.
+
+---
+
+### Avaliações (`/reviews`)
+
+#### `POST /reviews` — Criar Avaliação (Dono)
+
+O dono avalia o cuidador após o serviço ser concluído.
+
+**Auth:** Bearer token + role `owner`
+
+**Body:**
+```json
+{
+  "serviceRequestId": "uuid-da-solicitacao",
+  "rating": 5,
+  "comment": "Excelente cuidador, muito atencioso com o Rex!"
+}
+```
+
+| Campo | Validação |
+|---|---|
+| `serviceRequestId` | UUID de uma solicitação existente |
+| `rating` | Inteiro de 1 a 5 |
+| `comment` | 1 a 500 caracteres |
+
+**Validações de negócio:**
+- A solicitação deve existir e estar com status `COMPLETED`
+- O dono da avaliação deve ser o dono da solicitação
+- Cada solicitação pode ter no máximo uma avaliação
+
+**Efeitos:** recalcula o `averageRating` do cuidador (média de todas as suas avaliações). Publica evento `review.created` → cuidador recebe notificação.
+
+**Erros possíveis:** `400` serviço não concluído, `403` não é o dono, `404` solicitação não encontrada, `409` avaliação duplicada.
+
+---
+
+### Notificações (`/notifications`)
+
+As notificações são criadas automaticamente pelo consumer Kafka. O usuário não cria notificações manualmente.
+
+#### `GET /notifications` — Listar Notificações
+
+Retorna todas as notificações do usuário autenticado, da mais recente para a mais antiga.
+
+**Auth:** Bearer token
+
+**Query params opcionais:**
+- `?unread=true` → filtra apenas as não lidas
+
+---
+
+#### `PATCH /notifications/:id/read` — Marcar como Lida
+
+Marca uma notificação como lida (preenche o campo `readAt`).
+
+**Auth:** Bearer token
+
+**Erros possíveis:** `403` se a notificação não pertencer ao usuário, `404` se não existir.
 
 ---
 
 ## Regras de negócio
 
+As regras abaixo são aplicadas nas camadas de service e garantem a consistência do sistema.
+
 | # | Onde | Regra |
 |---|---|---|
-| RN-01 | `service-requests.service` → `create()` | Pet com solicitação `OPEN` ou `ACCEPTED` ativa bloqueia nova abertura → `409` |
-| RN-02 | `service-requests.service` → `create()` | `scheduledAt` deve ser ≥ 2 horas no futuro → `400` |
-| RN-03 | `expire-requests.job.js` (cron a cada hora) | Solicitações `OPEN` com `expiresAt` vencido são canceladas automaticamente |
-| RN-04 | `service-requests.service` → `cancel()` | Dono só pode cancelar se status for `OPEN` → `403` |
+| RN-01 | `service-requests.service` → `create()` | `scheduledAt` deve ser ≥ agora + 2 horas → `400` |
+| RN-02 | `service-requests.service` → `create()` | Pet deve existir e pertencer ao dono autenticado → `404`/`403` |
+| RN-03 | `service-requests.service` → `create()` | Pet com solicitação `OPEN` ou `ACCEPTED` ativa bloqueia nova abertura → `409` |
+| RN-04 | `expire-requests.job.js` (cron a cada hora) | Solicitações `OPEN` com `expiresAt` vencido são automaticamente canceladas |
 | RN-05 | `service-requests.service` → `accept()` | Cuidador `INACTIVE` não pode aceitar → `403` |
-| RN-06 | `service-requests.service` → `accept()` | Limite de 3 solicitações `IN_PROGRESS` simultâneas por cuidador → `409` |
-| RN-07 | `service-requests.service` → `refuse()` | Recusa devolve status para `OPEN` |
-| RN-08 | `service-requests.service` → `accept()` | Primeiro cuidador a aceitar bloqueia a solicitação → `ACCEPTED` |
-| RN-09 | `service-requests.service` → `start()` | Apenas o cuidador atribuído pode mudar `ACCEPTED` → `IN_PROGRESS` → `403` |
-| RN-10 | `service-requests.service` → `complete()` | Apenas o cuidador atribuído pode marcar `COMPLETED` → `403` |
-| RN-11 | `service-requests.service` → `complete()` | Publica `service.completed` com `{ requestId, completedAt, caregiverId, ownerId }` |
+| RN-06 | `service-requests.service` → `accept()` | Cuidador com 3 ou mais solicitações `IN_PROGRESS` não pode aceitar mais → `409` |
+| RN-07 | `service-requests.service` → `accept()` | Primeiro cuidador a aceitar assume a solicitação — status muda para `ACCEPTED` e não pode ser aceita por outros |
+| RN-08 | `service-requests.service` → `refuse()` | Recusa devolve status para `OPEN` e limpa o `caregiverId`, liberando para novos aceites |
+| RN-09 | `service-requests.service` → `cancel()` | Dono só pode cancelar se status for `OPEN` → `403` |
+| RN-10 | `service-requests.service` → `start()` | Apenas o cuidador atribuído pode iniciar o serviço → `403` |
+| RN-11 | `service-requests.service` → `complete()` | Apenas o cuidador atribuído pode concluir o serviço → `403` |
 | RN-12 | `reviews.service` → `create()` | Avaliação exige status `COMPLETED` → `400` |
 | RN-13 | `reviews.service` → `create()` | Cada solicitação gera no máximo uma avaliação → `409` |
-| RN-14 | `reviews.service` → `create()` | Recalcula `averageRating` do cuidador com `AVG(rating)` via Prisma |
-| RN-15 | `service-requests.service` → `create()` | Pet deve existir e pertencer ao dono autenticado → `404`/`403` |
+| RN-14 | `reviews.service` → `create()` | `averageRating` do cuidador é recalculado com `AVG(rating)` sobre todas as suas avaliações |
+| RN-15 | `notifications.repository` → `existsDuplicate()` | Notificação com mesmo `userId + eventType + requestId` não é recriada (deduplicação) |
+
+---
+
+## Eventos Kafka
+
+Veja a documentação completa dos eventos em [Integração com MOM (Kafka)](integracao_Mom.md).
+
+Resumo dos tópicos publicados:
+
+| Tópico | Publicado quando | Destinatário |
+|---|---|---|
+| `service_request.created` | Dono cria solicitação | Todos os cuidadores `ACTIVE` |
+| `service_request.accepted` | Cuidador aceita | Dono da solicitação |
+| `service_request.refused` | Cuidador recusa | Dono da solicitação |
+| `service_request.in_progress` | Cuidador inicia | Dono da solicitação |
+| `service.completed` | Cuidador conclui | Dono da solicitação |
+| `review.created` | Dono avalia | Cuidador avaliado |
+
+---
+
+## Tratamento de erros
+
+Todos os erros passam pelo middleware `error.middleware.js`, que padroniza as respostas.
+
+| Código HTTP | Quando ocorre |
+|---|---|
+| `400 Bad Request` | Validação Zod falhou, dados inválidos, regra de negócio (ex: data muito próxima) |
+| `401 Unauthorized` | Token JWT ausente, inválido ou expirado |
+| `403 Forbidden` | Token válido, mas sem permissão (role incorreto, recurso de outro usuário) |
+| `404 Not Found` | Recurso não encontrado no banco de dados |
+| `409 Conflict` | Duplicidade (e-mail/telefone/avaliação) ou estado inválido (pet já tem solicitação ativa) |
+| `500 Internal Server Error` | Erro inesperado no servidor |
+
+**Formato de erro:**
+```json
+{
+  "error": "Mensagem descrevendo o problema"
+}
+```
 
 ---
 
 ## Infraestrutura Docker
 
-O `docker-compose.yml` sobe todos os serviços. O Kafka roda no modo **KRaft** (sem Zookeeper).
+O `docker-compose.yml` sobe todos os serviços com um único comando. O Kafka roda no modo **KRaft** (sem Zookeeper, simplificando a configuração).
 
 | Serviço | Imagem | Porta | Função |
 |---|---|---|---|
 | `plantao-pet-postgres` | `postgres:15` | `5432` | Banco de dados relacional |
-| `plantao-pet-kafka` | `apache/kafka:3.7.0` | `9092` | Message broker (KRaft) |
-| `plantao-pet-kafka-ui` | `provectuslabs/kafka-ui:latest` | `${KAFKA_UI_PORT}` | Interface web do Kafka |
+| `plantao-pet-kafka` | `apache/kafka:3.7.0` | `9092` | Message broker KRaft |
+| `plantao-pet-kafka-ui` | `provectuslabs/kafka-ui:latest` | `${KAFKA_UI_PORT}` | Interface web para inspecionar tópicos e mensagens |
 | `plantao-pet-api` | Build local (Dockerfile) | `${PORT}` | API REST + Socket.IO |
 
-> `postgres` e `kafka` possuem healthcheck configurado. A `api` aguarda ambos estarem saudáveis e executa `prisma migrate deploy` automaticamente na subida.
+Os containers `postgres` e `kafka` possuem healthcheck configurado. A `api` aguarda ambos estarem saudáveis e executa `prisma migrate deploy` automaticamente ao subir.
 
 ```bash
 # Subir toda a infraestrutura
 docker compose up -d
 
-# Verificar status
+# Verificar status dos containers
 docker compose ps
 
-# Logs da API
+# Acompanhar logs da API em tempo real
 docker compose logs -f api
 
-# Derrubar e remover volumes
+# Derrubar e remover volumes (reseta o banco)
 docker compose down -v
 ```
 
@@ -308,7 +896,7 @@ docker compose down -v
 
 ## Variáveis de ambiente
 
-Crie `backend/.env` a partir do template:
+Crie o arquivo `backend/.env` a partir do template:
 
 ```bash
 cp backend/.env.example backend/.env
@@ -317,84 +905,31 @@ cp backend/.env.example backend/.env
 | Variável | Exemplo | Descrição |
 |---|---|---|
 | `DATABASE_URL` | `postgresql://plantao:senha@postgres:5432/plantao_pet` | URL de conexão com o PostgreSQL |
-| `POSTGRES_DB` | `plantao_pet` | Nome do banco |
+| `POSTGRES_DB` | `plantao_pet` | Nome do banco de dados |
 | `POSTGRES_USER` | `plantao` | Usuário do banco |
 | `POSTGRES_PASSWORD` | `senha_forte` | Senha do banco |
-| `JWT_SECRET` | *(string base64 64 bytes)* | Chave de assinatura JWT — nunca commitar |
-| `JWT_EXPIRES_IN` | `7d` | Validade do token |
-| `PORT` | `3000` | Porta da API |
+| `JWT_SECRET` | *(string base64 de 64 bytes)* | Chave de assinatura dos tokens JWT — nunca versionar |
+| `JWT_EXPIRES_IN` | `7d` | Validade do token (ex: `7d`, `24h`, `1h`) |
+| `PORT` | `3000` | Porta onde a API escuta |
 | `KAFKA_BROKER` | `kafka:29092` (Docker) / `localhost:9092` (local) | Endereço do broker Kafka |
 | `KAFKA_UI_PORT` | `8080` | Porta da interface Kafka UI |
-| `KAFKA_CLUSTER_NAME` | `plantao-pet` | Nome do cluster no Kafka UI |
+| `KAFKA_CLUSTER_NAME` | `plantao-pet` | Nome exibido na Kafka UI |
 
-Gere o `JWT_SECRET`:
+**Gerando o JWT_SECRET:**
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
 ```
 
 ---
 
-## Instalação e execução
-
-### Com Docker (recomendado)
+## Scripts disponíveis
 
 ```bash
-# 1. Clone o repositório
-git clone <url-do-repositorio>
-
-# 2. Configure o ambiente
-cp backend/.env.example backend/.env
-# Edite o .env com suas configurações
-
-# 3. Suba todos os serviços
-cd backend
-docker compose up -d
-
-# 4. Verifique os containers
-docker compose ps
-```
-
-### Acessos
-
-| Serviço | URL |
-|---|---|
-| API REST | `http://localhost:3000` |
-| Swagger UI | `http://localhost:3000/api-docs` |
-| Kafka UI | `http://localhost:8080` |
-| Prisma Studio | `http://localhost:5555` (apenas local) |
-
-### Scripts npm
-
-| Script | Descrição |
-|---|---|
-| `npm start` | Servidor em produção |
-| `npm run dev` | Hot reload com nodemon |
-| `npm run db:migrate` | Executa migrations Prisma |
-| `npm run db:generate` | Regenera o Prisma Client |
-| `npm run db:studio` | Abre o Prisma Studio na porta 5555 |
-
----
-
-## Testes da API
-
-Coleção Postman disponível em `docs/Plantão Pet.postman_collection.json`.
-
-1. Importe o arquivo no Postman
-2. Configure a variável `{{baseUrl}}` com `http://localhost:3000`
-3. Execute na ordem:
-
-```
-1.  Registrar Dono
-2.  Login Dono              → preenche {{ownerToken}}
-3.  Registrar Cuidador
-4.  Login Cuidador          → preenche {{caregiverToken}}
-5.  Cadastrar Pet
-6.  Criar Solicitação
-7.  Listar Solicitações Abertas (Cuidador)
-8.  Aceitar Solicitação
-9.  Iniciar Serviço
-10. Concluir Serviço
-11. Avaliar Cuidador
+npm start          # Inicia o servidor em modo produção
+npm run dev        # Inicia com nodemon (hot reload para desenvolvimento)
+npm run db:migrate # Executa as migrations do Prisma
+npm run db:generate # Regenera o Prisma Client após mudanças no schema
+npm run db:studio  # Abre o Prisma Studio (interface visual do banco) na porta 5555
 ```
 
 ---
@@ -412,12 +947,12 @@ Coleção Postman disponível em `docs/Plantão Pet.postman_collection.json`.
 | WebSocket | Socket.IO | 4.x |
 | Autenticação | jsonwebtoken | 9.x |
 | Hash de senha | bcryptjs | 2.x |
-| Validação | Zod | 3.x |
+| Validação de schemas | Zod | 3.x |
 | Documentação API | swagger-ui-express + swagger-jsdoc | 5.x / 6.x |
-| Agendamento | node-cron | 4.x |
+| Agendamento de tarefas | node-cron | 4.x |
 | Variáveis de ambiente | dotenv | 16.x |
 | CORS | cors | 2.x |
-| Hot reload | nodemon (dev) | 3.x |
+| Hot reload (dev) | nodemon | 3.x |
 | Containerização | Docker + Docker Compose | — |
 
 ---

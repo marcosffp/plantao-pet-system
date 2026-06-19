@@ -12,8 +12,8 @@ class PetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emoji = AppConstants.speciesEmoji[pet.species] ?? '🐾';
     final speciesLabel = AppConstants.speciesLabels[pet.species] ?? pet.species;
+    final iconColor = AppConstants.speciesColor(pet.species);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -29,12 +29,10 @@ class PetCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF3E0),
+              color: iconColor.withOpacity(0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 32)),
-            ),
+            child: AppConstants.speciesIconWidget(pet.species, size: 22, color: iconColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -70,11 +68,13 @@ class PetCard extends StatelessWidget {
             IconButton(
               onPressed: onEdit,
               icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
+              tooltip: 'Editar pet',
             ),
           if (onDelete != null)
             IconButton(
               onPressed: onDelete,
-              icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
+              icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+              tooltip: 'Remover pet',
             ),
         ],
       ),
@@ -88,16 +88,7 @@ class _SpeciesChip extends StatelessWidget {
 
   const _SpeciesChip({required this.label, required this.species});
 
-  Color get _color {
-    switch (species) {
-      case 'DOG':
-        return AppColors.primary;
-      case 'CAT':
-        return const Color(0xFF8B5CF6);
-      default:
-        return AppColors.textSecondary;
-    }
-  }
+  Color get _color => AppConstants.speciesColor(species);
 
   @override
   Widget build(BuildContext context) {

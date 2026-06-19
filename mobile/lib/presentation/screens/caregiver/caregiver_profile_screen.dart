@@ -57,7 +57,7 @@ class CaregiverProfileScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.star, color: Color(0xFFF59E0B), size: 18),
+                    const Icon(Icons.star, color: AppColors.ratingColor, size: 18),
                     const SizedBox(width: 4),
                     Text(
                       '${user.averageRating?.toStringAsFixed(1) ?? '0.0'}',
@@ -69,26 +69,8 @@ class CaregiverProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: user.status == 'ACTIVE'
-                        ? AppColors.successBg
-                        : AppColors.statusCancelledBg,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    user.status == 'ACTIVE' ? 'Ativo' : 'Inativo',
-                    style: TextStyle(
-                      color: user.status == 'ACTIVE'
-                          ? AppColors.statusInProgress
-                          : AppColors.statusCancelled,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 12),
+                _StatusToggle(isActive: user.status == 'ACTIVE'),
               ],
             ),
           ),
@@ -188,7 +170,7 @@ class CaregiverProfileScreen extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
                         child: const Text('Sair'),
                       ),
                     ],
@@ -198,12 +180,73 @@ class CaregiverProfileScreen extends StatelessWidget {
                   await context.read<AuthProvider>().logout();
                 }
               },
-              icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text('Sair da conta', style: TextStyle(color: Colors.red)),
-              style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
+              icon: const Icon(Icons.logout, color: AppColors.error),
+              label: const Text('Sair da conta', style: TextStyle(color: AppColors.error)),
+              style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.error)),
             ),
           ),
           const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusToggle extends StatelessWidget {
+  final bool isActive;
+
+  const _StatusToggle({required this.isActive});
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.read<AuthProvider>();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isActive ? AppColors.successLight : AppColors.background,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive ? AppColors.successBorder : AppColors.divider,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.success : AppColors.textSecondary,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            isActive ? 'Disponível para atendimentos' : 'Indisponível no momento',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isActive ? AppColors.success : AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Switch(
+            value: isActive,
+            activeThumbColor: AppColors.success,
+            onChanged: (val) async {
+              final newStatus = val ? 'ACTIVE' : 'INACTIVE';
+              final ok = await auth.updateCaregiverStatus(newStatus);
+              if (!context.mounted) return;
+              if (!ok) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(auth.error ?? 'Erro ao atualizar status'),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+          ),
         ],
       ),
     );

@@ -130,6 +130,46 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> refreshProfile() async {
+    if (_user == null || _user!.role != 'caregiver') return;
+    try {
+      final refreshed = await _repo.fetchCaregiverProfile(_user!.id, _user!.token);
+      _user = refreshed;
+      await TokenStorage.saveUser(_user!.toJson());
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  Future<bool> updateCaregiverStatus(String status) async {
+    if (_user == null) return false;
+    _loading = true;
+    notifyListeners();
+    try {
+      await _repo.updateCaregiverStatus(status, _user!.token);
+      _user = AuthUser(
+        id: _user!.id,
+        role: _user!.role,
+        name: _user!.name,
+        email: _user!.email,
+        phone: _user!.phone,
+        token: _user!.token,
+        address: _user!.address,
+        neighborhoods: _user!.neighborhoods,
+        services: _user!.services,
+        averageRating: _user!.averageRating,
+        status: status,
+      );
+      await TokenStorage.saveUser(_user!.toJson());
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceFirst('Exception: ', '');
+      return false;
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> logout() async {
     _socket.disconnect();
     await TokenStorage.clear();

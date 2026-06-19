@@ -87,7 +87,8 @@ class ServiceRequestProvider extends ChangeNotifier {
   Future<bool> accept(String id, String token) async {
     try {
       final updated = await _repo.accept(id, token);
-      _updateInOpen(updated);
+      _openRequests.removeWhere((r) => r.id == updated.id);
+      _updateInMine(updated);
       return true;
     } catch (e) {
       _error = e.toString().replaceFirst('Exception: ', '');

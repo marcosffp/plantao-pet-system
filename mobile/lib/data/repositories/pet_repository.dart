@@ -42,7 +42,7 @@ class PetRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 201) {
-      throw Exception(body['message'] ?? 'Erro ao cadastrar pet');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao cadastrar pet');
     }
     return Pet.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -67,12 +67,12 @@ class PetRepository {
         'species': species,
         'breed': breed,
         'age': age,
-        if (specialNotes != null && specialNotes.isNotEmpty) 'specialNotes': specialNotes,
+        'specialNotes': (specialNotes != null && specialNotes.isNotEmpty) ? specialNotes : '',
       }),
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao editar pet');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao editar pet');
     }
     return Pet.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -84,7 +84,7 @@ class PetRepository {
     );
     if (res.statusCode != 204) {
       final body = jsonDecode(res.body) as Map<String, dynamic>;
-      throw Exception(body['message'] ?? 'Erro ao deletar pet');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao deletar pet');
     }
   }
 }

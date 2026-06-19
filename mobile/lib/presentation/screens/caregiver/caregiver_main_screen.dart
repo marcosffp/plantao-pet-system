@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/notification_provider.dart';
 import '../../providers/service_request_provider.dart';
@@ -53,7 +52,10 @@ class _CaregiverMainScreenState extends State<CaregiverMainScreen> {
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        onTap: (i) {
+          setState(() => _currentIndex = i);
+          if (i == 3) context.read<AuthProvider>().refreshProfile();
+        },
         items: [
           const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

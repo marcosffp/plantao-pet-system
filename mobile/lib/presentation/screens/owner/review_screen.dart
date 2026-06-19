@@ -46,7 +46,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Avaliação enviada com sucesso!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
         Navigator.pop(context);
@@ -57,7 +57,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -127,10 +127,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
               children: List.generate(5, (i) {
                 return GestureDetector(
                   onTap: () => setState(() => _rating = i + 1),
-                  child: Icon(
-                    i < _rating ? Icons.star : Icons.star_border,
-                    size: 48,
-                    color: const Color(0xFFF59E0B),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Icon(
+                      i < _rating ? Icons.star : Icons.star_border,
+                      size: 48,
+                      color: AppColors.ratingColor,
+                    ),
                   ),
                 );
               }),
@@ -139,9 +142,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
             TextFormField(
               controller: _commentCtrl,
               maxLines: 4,
-              style: const TextStyle(color: Colors.white),
               decoration: const InputDecoration(
                 hintText: 'Conte como foi a experiência...',
+                alignLabelWithHint: true,
               ),
             ),
             const SizedBox(height: 32),

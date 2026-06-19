@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(auth.error ?? 'Erro ao fazer login'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _Header(),
+              const _Header(),
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _RoleToggle(
+                      RoleToggle(
                         isOwner: _isOwner,
                         onChanged: (v) => setState(() => _isOwner = v),
                       ),
@@ -91,7 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress,
-                        style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
                           hintText: 'seu@email.com',
                         ),
@@ -112,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _passCtrl,
                         obscureText: _obscure,
-                        style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: '••••••••',
                           suffixIcon: IconButton(
@@ -121,6 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: AppColors.textHint,
                             ),
                             onPressed: () => setState(() => _obscure = !_obscure),
+                            tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
                           ),
                         ),
                         validator: (v) =>
@@ -194,6 +193,8 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class _Header extends StatelessWidget {
+  const _Header();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -215,9 +216,7 @@ class _Header extends StatelessWidget {
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Center(
-              child: Text('🐾', style: TextStyle(fontSize: 36)),
-            ),
+            child: const Icon(Icons.pets, color: Colors.white, size: 36),
           ),
           const SizedBox(height: 16),
           RichText(
@@ -254,11 +253,11 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _RoleToggle extends StatelessWidget {
+class RoleToggle extends StatelessWidget {
   final bool isOwner;
   final ValueChanged<bool> onChanged;
 
-  const _RoleToggle({required this.isOwner, required this.onChanged});
+  const RoleToggle({super.key, required this.isOwner, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {

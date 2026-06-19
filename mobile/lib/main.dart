@@ -5,7 +5,6 @@ import 'core/theme/app_theme.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/notification_repository.dart';
 import 'data/repositories/pet_repository.dart';
-import 'data/repositories/review_repository.dart';
 import 'data/repositories/service_request_repository.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/notification_provider.dart';
@@ -83,7 +82,7 @@ class _AppRootState extends State<_AppRoot> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('🐾', style: TextStyle(fontSize: 64)),
+              Icon(Icons.pets, size: 64, color: AppColors.primary),
               SizedBox(height: 16),
               CircularProgressIndicator(),
             ],

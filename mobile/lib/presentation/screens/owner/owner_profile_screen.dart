@@ -124,7 +124,7 @@ class OwnerProfileScreen extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
                         child: const Text('Sair'),
                       ),
                     ],
@@ -134,9 +134,9 @@ class OwnerProfileScreen extends StatelessWidget {
                   await context.read<AuthProvider>().logout();
                 }
               },
-              icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text('Sair da conta', style: TextStyle(color: Colors.red)),
-              style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
+              icon: const Icon(Icons.logout, color: AppColors.error),
+              label: const Text('Sair da conta', style: TextStyle(color: AppColors.error)),
+              style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.error)),
             ),
           ),
           const SizedBox(height: 32),

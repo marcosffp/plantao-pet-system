@@ -95,7 +95,7 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('O agendamento deve ser feito com pelo menos 2 horas de antecedência'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -115,7 +115,7 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Solicitação criada com sucesso!'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
       Navigator.pop(context);
@@ -124,7 +124,7 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(err ?? 'Erro ao criar solicitação'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -161,7 +161,7 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                         child: Row(
                           children: pets.map((pet) {
                             final selected = _selectedPet?.id == pet.id;
-                            final emoji = AppConstants.speciesEmoji[pet.species] ?? '🐾';
+                            final iconColor = AppConstants.speciesColor(pet.species);
                             return GestureDetector(
                               onTap: () => setState(() => _selectedPet = pet),
                               child: Container(
@@ -178,8 +178,20 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                                 ),
                                 child: Column(
                                   children: [
-                                    Text(emoji, style: const TextStyle(fontSize: 32)),
-                                    const SizedBox(height: 4),
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: iconColor.withOpacity(0.12),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: AppConstants.speciesIconWidget(
+                                        pet.species,
+                                        size: 18,
+                                        color: selected ? iconColor : AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
                                     Text(
                                       pet.name,
                                       style: TextStyle(
@@ -277,7 +289,8 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.calendar_today_outlined, size: 16, color: AppColors.primary),
+                              const Icon(Icons.calendar_today_outlined,
+                                  size: 16, color: AppColors.primary),
                               const SizedBox(width: 8),
                               Text(
                                 _scheduledDate != null
@@ -335,25 +348,9 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                 title: 'ENDEREÇO DE ATENDIMENTO',
                 child: TextFormField(
                   controller: _addressCtrl,
-                  style: const TextStyle(color: AppColors.textPrimary),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Rua, número, bairro',
-                    hintStyle: const TextStyle(color: AppColors.textHint),
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.divider),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.divider),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 2),
-                    ),
-                    prefixIcon: const Icon(Icons.location_on_outlined, color: AppColors.primary),
+                    prefixIcon: Icon(Icons.location_on_outlined, color: AppColors.primary),
                   ),
                   validator: (v) => v == null || v.length < 5 ? 'Endereço obrigatório' : null,
                 ),
@@ -362,14 +359,14 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppColors.warningBg,
+                  color: AppColors.warningLight,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.warningBorder),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline, color: Color(0xFFF59E0B), size: 20),
+                    const Icon(Icons.info_outline, color: AppColors.warning, size: 20),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text.rich(
@@ -381,12 +378,11 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                               text: '2 horas de antecedência',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFFD97706),
+                                color: AppColors.warningText,
                               ),
                             ),
                             TextSpan(
-                              text:
-                                  '. A solicitação expira automaticamente em 24h se não aceita.',
+                              text: '. A solicitação expira automaticamente em 24h se não aceita.',
                             ),
                           ],
                         ),

@@ -1,145 +1,193 @@
 <img width="1600" style="height:auto; border-radius: 12px;" alt="banner" src="images/banner.png" />
 
-# App do Dono do Pet — Documentação Técnica
+# App Mobile — Perfil: Dono do Pet
 
-> Módulo Flutter do **Plantão Pet** voltado ao dono do animal. Permite cadastro, login, gerenciamento de pets, abertura de solicitações de serviço, acompanhamento em tempo real e avaliação de cuidadores.
+> Documentação técnica do **Plantão Pet** sob a perspectiva do **Dono do Pet**. O app Flutter é único — o mesmo binário serve ambos os perfis. Ao fazer login como Dono, o sistema exibe a interface descrita neste documento. O perfil é determinado no momento do cadastro e nunca muda.
 
 ---
 
 ## Sumário
 
-- [Visão geral](#visão-geral)
-- [Arquitetura](#arquitetura)
-- [Estrutura de pastas](#estrutura-de-pastas)
+- [O que é o perfil Dono?](#o-que-é-o-perfil-dono)
+- [Fluxo completo do Dono](#fluxo-completo-do-dono)
+- [Arquitetura do app](#arquitetura-do-app)
+- [Estrutura de arquivos](#estrutura-de-arquivos)
 - [Configuração e execução](#configuração-e-execução)
-- [Segurança](#segurança)
-- [Navegação e telas](#navegação-e-telas)
-- [Camada de dados](#camada-de-dados)
-- [Providers (estado)](#providers-estado)
-- [Tempo real via Socket.IO](#tempo-real-via-socketio)
-- [Tema e design system](#tema-e-design-system)
+- [Segurança — JWT e armazenamento](#segurança--jwt-e-armazenamento)
+- [Inicialização — como o app decide o que mostrar](#inicialização--como-o-app-decide-o-que-mostrar)
+- [Navegação — as 5 abas do Dono](#navegação--as-5-abas-do-dono)
+- [Telas detalhadas](#telas-detalhadas)
+  - [Login](#login)
+  - [Cadastro](#cadastro)
+  - [Início (Home)](#início-home)
+  - [Criar Solicitação](#criar-solicitação)
+  - [Detalhe da Solicitação](#detalhe-da-solicitação)
+  - [Perfil do Cuidador (tela compartilhada)](#perfil-do-cuidador-tela-compartilhada)
+  - [Avaliação](#avaliação)
+  - [Pets](#pets)
+  - [Criar / Editar Pet](#criar--editar-pet)
+  - [Explorar Cuidadores](#explorar-cuidadores)
+  - [Alertas / Notificações](#alertas--notificações)
+  - [Perfil do Dono](#perfil-do-dono)
+- [Modelos de dados](#modelos-de-dados)
+- [Repositórios — acesso à API](#repositórios--acesso-à-api)
+- [Providers — gerenciamento de estado](#providers--gerenciamento-de-estado)
+- [Serviço de Socket.IO — tempo real](#serviço-de-socketio--tempo-real)
+- [Widgets reutilizáveis](#widgets-reutilizáveis)
+- [Cores e tema](#cores-e-tema)
 - [Dependências](#dependências)
 
 ---
 
-## Visão geral
+## O que é o perfil Dono?
 
-O app do dono é uma das duas interfaces Flutter do sistema. Ele se comunica com o backend Node.js via HTTP/REST e recebe eventos em tempo real via Socket.IO (WebSocket). O app persiste o token JWT no Keychain/Keystore do dispositivo e reconstrói a sessão automaticamente ao abrir.
+O **Dono do Pet** é o usuário que possui animais de estimação e precisa contratar serviços de cuidado para eles. Ele é quem inicia o ciclo de vida de uma solicitação de serviço. No app, o Dono pode:
 
-**Fluxo principal do dono:**
+- Cadastrar e gerenciar seus pets (espécie, raça, idade, observações de saúde)
+- Abrir solicitações de serviço para qualquer pet, definindo tipo de serviço, data, horário e endereço de encontro
+- Aguardar que um cuidador aceite — e ser notificado em tempo real assim que isso acontecer, sem precisar atualizar a tela
+- Acompanhar cada etapa do serviço: criado → aceito → em andamento → concluído
+- Cancelar uma solicitação que ainda não foi aceita
+- Explorar o perfil público de qualquer cuidador cadastrado no sistema
+- Avaliar o cuidador com nota (1–5 estrelas) e comentário após o serviço ser concluído
+- Ver o histórico de notificações recebidas
 
-```
-Cadastro → Login → Home (solicitações)
-                       ↳ Criar solicitação → Aguardar aceite → Acompanhar → Avaliar
-             → Pets → Cadastrar / Editar / Deletar pet
-             → Alertas → Histórico de notificações
-             → Perfil → Dados da conta / Logout
-```
+O Dono **não pode** aceitar solicitações, controlar disponibilidade, nem ver filas de trabalho — essas são funções exclusivas do perfil Cuidador.
 
 ---
 
-## Arquitetura
-
-O app segue **Clean Architecture**, com dependências sempre apontando para dentro: as telas conhecem os providers, os providers conhecem os repositórios/serviços, e os repositórios conhecem os modelos — nunca o caminho inverso.
+## Fluxo completo do Dono
 
 ```mermaid
-flowchart TB
-    subgraph Presentation["presentation/ — UI + estado"]
-        Screens["screens/<br/>login, home, pets, criar solicitação,<br/>detalhe, notificações, perfil, avaliação"]
-        Widgets["widgets/<br/>PetCard · ServiceRequestCard · StatusBadge"]
-        Providers["providers/ (ChangeNotifier)<br/>AuthProvider · PetProvider<br/>ServiceRequestProvider · NotificationProvider"]
-    end
+flowchart TD
+    START([Abrir o app])
+    CHECK{Sessão salva?}
+    LOGIN[Tela de Login / Cadastro]
+    MAIN["OwnerMainScreen (5 abas)"]
 
-    subgraph Data["data/ — acesso à API"]
-        Repositories["repositories/<br/>AuthRepository · PetRepository<br/>ServiceRequestRepository · ReviewRepository<br/>NotificationRepository"]
-        Models["models/<br/>AuthUser · Pet · ServiceRequest<br/>AppNotification · Review"]
-    end
+    START --> CHECK
+    CHECK -->|Não| LOGIN
+    CHECK -->|Sim| MAIN
 
-    subgraph Services["services/ — tempo real"]
-        SocketService["SocketService<br/>(socket_io_client)"]
-    end
+    MAIN --> ABA0["Aba Início\nLista de solicitações + filtros"]
+    MAIN --> ABA1["Aba Pets\nLista de pets cadastrados"]
+    MAIN --> ABA2["Aba Cuidadores\nLista de cuidadores disponíveis"]
+    MAIN --> ABA3["Aba Alertas\nHistórico de notificações (badge)"]
+    MAIN --> ABA4["Aba Perfil\nDados da conta + Sair"]
 
-    subgraph Core["core/ — transversal"]
-        CoreItems["theme · constants · utils (TokenStorage)"]
-    end
+    ABA0 -->|"Toque no card"| DETAIL["Detalhe da Solicitação"]
+    DETAIL -->|"Status OPEN"| CANCEL["Cancelar (menu ···)"]
+    DETAIL -->|"COMPLETED + sem avaliação"| REVIEW["Avaliar Cuidador"]
+    DETAIL -->|"Toque no cuidador"| CPERFIL["Perfil do Cuidador"]
 
-    Widgets --> Screens
-    Screens --> Providers
-    Providers --> Repositories
-    Providers --> SocketService
-    Repositories --> Models
+    ABA0 -->|"FAB +"| CREATE_SR["Criar Solicitação\npet + tipo + data + hora + endereço"]
 
-    Repositories -- "HTTP REST (pacote http)" --> Backend[("Backend REST<br/>Node.js/Express")]
-    SocketService -- "WebSocket (Socket.IO)" --> Backend
+    ABA1 -->|"Botão editar"| EDIT_PET["Criar/Editar Pet (preenchido)"]
+    ABA1 -->|"Botão excluir"| CONFIRM["AlertDialog de confirmação"]
+    ABA1 -->|"FAB +"| NEW_PET["Criar/Editar Pet (vazio)"]
 
-    Screens -.-> Core
-    Providers -.-> Core
-    Repositories -.-> Core
+    ABA2 -->|"Toque no card"| CDETAIL["Perfil do Cuidador (com avaliações)"]
 ```
-
-> Estrutura de pastas correspondente em [Estrutura de pastas](#estrutura-de-pastas).
-
-**Gerenciamento de estado:** `provider` com `ChangeNotifier`. Cada domínio tem seu próprio provider (`AuthProvider`, `PetProvider`, `ServiceRequestProvider`, `NotificationProvider`).
-
-**Comunicação com API:** pacote `http`. Cada repositório encapsula um domínio da API e lança `Exception` em caso de erro, que o provider captura e expõe via `error`.
 
 ---
 
-## Estrutura de pastas
+## Arquitetura do app
+
+O app segue **Clean Architecture** — cada camada conhece apenas a camada imediatamente abaixo, nunca acima:
+
+```mermaid
+flowchart TD
+    subgraph PRESENTATION["presentation/"]
+        SCREENS["screens/\nowner/ · auth/ · shared/"]
+        PROVIDERS["providers/\nAuthProvider · PetProvider\nServiceRequestProvider · NotificationProvider"]
+        WIDGETS["widgets/\nPetCard · ServiceRequestCard · StatusBadge"]
+        SCREENS <--> PROVIDERS
+    end
+
+    subgraph DATA["data/"]
+        REPOS["repositories/\nAuthRepository · PetRepository · ServiceRequestRepository\nReviewRepository · NotificationRepository · CaregiverRepository"]
+        MODELS["models/\nAuthUser · Pet · ServiceRequest · AppNotification · Review"]
+    end
+
+    subgraph SVC["services/"]
+        SOCKET["SocketService ← socket_io_client"]
+    end
+
+    subgraph CORE["core/"]
+        THEME["theme/app_theme.dart → paleta de cores e tema Material 3"]
+        CONSTANTS["constants/app_constants.dart → URLs, labels, ícones de enum"]
+        TOKEN["utils/token_storage.dart → JWT armazenado com criptografia"]
+    end
+
+    BACKEND["Backend Node.js (:3000)"]
+
+    PRESENTATION -->|"lê / chama"| DATA
+    DATA -->|"HTTP REST"| BACKEND
+    SOCKET <-->|"WebSocket"| BACKEND
+```
+
+**Gerenciamento de estado:** `provider` (`ChangeNotifier`). Quatro providers independentes, cada um responsável por um domínio.
+
+**Comunicação REST:** pacote `http`. Cada repositório encapsula as chamadas de um domínio e lança `Exception` em caso de erro HTTP; o provider captura e expõe no campo `error`.
+
+---
+
+## Estrutura de arquivos
 
 ```
-mobile/
-├── lib/
-│   ├── core/
-│   │   ├── constants/
-│   │   │   └── app_constants.dart        ← baseUrl, socketUrl, labels de enum
-│   │   ├── theme/
-│   │   │   └── app_theme.dart            ← AppColors + AppTheme (Material 3)
-│   │   └── utils/
-│   │       └── token_storage.dart        ← JWT e dados do usuário no Secure Storage
-│   ├── data/
-│   │   ├── models/
-│   │   │   ├── auth_model.dart           ← AuthUser
-│   │   │   ├── pet_model.dart            ← Pet
-│   │   │   ├── service_request_model.dart ← ServiceRequest + embeds
-│   │   │   ├── notification_model.dart   ← AppNotification
-│   │   │   └── review_model.dart
-│   │   └── repositories/
-│   │       ├── auth_repository.dart      ← login / register owner & caregiver
-│   │       ├── pet_repository.dart       ← CRUD de pets
-│   │       ├── service_request_repository.dart
-│   │       ├── review_repository.dart
-│   │       └── notification_repository.dart
-│   ├── presentation/
-│   │   ├── providers/
-│   │   │   ├── auth_provider.dart
-│   │   │   ├── pet_provider.dart
-│   │   │   ├── service_request_provider.dart
-│   │   │   └── notification_provider.dart
-│   │   ├── screens/
-│   │   │   ├── auth/
-│   │   │   │   ├── login_screen.dart
-│   │   │   │   └── register_screen.dart
-│   │   │   └── owner/
-│   │   │       ├── owner_main_screen.dart          ← shell com BottomNavigationBar
-│   │   │       ├── owner_home_screen.dart          ← lista de solicitações + filtros
-│   │   │       ├── pets_screen.dart                ← lista de pets
-│   │   │       ├── create_pet_screen.dart          ← criar e editar pet
-│   │   │       ├── owner_notifications_screen.dart ← alertas em tempo real
-│   │   │       ├── owner_profile_screen.dart       ← dados da conta + logout
-│   │   │       ├── create_service_request_screen.dart
-│   │   │       ├── service_request_detail_screen.dart ← detalhes + cancelar + avaliar
-│   │   │       └── review_screen.dart
-│   │   └── widgets/
-│   │       ├── pet_card.dart
-│   │       ├── service_request_card.dart
-│   │       └── status_badge.dart
-│   ├── services/
-│   │   └── socket_service.dart
-│   └── main.dart
-├── .env                  ← URLs de ambiente (gitignored)
-├── .env.example          ← template público
-└── pubspec.yaml
+mobile/lib/
+├── main.dart                                       ← ponto de entrada
+│
+├── core/
+│   ├── constants/app_constants.dart               ← URLs, labels, ícones
+│   ├── theme/app_theme.dart                       ← cores e tema
+│   └── utils/token_storage.dart                  ← JWT seguro
+│
+├── data/
+│   ├── models/
+│   │   ├── auth_model.dart                        ← AuthUser
+│   │   ├── pet_model.dart                         ← Pet
+│   │   ├── service_request_model.dart             ← ServiceRequest + aninhados
+│   │   ├── notification_model.dart                ← AppNotification
+│   │   └── review_model.dart                      ← Review
+│   └── repositories/
+│       ├── auth_repository.dart
+│       ├── pet_repository.dart
+│       ├── service_request_repository.dart
+│       ├── review_repository.dart
+│       ├── notification_repository.dart
+│       └── caregiver_repository.dart              ← inclui CaregiverSummary
+│
+├── presentation/
+│   ├── providers/
+│   │   ├── auth_provider.dart
+│   │   ├── pet_provider.dart
+│   │   ├── service_request_provider.dart
+│   │   └── notification_provider.dart
+│   ├── screens/
+│   │   ├── auth/
+│   │   │   ├── login_screen.dart                 ← Login (dono e cuidador)
+│   │   │   └── register_screen.dart              ← Cadastro (dono e cuidador)
+│   │   ├── owner/                                ← TELAS EXCLUSIVAS DO DONO
+│   │   │   ├── owner_main_screen.dart            ← shell com 5 abas
+│   │   │   ├── owner_home_screen.dart            ← lista de solicitações
+│   │   │   ├── create_service_request_screen.dart
+│   │   │   ├── service_request_detail_screen.dart
+│   │   │   ├── pets_screen.dart
+│   │   │   ├── create_pet_screen.dart
+│   │   │   ├── caregivers_screen.dart            ← browse de cuidadores
+│   │   │   ├── review_screen.dart
+│   │   │   ├── owner_notifications_screen.dart
+│   │   │   └── owner_profile_screen.dart
+│   │   └── shared/
+│   │       └── caregiver_detail_screen.dart      ← perfil público de cuidador
+│   └── widgets/
+│       ├── pet_card.dart
+│       ├── service_request_card.dart
+│       └── status_badge.dart
+│
+└── services/
+    └── socket_service.dart
 ```
 
 ---
@@ -148,28 +196,31 @@ mobile/
 
 ### Pré-requisitos
 
-- Flutter SDK 3.7+
-- Xcode (iOS) ou Android Studio (Android)
-- Backend rodando (ver [documentação do backend](../README.md))
+- Flutter SDK 3.3.0+
+- Xcode (para iOS) ou Android Studio (para Android)
+- Backend Plantão Pet rodando — ver [docs/backend-api.md](backend-api.md)
 
 ### Variáveis de ambiente
 
-Copie o template e ajuste as URLs:
+As URLs da API são injetadas em **tempo de compilação** com `--dart-define-from-file`. Nunca ficam hardcoded no código.
 
 ```bash
-cp mobile/.env.example mobile/.env
+cd mobile
+cp .env.example .env
 ```
 
-Conteúdo padrão para desenvolvimento local com iOS Simulator:
-
+Edite `.env`:
 ```env
+# iOS Simulator (padrão)
 BASE_URL=http://localhost:3000
 SOCKET_URL=http://localhost:3000
+
+# Android Emulator (troque se for rodar no Android)
+# BASE_URL=http://10.0.2.2:3000
+# SOCKET_URL=http://10.0.2.2:3000
 ```
 
-> Para Android Emulator, troque `localhost` por `10.0.2.2`.
-
-### Rodar o app
+### Executar
 
 ```bash
 cd mobile
@@ -177,52 +228,27 @@ flutter pub get
 flutter run --dart-define-from-file=.env
 ```
 
-### Build de produção
-
+Para especificar um simulador (ver a seção de dois simuladores no README):
 ```bash
-# iOS
-flutter build ios --dart-define-from-file=.env.production
-
-# Android
-flutter build apk --dart-define-from-file=.env.production
-```
-
-### Primeira vez (gerar pastas nativas)
-
-Se a pasta `ios/` ou `android/` não existir:
-
-```bash
-flutter create . --platforms ios,android
-flutter pub get
+flutter run -d "iPhone 17" --dart-define-from-file=.env
 ```
 
 ---
 
-## Segurança
+## Segurança — JWT e armazenamento
 
-### Armazenamento de credenciais
+### TokenStorage (`core/utils/token_storage.dart`)
 
-O token JWT e os dados do usuário são armazenados com **`flutter_secure_storage`**, que usa:
+Toda credencial é armazenada com **`flutter_secure_storage`** — nunca em `SharedPreferences` comum:
 
-| Plataforma | Mecanismo |
-|---|---|
-| iOS | Keychain (`KeychainAccessibility.first_unlock`) |
-| Android | `EncryptedSharedPreferences` (AES-256) |
+| Dado salvo | Chave | Mecanismo no iOS | Mecanismo no Android |
+|---|---|---|---|
+| JWT | `jwt_token` | Keychain (`first_unlock`) | `EncryptedSharedPreferences` |
+| Dados do usuário (JSON) | `user_data` | Keychain | `EncryptedSharedPreferences` |
 
-O `SharedPreferences` (texto puro, acessível via backup do dispositivo) **não é usado** para dados sensíveis.
+**`TokenStorage.decodeToken(token)`** — extrai o payload do JWT sem verificar assinatura. Divide por `.`, decodifica o segmento do meio com base64Url e faz `jsonDecode`. Usado logo após o login para obter o `id` do usuário e fazer a segunda chamada de perfil.
 
-Implementação em `lib/core/utils/token_storage.dart`:
-
-```dart
-static const _storage = FlutterSecureStorage(
-  aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-);
-```
-
-### URLs de ambiente
-
-As URLs da API **não ficam hardcoded** no código. São injetadas em tempo de compilação via `--dart-define-from-file` e acessadas como:
+### URLs como variáveis de compilação
 
 ```dart
 static const String baseUrl = String.fromEnvironment(
@@ -231,356 +257,924 @@ static const String baseUrl = String.fromEnvironment(
 );
 ```
 
-O arquivo `.env` é ignorado pelo git (`.gitignore`). O repositório contém apenas `.env.example`.
-
 ---
 
-## Navegação e telas
+## Inicialização — como o app decide o que mostrar
 
-### Roteamento raiz (`main.dart` → `_AppRoot`)
+**Arquivo:** `main.dart`
 
-O `_AppRoot` decide qual tela exibir com base no estado do `AuthProvider`:
-
-```
-_AppRoot
-├── _checking == true  → splash com CircularProgressIndicator
-├── !auth.isAuthenticated → LoginScreen
-├── auth.user.isOwner  → OwnerMainScreen
-└── auth.user.isCaregiver → CaregiverMainScreen
+O `main()` inicializa os dados de localização pt_BR antes de rodar o app:
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('pt_BR');
+  runApp(const PlantaoPetApp());
+}
 ```
 
-Ao iniciar, `tryAutoLogin()` lê o token do Secure Storage e reconstrói a sessão sem exigir novo login.
+O `PlantaoPetApp` cria uma instância única de `SocketService` e monta o `MultiProvider`:
+
+```dart
+final socket = SocketService();
+MultiProvider(providers: [
+  ChangeNotifierProvider(create: (_) => AuthProvider(AuthRepository(), socket)),
+  ChangeNotifierProvider(create: (_) => PetProvider(PetRepository())),
+  ChangeNotifierProvider(create: (_) => ServiceRequestProvider(ServiceRequestRepository(), socket)),
+  ChangeNotifierProvider(create: (_) => NotificationProvider(NotificationRepository(), socket)),
+], child: MaterialApp(home: const _AppRoot()))
+```
+
+O widget `_AppRoot` tenta o auto-login no `initState` e exibe um splash enquanto verifica:
+
+```mermaid
+flowchart TD
+    INIT["_AppRoot.initState()"] --> AUTO["AuthProvider.tryAutoLogin()"]
+    AUTO --> STORAGE["TokenStorage.getToken()\n+ TokenStorage.getUser()"]
+    STORAGE -->|"Encontrou"| CONNECT["Reconstrói AuthUser\n+ conecta socket"]
+    STORAGE -->|"Não encontrou"| UNAUTH["Permanece não autenticado"]
+
+    BUILD["_AppRoot.build()"]
+    BUILD --> CHECK1{"_checking == true?"}
+    CHECK1 -->|"Sim"| SPLASH["Splash\n(ícone de pets + CircularProgressIndicator)"]
+    CHECK1 -->|"Não"| CHECK2{"isAuthenticated?"}
+    CHECK2 -->|"Não"| LOGINSCREEN["LoginScreen"]
+    CHECK2 -->|"Sim"| CHECK3{"user.isOwner?"}
+    CHECK3 -->|"Sim"| OWNER_MAIN["OwnerMainScreen ← DONO DO PET"]
+    CHECK3 -->|"Não"| CAREGIVER_MAIN["CaregiverMainScreen"]
+```
 
 ---
 
-### Tela de Login (`login_screen.dart`)
+## Navegação — as 5 abas do Dono
 
-Seleção do tipo de conta (Dono / Cuidador) + campos de e-mail e senha. Chama `AuthProvider.loginOwner` ou `loginCaregiver`. Em caso de sucesso, o `_AppRoot` detecta a autenticação via `Consumer` e navega automaticamente.
+**Arquivo:** `owner_main_screen.dart`
+
+`OwnerMainScreen` usa `IndexedStack` + `BottomNavigationBar`. Com `IndexedStack`, as telas são mantidas em memória ao trocar de aba — o estado não é perdido.
+
+No `initState` (via `addPostFrameCallback` para garantir que o contexto está pronto):
+1. `srProvider.loadMine(token)` — carrega as solicitações do dono
+2. `srProvider.listenToSocket(token)` — registra listeners de Socket.IO
+3. `notifProvider.load(token)` — carrega o histórico de notificações
+4. `notifProvider.listenToSocket(token)` — registra listeners de notificação
+
+| Índice | Ícone | Label | Tela | Observação |
+|---|---|---|---|---|
+| 0 | `Icons.home` | Início | `OwnerHomeScreen` | Lista de solicitações + FAB para criar |
+| 1 | `Icons.pets` | Pets | `PetsScreen` | Gerenciar pets + FAB para adicionar |
+| 2 | `Icons.people` | Cuidadores | `CaregiversScreen` | Browse de cuidadores disponíveis |
+| 3 | `Icons.notifications` | Alertas | `OwnerNotificationsScreen` | Badge vermelho com `unreadCount` |
+| 4 | `Icons.person` | Perfil | `OwnerProfileScreen` | Dados + logout |
+
+O badge da aba Alertas lê `NotificationProvider.unreadCount` reativamente.
 
 ---
 
-### Tela de Cadastro (`register_screen.dart`)
+## Telas detalhadas
 
-**Dono do Pet:**
-- Nome, e-mail, telefone, endereço, senha
+### Login
 
-**Cuidador:**
-- Nome, e-mail, telefone, bairros atendidos (separados por vírgula), serviços oferecidos (chips), senha
+**Arquivo:** `screens/auth/login_screen.dart`
 
-Após cadastro bem-sucedido: `Navigator.popUntil(isFirst)` → `_AppRoot` detecta autenticação e exibe a tela principal.
+Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de digitar e-mail e senha.
+
+**Componentes:**
+- `_Header`: área com gradiente roxo-claro, ícone de pets, logo "Plantão**Pet**" em azul e tagline
+- `RoleToggle`: dois botões lado a lado ("Dono do Pet" com `Icons.favorite_border` e "Cuidador" com `Icons.star_border`). O selecionado recebe borda azul e fundo branco
+- Campo e-mail com validação `contains('@')`
+- Campo senha com toggle de visibilidade
+- Botão "Esqueci minha senha" — presente na UI mas sem ação implementada
+- Botão "Entrar" — desabilitado durante loading (exibe `CircularProgressIndicator`)
+- Separador "ou" + botão "Criar conta" → abre `RegisterScreen` com o perfil já selecionado
+
+**Fluxo de login do Dono:**
+1. `_isOwner == true` → chama `AuthProvider.loginOwner(email, senha)`
+2. Provider chama `AuthRepository.loginOwner()` → `POST /auth/owner/login`
+3. Extrai token da resposta, decodifica com `TokenStorage.decodeToken()` para pegar `id`
+4. Faz segunda chamada: `GET /owners/{id}` para buscar dados completos do perfil
+5. Salva token e usuário no `TokenStorage`
+6. Conecta `SocketService` com o token
+7. `_AppRoot` detecta mudança no `AuthProvider` e exibe `OwnerMainScreen`
 
 ---
 
-### Shell principal (`owner_main_screen.dart`)
+### Cadastro
 
-`BottomNavigationBar` com quatro abas usando `IndexedStack` (mantém estado das abas):
+**Arquivo:** `screens/auth/register_screen.dart`
 
-| Índice | Ícone | Tela |
+Tela única para ambos os perfis — a seleção do perfil determina quais campos aparecem.
+
+**Campos para o Dono do Pet:**
+
+| Campo | Validação | Observação |
 |---|---|---|
-| 0 | Home | `OwnerHomeScreen` |
-| 1 | Pets | `PetsScreen` |
-| 2 | Alertas | `OwnerNotificationsScreen` (badge com contador não lidos) |
-| 3 | Perfil | `OwnerProfileScreen` |
+| Tipo de perfil | Obrigatório | `RoleToggle` reaproveitado do Login |
+| Nome completo | Mínimo 2 caracteres | — |
+| Email | Deve conter `@` | — |
+| Telefone | Mínimo 10 dígitos (ignora não-dígitos) | Stripado com `replaceAll(RegExp(r'\D'), '')` antes de enviar |
+| Endereço | Mínimo 5 caracteres | Campo exclusivo do Dono |
+| Senha | Mínimo 6 caracteres | Toggle de visibilidade |
 
-No `initState`, carrega solicitações, notificações e inicia os listeners de Socket.IO.
+Ao submeter:
+1. Valida o formulário
+2. Chama `AuthProvider.registerOwner({name, email, phone, address, password})`
+3. Provider chama `AuthRepository.registerOwner()` → `POST /auth/owner/register`
+4. A resposta já inclui o token — não é necessária segunda chamada
+5. Salva token e usuário, conecta socket
+6. `Navigator.popUntil(isFirst)` → `_AppRoot` detecta autenticação e exibe `OwnerMainScreen`
 
 ---
 
-### Home (`owner_home_screen.dart`)
+### Início (Home)
 
-Lista as solicitações de serviço do dono com filtros por status:
+**Arquivo:** `screens/owner/owner_home_screen.dart`
 
-| Filtro | Status filtrado |
+Tela principal do Dono. Lista todas as suas solicitações de serviço.
+
+**Layout:**
+- `_Header`: fundo branco, saudação "Olá, {primeiro nome}!" + data atual formatada em pt_BR (ex: "quinta-feira, 19 de junho")
+  - Avatar circular azul com iniciais do usuário (ex: "JS")
+- Contador "N no total" e filtros horizontais
+- `SliverList` com `ServiceRequestCard` para cada solicitação filtrada
+
+**Filtros (chips horizontais scrolláveis):**
+
+| Chip | Status filtrado |
 |---|---|
-| Todas | — |
+| Todas | nenhum (exibe todas) |
 | Em andamento | `IN_PROGRESS` |
 | Abertas | `OPEN` |
 
-- **Pull to refresh** → recarrega via API
-- **FAB** (`heroTag: 'fab_home'`) → abre `CreateServiceRequestScreen`
-- Toque em card → `ServiceRequestDetailScreen`
+**Pull to refresh:** chama `srProvider.loadMine(auth.user!.token)`.
+
+**Estado vazio:** ícone de pets cinza + mensagem contextual (muda se há filtro ativo).
+
+**FAB** (`heroTag: 'fab_home'`): abre `CreateServiceRequestScreen`. O `heroTag` personalizado evita conflito com o FAB da tela de Pets.
 
 ---
 
-### Pets (`pets_screen.dart`)
+### Criar Solicitação
 
-Lista todos os pets do dono. Cada `PetCard` exibe:
-- Emoji da espécie, nome, raça, idade
-- Chip de espécie com cor por tipo (azul → cão, roxo → gato)
-- Chip de observações especiais (quando preenchido)
-- Botão de editar (abre `CreatePetScreen` pré-preenchido)
-- Botão de deletar (com `AlertDialog` de confirmação)
+**Arquivo:** `screens/owner/create_service_request_screen.dart`
 
-**FAB** (`heroTag: 'fab_pets'`) → abre `CreatePetScreen` em modo criação.
+Formulário dividido em seções (`_SectionCard` com ícone + título uppercase + conteúdo).
 
-> As duas telas com FAB (`OwnerHomeScreen` e `PetsScreen`) usam `heroTag` distintos para evitar conflito de Hero animation.
+**Seção 1 — SELECIONAR PET:**
+- Carrega os pets do dono via `PetProvider.load()` no `initState`
+- Exibe scroll horizontal de cards de 90px. Cada card tem: ícone da espécie no fundo colorido + nome do pet
+- Pet selecionado recebe borda azul de 2px + fundo `primaryLight`
+- Se não há pets: texto "Cadastre um pet antes de criar uma solicitação"
+
+**Seção 2 — TIPO DE SERVIÇO:**
+Grid 2×2 de opções:
+
+| Código | Linha 1 | Linha 2 | Ícone |
+|---|---|---|---|
+| `WALK_30MIN` | Passeio | 30 min | `Icons.directions_walk` |
+| `WALK_1H` | Passeio | 1 hora | `Icons.directions_walk` |
+| `HOME_VISIT` | Visita | Domiciliar | `Icons.home_outlined` |
+| `HOSTING` | Hospedagem | Temporária | `Icons.bed_outlined` |
+
+**Seção 3 — DATA E HORÁRIO:**
+- Dois campos lado a lado: Data (DatePicker) e Horário (TimePicker)
+- DatePicker: mínimo = agora + 2h, máximo = agora + 90 dias
+
+**Seção 4 — ENDEREÇO DE ATENDIMENTO:**
+- Campo de texto com ícone de localização
+- Validação: mínimo 5 caracteres
+
+**Banner de aviso:** fundo amarelo claro com texto "O agendamento deve ser feito com pelo menos **2 horas de antecedência**. A solicitação expira automaticamente em 24h se não aceita."
+
+**Validação extra no submit:** verifica se `scheduledAt` está no futuro com pelo menos 2h antes de enviar à API.
+
+**Ao submeter com sucesso:** SnackBar verde "Solicitação criada com sucesso!" → `Navigator.pop()`. A nova solicitação é adicionada ao início de `_requests` no provider.
 
 ---
 
-### Criar / Editar Pet (`create_pet_screen.dart`)
+### Detalhe da Solicitação
 
-Tela reutilizável para criação e edição, controlada pelo parâmetro opcional `Pet? pet`:
+**Arquivo:** `screens/owner/service_request_detail_screen.dart`
 
-| Modo | `pet` | Título | Botão | Ação do provider |
-|---|---|---|---|---|
-| Criar | `null` | "Novo Pet" | "Cadastrar Pet" | `PetProvider.create` |
-| Editar | `Pet` | "Editar Pet" | "Salvar alterações" | `PetProvider.update` |
+Tela reativa — assina `ServiceRequestProvider` e encontra o estado atualizado da solicitação via `requests.firstWhere(r.id == _request.id, orElse: () => _request)`. Quando um evento Socket.IO chega e o provider recarrega, esta tela atualiza automaticamente.
+
+**Card principal:**
+- Ícone da espécie (52×52, fundo colorido com opacidade 12%) + nome do pet + tipo de serviço + `StatusBadge`
+- Data formatada `dd/MM/yyyy`, horário `HH:mm` (convertidos para horário local com `.toLocal()`)
+- Endereço de encontro
+
+**Banner Em Andamento** (aparece somente quando `status == 'IN_PROGRESS'` e `caregiver != null`):
+- Fundo verde claro, borda verde: `"[pet.name] está em passeio agora com [caregiver.name]"`
+
+**Card do cuidador** (aparece quando `caregiver != null`):
+- Avatar quadrado azul com iniciais do cuidador
+- Nome e telefone
+- Toque no card → `CaregiverDetailScreen(caregiverId, caregiverName)` (tela de perfil público)
+
+**Timeline de progresso (`_ProgressTimeline`):**
+4 etapas verticais com círculos conectados por linhas. Círculo verde = concluído, cinza = pendente:
+
+| Etapa | Condição para marcar como concluída |
+|---|---|
+| Solicitação criada | Sempre (data/hora do `createdAt`) |
+| Solicitação aceita | `caregiver != null` |
+| Serviço iniciado | `status == 'IN_PROGRESS'` ou `status == 'COMPLETED'` |
+| Serviço concluído | `status == 'COMPLETED'` |
+
+**Menu ···** (AppBar, `PopupMenuButton`): "Cancelar solicitação" — só aparece quando `status == 'OPEN'`. Exibe `AlertDialog` de confirmação, chama `ServiceRequestProvider.cancel()`, e ao confirmar faz `Navigator.pop()`.
+
+**Botão "Avaliar Cuidador"** — aparece quando `status == 'COMPLETED'` **e** `review == null`. Abre `ReviewScreen`.
+
+**Card de avaliação** — aparece quando `review != null`. Fundo amarelo claro, estrelas (preenchidas ou vazias), comentário em texto.
+
+---
+
+### Perfil do Cuidador (tela compartilhada)
+
+**Arquivo:** `screens/shared/caregiver_detail_screen.dart`
+
+Aberta em dois contextos:
+1. Do `ServiceRequestDetailScreen` ao tocar no card do cuidador
+2. Da `CaregiversScreen` ao tocar em um card da listagem
+
+No `initState`, carrega em paralelo com `Future.wait`:
+```dart
+final results = await Future.wait([
+  _repo.getById(caregiverId, token),    // GET /caregivers/:id
+  _repo.getReviews(caregiverId, token), // GET /caregivers/:id/reviews
+]);
+```
+
+**Layout:**
+- Avatar circular azul com iniciais (80×80)
+- Nome, média de estrelas + total de avaliações
+- Badge "Disponível" (verde) ou "Indisponível" (cinza) — baseado em `status == 'ACTIVE'`
+
+**Seção INFORMAÇÕES:** telefone + bairros atendidos
+
+**Seção SERVIÇOS OFERECIDOS:** chips azuis com label traduzido (usa `AppConstants.serviceTypeLabels`)
+
+**Seção AVALIAÇÕES:** lista de `_ReviewTile` — cada um exibe estrelas, data, comentário e divisor
+
+---
+
+### Avaliação
+
+**Arquivo:** `screens/owner/review_screen.dart`
+
+Acessível somente a partir do `ServiceRequestDetailScreen` quando `status == 'COMPLETED'` e ainda não há avaliação.
+
+**Layout:**
+- Avatar quadrado azul com iniciais do cuidador (80×80)
+- Nome do cuidador + nome do pet
+- Seletor de estrelas: 5 ícones `Icons.star` / `Icons.star_border` tocáveis. Rating padrão = 5
+- Campo de comentário multi-linha (obrigatório)
+- Botão "Enviar Avaliação" — desabilitado durante loading
+
+**Implementação:** `ReviewScreen` instancia `ReviewRepository()` diretamente (sem provider). Envia:
+```
+POST /reviews  { serviceRequestId, caregiverId, rating, comment }
+```
+
+**Ao submeter com sucesso:** SnackBar verde → `Navigator.pop()` × 2 (fecha a avaliação e fecha o detalhe da solicitação, voltando à Home).
+
+---
+
+### Pets
+
+**Arquivo:** `screens/owner/pets_screen.dart`
+
+`PetsScreen` carrega os pets no `initState` via `PetProvider.load()`. Após uma edição ou exclusão, chama `_load()` novamente via `.then((_) => _load())` no callback do `Navigator.push`.
+
+**Cabeçalho:**
+- Título "Meus Pets" + subtítulo "Gerencie seus animais cadastrados"
+- Badge azul no canto superior direito com o total de pets
+
+**Lista:**
+- Um `PetCard` para cada pet
+- Após todos os pets: card informativo "Adicionar mais pets pelo botão +" (em fundo azul claro)
+- Estado vazio: ícone cinza + link "Adicionar pet"
+
+**FAB** (`heroTag: 'fab_pets'`): abre `CreatePetScreen` (modo criação).
+
+**Exclusão:** `AlertDialog` de confirmação com o nome do pet. Chama `PetProvider.delete()`.
+
+---
+
+### Criar / Editar Pet
+
+**Arquivo:** `screens/owner/create_pet_screen.dart`
+
+Tela reutilizável. O comportamento muda com base no parâmetro `Pet? pet`:
+
+| `pet` | Modo | Título da AppBar | Texto do botão |
+|---|---|---|---|
+| `null` | Criação | "Novo Pet" | "Cadastrar Pet" |
+| `Pet` preenchido | Edição | "Editar Pet" | "Salvar alterações" |
+
+No modo edição, os controllers são pré-preenchidos com os dados do pet existente.
+
+**Seletor de espécie:**
+3 cards horizontais. Cada um tem: círculo com ícone no topo + label. O selecionado recebe borda azul 2px + fundo `primaryLight`. Cor do ícone muda conforme a espécie:
+- DOG → azul `AppColors.primary`
+- CAT → roxo `AppColors.speciesCat`
+- OTHER → cinza `AppColors.textSecondary`
 
 **Campos:**
-- Espécie (Cão / Gato / Outro) — seletor visual
-- Nome (máx. 10 caracteres no backend)
-- Raça
-- Idade (0–30 anos)
-- Observações especiais (opcional)
 
-**Endpoints chamados:**
-- Criar: `POST /owners/pets`
-- Editar: `PUT /owners/pets/:petId`
+| Campo | Hint | Validação |
+|---|---|---|
+| NOME DO PET | "Ex: Rex, Luna" | Obrigatório (não vazio) |
+| RAÇA | "Ex: Golden Retriever" | Obrigatório |
+| IDADE (anos) | "Ex: 3" | Obrigatório, 0–30, inteiro |
+| OBSERVAÇÕES ESPECIAIS | "Alergias, medicamentos..." | Opcional |
 
----
-
-### Detalhe da Solicitação (`service_request_detail_screen.dart`)
-
-Exibe todas as informações de uma solicitação:
-
-- Cabeçalho: emoji do pet, nome, tipo de serviço, badge de status
-- Data, horário e endereço do atendimento
-- Banner verde quando `IN_PROGRESS` com nome do cuidador
-- Card do cuidador com iniciais e telefone (quando atribuído)
-- **Timeline de progresso** com 4 etapas: criada → aceita → iniciada → concluída
-- Cancelamento via menu (`···`) disponível apenas quando `OPEN`
-- Botão "Avaliar Cuidador" quando `COMPLETED` e sem avaliação
-- Exibe avaliação já feita (estrelas + comentário)
-
-O estado da tela é reativo: assina o `ServiceRequestProvider` para refletir atualizações via Socket.IO sem recarregar a página.
+**Tratamento de `specialNotes`:**
+- Campo vazio → `notes = null`
+- Na criação: `specialNotes` é **omitido** do JSON quando null (Dart collection-if)
+- Na edição: envia `specialNotes: ""` quando null/vazio (o backend normaliza `""` para `null`)
 
 ---
 
-### Criar Solicitação (`create_service_request_screen.dart`)
+### Explorar Cuidadores
 
-Campos:
-- Pet (seleção dos pets cadastrados)
-- Tipo de serviço (`WALK_30MIN`, `WALK_1H`, `HOME_VISIT`, `HOSTING`)
-- Data e horário do atendimento (DatePicker + TimePicker)
-- Endereço do encontro
+**Arquivo:** `screens/owner/caregivers_screen.dart`
 
-Regras validadas no backend:
-- `scheduledAt` deve ser ≥ 2 horas no futuro
-- Pet não pode ter solicitação `OPEN` ou `ACCEPTED` ativa
+Lista todos os cuidadores retornados por `GET /caregivers`. Não usa um provider — instancia `CaregiverRepository()` diretamente com estado local (`setState`).
+
+**Card do cuidador (`_CaregiverCard`):**
+- Avatar circular azul claro com iniciais (52×52)
+- Nome + média de estrelas (se `averageRating != null`)
+- Até 2 bairros (com `c.neighborhoods.take(2)`)
+- Até 2 serviços como chips + "+N" se houver mais
+- Ponto verde (ACTIVE) ou cinza (INACTIVE) no canto direito
+
+**Toque no card:** abre `CaregiverDetailScreen`.
+
+**Botão de atualizar** na AppBar e **pull to refresh** disponíveis.
 
 ---
 
-### Notificações (`owner_notifications_screen.dart`)
+### Alertas / Notificações
 
-Lista de todas as notificações recebidas via Kafka → Socket.IO, persistidas no backend.
+**Arquivo:** `screens/owner/owner_notifications_screen.dart`
 
-| Evento | Ícone |
+Exibe o histórico de notificações recebidas pelo dono.
+
+**Eventos que o Dono recebe:**
+
+| `eventType` | Título exibido | Corpo exibido |
+|---|---|---|
+| `service_request.accepted` | "Solicitação aceita!" | "{caregiverName} aceitou sua solicitação." |
+| `service_request.refused` | "Solicitação recusada" | "Sua solicitação voltou para aberta." |
+| `service_request.in_progress` | "Serviço iniciado!" | "O cuidador iniciou o serviço." |
+| `service.completed` | "Serviço concluído!" | "O serviço foi concluído com sucesso!" |
+
+Notificações não lidas (`readAt == null`) têm fundo diferenciado. Toque em uma notificação chama `NotificationProvider.markRead()` que:
+1. Envia `PATCH /notifications/:id/read` para a API
+2. Emite evento `mark_read` via Socket.IO
+3. Atualiza localmente o `readAt` para `DateTime.now()`
+
+---
+
+### Perfil do Dono
+
+**Arquivo:** `screens/owner/owner_profile_screen.dart`
+
+Tela simples, apenas leitura. Não há edição de dados nesta versão.
+
+**Layout:**
+- Avatar circular azul (80×80) com iniciais
+- Nome do usuário
+- Badge "Dono do Pet" (chip azul claro)
+- Seção INFORMAÇÕES PESSOAIS: Email, Telefone, Endereço (se preenchido)
+
+**Logout:**
+Botão "Sair da conta" (vermelho) → `AlertDialog` "Tem certeza que deseja sair?" → confirmar chama:
+```dart
+AuthProvider.logout()
+  └── SocketService.disconnect()   ← desconecta o WebSocket
+  └── TokenStorage.clear()         ← apaga jwt_token e user_data
+  └── _user = null                 ← dispara notifyListeners()
+  └── _AppRoot reage               ← exibe LoginScreen
+```
+
+---
+
+## Modelos de dados
+
+### `AuthUser` (`data/models/auth_model.dart`)
+
+Representa o usuário autenticado. O mesmo modelo serve Dono e Cuidador.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `String` | UUID único do usuário |
+| `role` | `String` | `'owner'` para o Dono |
+| `name` | `String` | Nome completo |
+| `email` | `String` | E-mail de acesso |
+| `phone` | `String` | Telefone (somente dígitos) |
+| `token` | `String` | JWT Bearer para autenticação nas APIs |
+| `address` | `String?` | Endereço do dono (opcional) |
+| `neighborhoods` | `List<String>?` | Null para o Dono |
+| `services` | `List<String>?` | Null para o Dono |
+| `averageRating` | `double?` | Null para o Dono |
+| `status` | `String?` | Null para o Dono |
+
+**Getters úteis:**
+- `isOwner` → `role == 'owner'`
+- `isCaregiver` → `role == 'caregiver'`
+- `initials` → primeiras letras do primeiro e segundo nome em maiúsculas (ex: "João Silva" → "JS")
+
+---
+
+### `Pet` (`data/models/pet_model.dart`)
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `String` | UUID |
+| `name` | `String` | Nome (validado como não vazio no app) |
+| `species` | `String` | `'DOG'`, `'CAT'` ou `'OTHER'` |
+| `breed` | `String` | Raça |
+| `age` | `int` | Idade em anos |
+| `specialNotes` | `String?` | Observações de saúde/comportamento — pode ser `null` |
+| `ownerId` | `String` | UUID do dono proprietário |
+| `createdAt` | `DateTime` | Data de cadastro (parse de ISO 8601) |
+
+---
+
+### `ServiceRequest` e classes aninhadas (`data/models/service_request_model.dart`)
+
+**`ServiceRequestPet`** — snapshot do pet no momento do serviço:
+
+| Campo | Tipo |
 |---|---|
-| `service_request.accepted` | check_circle |
-| `service_request.refused` | cancel |
-| `service_request.in_progress` | directions_walk |
-| `service.completed` | flag |
-| `review.created` | star |
+| `id` | `String` |
+| `name` | `String` |
+| `species` | `String` |
+| `breed` | `String` |
 
-- Notificações não lidas: fundo azul claro + ponto indicador
-- Toque: marca como lida via `PATCH /notifications/:id/read`
-- Pull to refresh
+**`ServiceRequestUser`** — snapshot simplificado de um usuário:
+
+| Campo | Tipo |
+|---|---|
+| `id` | `String` |
+| `name` | `String` |
+| `phone` | `String` |
+
+Getter `initials` disponível.
+
+**`ServiceRequestReview`** — avaliação associada à solicitação:
+
+| Campo | Tipo |
+|---|---|
+| `id` | `String` |
+| `rating` | `int` (1–5) |
+| `comment` | `String` |
+
+**`ServiceRequest`** — modelo principal:
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `String` | UUID |
+| `petId` | `String` | UUID do pet |
+| `ownerId` | `String` | UUID do dono |
+| `caregiverId` | `String?` | UUID do cuidador (null enquanto OPEN) |
+| `serviceType` | `String` | `WALK_30MIN`, `WALK_1H`, `HOME_VISIT` ou `HOSTING` |
+| `scheduledAt` | `DateTime` | Data/hora agendada (UTC → `.toLocal()` para exibir) |
+| `meetingAddress` | `String` | Endereço de encontro |
+| `status` | `String` | `OPEN`, `ACCEPTED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` ou `REFUSED` |
+| `expiresAt` | `DateTime` | 24h após a criação (para expiração automática) |
+| `createdAt` | `DateTime` | Quando foi criada |
+| `pet` | `ServiceRequestPet` | Dados do pet |
+| `owner` | `ServiceRequestUser` | Dados do dono |
+| `caregiver` | `ServiceRequestUser?` | Dados do cuidador (null enquanto OPEN) |
+| `review` | `ServiceRequestReview?` | Avaliação (null se não foi feita) |
 
 ---
 
-### Perfil (`owner_profile_screen.dart`)
+### `AppNotification` (`data/models/notification_model.dart`)
 
-Exibe nome, badge "Dono do Pet", e-mail, telefone e endereço. Botão de logout com confirmação via `AlertDialog`. O logout limpa o Secure Storage e desconecta o socket.
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `String` | UUID |
+| `userId` | `String` | ID do destinatário |
+| `userRole` | `String` | `'owner'` ou `'caregiver'` |
+| `eventType` | `String` | Tipo do evento Kafka que gerou esta notificação |
+| `payload` | `Map<String, dynamic>` | Dados completos do evento |
+| `requestId` | `String?` | ID da solicitação relacionada (quando aplicável) |
+| `readAt` | `DateTime?` | `null` = não lida |
+| `createdAt` | `DateTime` | Data de criação |
+
+**Getters:**
+- `isRead` → `readAt != null`
+- `title` → texto do título baseado em `eventType` (ex: `service_request.accepted` → "Solicitação aceita!")
+- `body` → texto descritivo, podendo usar dados do `payload` (ex: `payload['caregiverName']`)
 
 ---
 
-## Camada de dados
+### `Review` (`data/models/review_model.dart`)
 
-### Modelos
+Usado pela `CaregiverDetailScreen` para listar avaliações recebidas:
 
-| Modelo | Arquivo | Campos principais |
-|---|---|---|
-| `AuthUser` | `auth_model.dart` | `id`, `role`, `name`, `email`, `phone`, `token`, `address` |
-| `Pet` | `pet_model.dart` | `id`, `name`, `species`, `breed`, `age`, `specialNotes`, `ownerId` |
-| `ServiceRequest` | `service_request_model.dart` | `id`, `status`, `serviceType`, `scheduledAt`, `pet`, `owner`, `caregiver`, `review` |
-| `AppNotification` | `notification_model.dart` | `id`, `title`, `body`, `eventType`, `isRead`, `createdAt` |
-
-### Repositórios e endpoints
-
-#### `AuthRepository`
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `loginOwner` | `POST /auth/owner/login` | Login do dono |
-| `loginCaregiver` | `POST /auth/caregiver/login` | Login do cuidador |
-| `registerOwner` | `POST /auth/owner/register` | Cadastro do dono |
-| `registerCaregiver` | `POST /auth/caregiver/register` | Cadastro do cuidador |
-
-#### `PetRepository`
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `getPets` | `GET /owners/pets` | Lista pets do dono autenticado |
-| `createPet` | `POST /owners/pets` | Cadastra novo pet |
-| `updatePet` | `PUT /owners/pets/:petId` | Edita pet (verifica propriedade no backend) |
-| `deletePet` | `DELETE /owners/pets/:petId` | Deleta pet (verifica propriedade no backend) |
-
-#### `ServiceRequestRepository`
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `getMyRequests` | `GET /service-requests/my` | Solicitações do usuário |
-| `create` | `POST /service-requests` | Criar solicitação |
-| `cancel` | `PATCH /service-requests/:id/cancel` | Cancelar (apenas `OPEN`) |
-
-#### `ReviewRepository`
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `create` | `POST /reviews` | Avaliar cuidador (apenas após `COMPLETED`) |
-
-#### `NotificationRepository`
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `getAll` | `GET /notifications` | Listar notificações |
-| `markRead` | `PATCH /notifications/:id/read` | Marcar como lida |
+| Campo | Tipo |
+|---|---|
+| `id` | `String` |
+| `serviceRequestId` | `String` |
+| `ownerId` | `String` |
+| `caregiverId` | `String` |
+| `rating` | `int` (1–5) |
+| `comment` | `String` |
+| `createdAt` | `DateTime` |
 
 ---
 
-## Providers (estado)
+### `CaregiverSummary` (`data/repositories/caregiver_repository.dart`)
 
-Todos os providers são `ChangeNotifier` registrados no `MultiProvider` do `main.dart`. Expõem `loading`, `error` e os dados do domínio.
+Modelo de cuidador para a listagem e perfil público. Definido no mesmo arquivo do repositório:
+
+| Campo | Tipo |
+|---|---|
+| `id` | `String` |
+| `name` | `String` |
+| `email` | `String` |
+| `phone` | `String` |
+| `neighborhoods` | `List<String>` |
+| `services` | `List<String>` |
+| `averageRating` | `double?` |
+| `totalReviews` | `int?` |
+| `status` | `String` (`'ACTIVE'` ou `'INACTIVE'`) |
+
+Getter `initials` disponível.
+
+---
+
+## Repositórios — acesso à API
+
+Todos os repositórios leem `AppConstants.baseUrl` e lançam `Exception` em erro HTTP.
+
+### `AuthRepository`
+
+| Método | HTTP | Endpoint | Descrição |
+|---|---|---|---|
+| `loginOwner(email, password)` | POST → GET | `/auth/owner/login` → `/owners/{id}` | Faz login (retorna token), decodifica JWT para obter `id`, busca perfil completo |
+| `registerOwner({name, email, phone, address, password})` | POST | `/auth/owner/register` | Cadastra dono; resposta inclui token diretamente nos `data` |
+| `fetchCaregiverProfile(id, token)` | GET | `/caregivers/{id}` | Busca perfil atualizado (chamado pelo AuthProvider ao abrir aba Perfil do Cuidador) |
+| `updateCaregiverStatus(status, token)` | PATCH | `/caregivers/status` | Alterna ACTIVE/INACTIVE (não usado pelo Dono) |
+| `loginCaregiver(email, password)` | POST → GET | `/auth/caregiver/login` → `/caregivers/{id}` | Login do Cuidador |
+| `registerCaregiver({...})` | POST | `/auth/caregiver/register` | Cadastro do Cuidador |
+
+---
+
+### `PetRepository`
+
+| Método | HTTP | Endpoint | Corpo | Descrição |
+|---|---|---|---|---|
+| `getPets(ownerId, token)` | GET | `/owners/pets` | — | Lista todos os pets do dono |
+| `createPet({ownerId, token, name, species, breed, age, specialNotes?})` | POST | `/owners/pets` | JSON sem `specialNotes` quando null | Cria pet; omite `specialNotes` com collection-if |
+| `updatePet({petId, token, name, species, breed, age, specialNotes?})` | PUT | `/owners/pets/{petId}` | Inclui `specialNotes: ""` quando null | Atualiza; backend normaliza `""` → `null` |
+| `deletePet({petId, token})` | DELETE | `/owners/pets/{petId}` | — | Espera `204`; outros status lançam Exception |
+
+---
+
+### `ServiceRequestRepository`
+
+| Método | HTTP | Endpoint | Descrição |
+|---|---|---|---|
+| `getMine(token)` | GET | `/service-requests/my` | Solicitações do dono autenticado |
+| `getOpen(token)` | GET | `/service-requests` | Solicitações OPEN (para o Cuidador) |
+| `getById(id, token)` | GET | `/service-requests/{id}` | Detalhes completos |
+| `create({token, petId, serviceType, scheduledAt, meetingAddress})` | POST | `/service-requests` | `scheduledAt` como ISO 8601 UTC |
+| `cancel(id, token)` | PATCH | `/service-requests/{id}/cancel` | Apenas quando OPEN |
+| `accept(id, token)` | PATCH | `/service-requests/{id}/accept` | Cuidador aceita |
+| `refuse(id, token)` | PATCH | `/service-requests/{id}/refuse` | Cuidador recusa |
+| `start(id, token)` | PATCH | `/service-requests/{id}/start` | Cuidador inicia |
+| `complete(id, token)` | PATCH | `/service-requests/{id}/complete` | Cuidador conclui |
+
+---
+
+### `ReviewRepository`
+
+| Método | HTTP | Endpoint | Corpo | Descrição |
+|---|---|---|---|---|
+| `create({token, serviceRequestId, caregiverId, rating, comment})` | POST | `/reviews` | JSON completo | Cria avaliação; resposta `201` |
+
+---
+
+### `NotificationRepository`
+
+| Método | HTTP | Endpoint | Descrição |
+|---|---|---|---|
+| `getAll(token)` | GET | `/notifications` | Histórico completo |
+| `markRead(id, token)` | PATCH | `/notifications/{id}/read` | Marca como lida |
+
+---
+
+### `CaregiverRepository`
+
+| Método | HTTP | Endpoint | Retorno |
+|---|---|---|---|
+| `getAll(token)` | GET | `/caregivers` | `List<CaregiverSummary>` |
+| `getById(id, token)` | GET | `/caregivers/{id}` | `CaregiverSummary` |
+| `getReviews(id, token)` | GET | `/caregivers/{id}/reviews` | `List<Review>` |
+
+---
+
+## Providers — gerenciamento de estado
+
+Todos os providers estendem `ChangeNotifier`. Campos com `_` são privados e expostos via getters.
 
 ### `AuthProvider`
 
-| Getter | Tipo | Descrição |
-|---|---|---|
-| `user` | `AuthUser?` | Usuário autenticado |
-| `loading` | `bool` | Operação em andamento |
-| `error` | `String?` | Mensagem de erro |
-| `isAuthenticated` | `bool` | `user != null` |
+| Campo | Tipo | Getter público | Descrição |
+|---|---|---|---|
+| `_user` | `AuthUser?` | `user` | Usuário autenticado |
+| `_loading` | `bool` | `loading` | Operação em andamento |
+| `_error` | `String?` | `error` | Último erro (sem prefixo "Exception: ") |
+| — | — | `isAuthenticated` | `_user != null` |
 
-**Métodos:** `tryAutoLogin`, `loginOwner`, `loginCaregiver`, `registerOwner`, `registerCaregiver`, `logout`
+**Métodos:**
+
+| Método | Ação |
+|---|---|
+| `tryAutoLogin()` | Lê `TokenStorage`, reconstrói `AuthUser`, conecta socket |
+| `loginOwner(email, password)` | `POST login` → salva → conecta socket → retorna `bool` |
+| `loginCaregiver(email, password)` | Idem para cuidador |
+| `registerOwner({...})` | `POST register` → salva → conecta socket → retorna `bool` |
+| `registerCaregiver({...})` | Idem para cuidador |
+| `refreshProfile()` | Busca perfil atualizado do cuidador (para `averageRating`). No-op para dono |
+| `updateCaregiverStatus(status)` | Alterna ACTIVE/INACTIVE sem fazer nova requisição de perfil |
+| `logout()` | Desconecta socket → limpa storage → `_user = null` |
+| `clearError()` | Zera `_error` |
+
+---
 
 ### `PetProvider`
 
-| Getter | Tipo | Descrição |
+| Campo | Getter | Descrição |
 |---|---|---|
-| `pets` | `List<Pet>` | Lista local (atualizada otimisticamente) |
-| `loading` | `bool` | — |
-| `error` | `String?` | — |
+| `_pets` | `pets` | Lista de pets do dono |
+| `_loading` | `loading` | — |
+| `_error` | `error` | — |
 
-**Métodos:** `load`, `create`, `update`, `delete`
+**Atualizações otimistas:** a lista local é modificada imediatamente, sem esperar confirmação da UI.
 
-> Atualizações otimistas: `create` adiciona no topo da lista, `update` substitui o item pelo ID, `delete` remove da lista — sem necessidade de recarregar via API.
+| Método | Atualização local |
+|---|---|
+| `load(ownerId, token)` | Substitui `_pets` inteiro |
+| `create({...})` | `_pets = [novoPet, ..._pets]` (insere no topo) |
+| `update({...})` | `_pets.map(p => p.id == petId ? updated : p)` |
+| `delete({petId, token})` | `_pets.where(p => p.id != petId)` |
+| `clearError()` | Zera `_error` |
+
+---
 
 ### `ServiceRequestProvider`
 
-**Métodos:** `loadMine`, `create`, `cancel`, `listenToSocket`
+| Campo | Getter | Descrição |
+|---|---|---|
+| `_requests` | `requests` | Solicitações do usuário autenticado (dono: suas; cuidador: aceitas) |
+| `_openRequests` | `openRequests` | Solicitações OPEN (usado pelo Cuidador) |
+| `_loading` | `loading` | — |
+| `_error` | `error` | — |
 
-O método `listenToSocket` registra listeners no `SocketService` para os eventos `request_accepted`, `request_refused`, `service_started`, `service_completed` e atualiza a lista localmente ao recebê-los.
+**Listeners de Socket.IO** (registrados em `listenToSocket(token)`):
+
+| Evento | Reação |
+|---|---|
+| `new_request` | `loadOpen(token)` — nova solicitação disponível para o Cuidador |
+| `request_accepted` | `loadMine(token)` — atualiza lista do Dono |
+| `request_refused` | `loadMine(token)` |
+| `service_started` | `loadMine(token)` |
+| `service_completed` | `loadMine(token)` |
+
+O mesmo provider lida com eventos de ambos os perfis. O que é chamado depende do contexto:
+- Dono → `listenToSocket` registra os 5 eventos, mas só `request_*` e `service_*` são relevantes
+- Cuidador → registra os mesmos, mas só `new_request` é relevante para a home dele
+
+**Métodos:**
+
+| Método | Comportamento |
+|---|---|
+| `loadMine(token)` | Carrega com loading = true/false |
+| `loadOpen(token)` | Idem para lista de abertas |
+| `create({...})` | `_requests = [nova, ..._requests]` ao criar |
+| `accept(id, token)` | Remove de `_openRequests`, adiciona/atualiza em `_requests` |
+| `refuse(id, token)` | Remove de `_openRequests` |
+| `cancel(id, token)` | Atualiza status em `_requests` via `_updateInMine()` |
+| `start(id, token)` | Idem |
+| `complete(id, token)` | Idem |
+
+`_updateInMine(updated)`: encontra pelo `id` em `_requests` e substitui; se não encontrar, insere no topo.
+
+---
 
 ### `NotificationProvider`
 
-**Métodos:** `load`, `markRead`, `listenToSocket`
+| Campo | Getter | Descrição |
+|---|---|---|
+| `_notifications` | `notifications` | Lista de todas as notificações |
+| `_loading` | `loading` | — |
+| — | `unreadCount` | `_notifications.where(n => !n.isRead).length` |
 
-`unreadCount` é calculado como `notifications.where((n) => !n.isRead).length` e exibido como badge na aba de Alertas.
+**Listeners:** registra os mesmos 6 eventos do socket e chama `load(token)` em qualquer um deles.
+
+| Método | Ação |
+|---|---|
+| `load(token)` | Busca `GET /notifications` |
+| `markRead(id, token)` | `PATCH /notifications/:id/read` + emite `mark_read` no socket + atualiza `readAt` localmente |
+| `listenToSocket(token)` | Registra listeners para os 6 eventos |
 
 ---
 
-## Tempo real via Socket.IO
+## Serviço de Socket.IO — tempo real
 
-O `SocketService` (`lib/services/socket_service.dart`) encapsula o cliente `socket_io_client`. A conexão é iniciada após login/cadastro com o JWT como parâmetro:
+**Arquivo:** `services/socket_service.dart`
 
+Instância única criada em `main.dart` e passada para `AuthProvider`, `ServiceRequestProvider` e `NotificationProvider`.
+
+**Conexão:**
 ```dart
-_socket = io(AppConstants.socketUrl, OptionBuilder()
-  .setTransports(['websocket'])
-  .setExtraHeaders({'Authorization': 'Bearer $token'})
-  .build());
+_socket = io.io(
+  AppConstants.socketUrl,
+  io.OptionBuilder()
+    .setTransports(['websocket'])
+    .setQuery({'token': token})  // token passado como query param
+    .disableAutoConnect()
+    .build(),
+);
+_socket!.connect();
 ```
 
-O backend autentica o socket pelo token e adiciona o cliente na sala `owner:<id>`. Os eventos que o dono recebe:
+**Eventos que o SocketService pré-registra ao conectar:**
+```dart
+final events = [
+  'new_request', 'request_accepted', 'request_refused',
+  'service_started', 'service_completed', 'new_review',
+];
+```
+Cada evento dispara todos os callbacks registrados via `_listeners[event]`.
 
-| Evento Socket.IO | Origem Kafka | Ação no app |
-|---|---|---|
-| `request_accepted` | `service_request.accepted` | Atualiza status da solicitação + adiciona notificação |
-| `request_refused` | `service_request.refused` | Atualiza status + notificação |
-| `service_started` | `service_request.in_progress` | Atualiza status + notificação |
-| `service_completed` | `service.completed` | Atualiza status + notificação + habilita avaliação |
+**API pública:**
 
-### Fluxo de atualização assíncrona (sem polling)
+| Método | Descrição |
+|---|---|
+| `connect(token)` | Desconecta anterior (se houver) e abre nova conexão com o token |
+| `on(event, callback)` | Registra um listener (acumula — vários callbacks por evento são suportados) |
+| `off(event, callback)` | Remove um listener específico |
+| `markRead(notificationId)` | Emite evento `mark_read` para o servidor |
+| `disconnect()` | `_socket.dispose()` + limpa `_listeners` |
+| `isConnected` | `_socket?.connected ?? false` |
 
-O diagrama abaixo mostra como uma mudança de estado feita pelo cuidador chega ao app do dono **sem nenhuma ação manual** (sem polling): o backend publica o evento no Kafka, o consumidor encaminha via Socket.IO para a sala `owner:<id>`, e o `ServiceRequestProvider`/`NotificationProvider` atualizam a UI reativamente.
-
+**Fluxo Socket.IO para o Dono (exemplo: cuidador aceita):**
 ```mermaid
 sequenceDiagram
-    actor Dono as App do Dono (Flutter)
-    participant API as Backend REST
-    participant Kafka as Kafka (MOM)
-    participant WS as Socket.IO Gateway
-    actor Cuidador as App do Cuidador (Flutter)
+    participant C as Cuidador
+    participant API as Backend
+    participant K as Apache Kafka
+    participant D as App do Dono
 
-    Dono->>API: POST /service-requests (cria solicitação)
-    API->>Kafka: publica "service_request.created"
-    Kafka-->>WS: consome evento
-    WS-->>Cuidador: emite "new_request" (sala caregiver:*)
-
-    Cuidador->>API: PATCH /service-requests/:id/accept
-    API->>Kafka: publica "service_request.accepted"
-    Kafka-->>WS: consome evento
-    WS-->>Dono: emite "request_accepted" (sala owner:<id>)
-
-    Note over Dono: ServiceRequestProvider.listenToSocket<br/>recarrega a solicitação e<br/>NotificationProvider adiciona alerta —<br/>tela atualiza via notifyListeners(), sem polling
+    C->>API: PATCH /service-requests/{id}/accept
+    API->>K: Publica "service_request.accepted"
+    K->>API: Consumer Kafka grava notificação
+    API-->>D: Emite Socket.IO "request_accepted"
+    D->>D: ServiceRequestProvider.loadMine()
+    Note over D: Lista de solicitações atualiza
+    D->>D: NotificationProvider.load()
+    Note over D: Badge de notificações atualiza
 ```
+
+O Dono vê o status mudar de "Aberta" para "Aceita" **sem tocar em nada**.
 
 ---
 
-## Tema e design system
+## Widgets reutilizáveis
 
-Definido em `lib/core/theme/app_theme.dart`. O app usa **Material 3** (`useMaterial3: true`).
+### `StatusBadge` (`widgets/status_badge.dart`)
 
-### Paleta de cores (`AppColors`)
+Chip colorido com texto e fundo por status. Para `IN_PROGRESS`, exibe um ponto pulsante (círculo de 7px) à esquerda do texto.
+
+| Status | Texto | Cor do texto | Fundo |
+|---|---|---|---|
+| `OPEN` | Aberta | `#F59E0B` (âmbar) | `#FEF3C7` |
+| `ACCEPTED` | Aceita | `#3B82F6` (azul) | `#DBEAFE` |
+| `IN_PROGRESS` | Em andamento | `#10B981` (verde) | `#D1FAE5` |
+| `COMPLETED` | Concluída | `#6B7280` (cinza) | `#F3F4F6` |
+| `CANCELLED` | Cancelada | `#EF4444` (vermelho) | `#FEE2E2` |
+| `REFUSED` | Recusada | `#F97316` (laranja) | `#FFF7ED` |
+
+---
+
+### `PetCard` (`widgets/pet_card.dart`)
+
+Card de listagem para pets. Estrutura:
+- Avatar quadrado (60×60) com ícone da espécie no fundo colorido (opacidade 12%)
+- Nome do pet (negrito)
+- Raça + idade (ex: "Golden Retriever · 3 anos" ou "1 ano" no singular)
+- `_SpeciesChip`: chip colorido com label da espécie (`AppConstants.speciesLabels`)
+- `_NoteChip`: chip cinza com o texto de `specialNotes` (truncado se longo) — só aparece quando `specialNotes != null && isNotEmpty`
+- Botões de ação: `Icons.edit_outlined` (azul) e `Icons.delete_outline` (vermelho)
+
+---
+
+### `ServiceRequestCard` (`widgets/service_request_card.dart`)
+
+Card de listagem para solicitações.
+
+- Ícone da espécie (44×44, fundo colorido)
+- Nome do pet + tipo de serviço traduzido
+- `StatusBadge` no canto superior direito
+- Quando `caregiver != null`: mini-avatar circular azul (20×20) com inicial + nome do cuidador em azul
+- Data formatada em pt_BR (`dd MMM, yyyy`) e horário (`HH:mm`)
+- Quando `highlighted == true` (solicitações `IN_PROGRESS`): borda verde de 2px em vez da borda cinza padrão
+
+---
+
+## Cores e tema
+
+**Arquivo:** `core/theme/app_theme.dart` — Material 3 com `useMaterial3: true`, fonte Roboto.
+
+### Cores principais
 
 | Constante | Hex | Uso |
 |---|---|---|
-| `primary` | `#2D5BE3` | Azul principal, botões, FAB |
-| `primaryLight` | `#E8EEFF` | Fundo de chips e badges |
-| `background` | `#F5F6FA` | Fundo das telas |
-| `surface` | `#FFFFFF` | Cards e AppBar |
-| `textPrimary` | `#1A1A2E` | Texto principal |
-| `textSecondary` | `#6B7280` | Labels, subtítulos |
+| `primary` | `#2D5BE3` | Botões, FAB, bordas ativas, avatares, texto de links |
+| `primaryLight` | `#E8EEFF` | Fundo de chips selecionados, badges azuis |
+| `background` | `#F5F6FA` | Fundo das telas (cinza muito claro) |
+| `surface` | `white` | Cards, AppBar, campos de input |
+| `inputBorder` | `#E5E7EB` | Borda padrão dos campos |
+| `textPrimary` | `#1A1A2E` | Texto principal (azul muito escuro) |
+| `textSecondary` | `#6B7280` | Labels, subtítulos, ícones desabilitados |
 | `textHint` | `#9CA3AF` | Placeholder dos campos |
-| `divider` | `#E5E7EB` | Bordas de cards |
-| `darkInput` | `#1C1C2E` | Fundo escuro dos campos de formulário |
-| `statusOpen` | `#F59E0B` | Badge Aberta |
-| `statusAccepted` | `#3B82F6` | Badge Aceita |
-| `statusInProgress` | `#10B981` | Badge Em andamento |
-| `statusCompleted` | `#6B7280` | Badge Concluída |
-| `statusCancelled` | `#EF4444` | Badge Cancelada |
+| `divider` | `#E5E7EB` | Divisores, bordas de cards |
+| `error` | `#EF4444` | Erros, snackbars de falha, botão de deletar |
+| `success` | `#10B981` | Status em andamento, banner verde |
+| `successLight` | `#D1FAE5` | Fundo do banner em andamento |
+| `warning` | `#F59E0B` | Badge Aberta, aviso de 2h |
+| `ratingColor` | `#F59E0B` | Estrelas de avaliação |
+| `speciesCat` | `#8B5CF6` | Cor temática do gato (roxo) |
 
-### Widgets globais configurados no tema
+### Status badges
 
-- **`AppBarTheme`:** fundo branco, sem elevação, texto escuro
-- **`ElevatedButton`:** azul primário, altura mínima 52px, bordas arredondadas 12px
-- **`OutlinedButton`:** borda azul, texto azul
-- **`CardThemeData`:** sem elevação, borda cinza, raio 16px
-- **`InputDecorationTheme`:** fundo `darkInput`, bordas arredondadas 12px, foco com borda azul 2px
+| Status | Cor texto | Cor fundo |
+|---|---|---|
+| OPEN | `#F59E0B` | `#FEF3C7` |
+| ACCEPTED | `#3B82F6` | `#DBEAFE` |
+| IN_PROGRESS | `#10B981` | `#D1FAE5` |
+| COMPLETED | `#6B7280` | `#F3F4F6` |
+| CANCELLED | `#EF4444` | `#FEE2E2` |
+| REFUSED | `#F97316` | `#FFF7ED` |
+
+### `AppConstants` — mapeamentos
+
+```dart
+serviceTypeLabels: {
+  'WALK_30MIN': 'Passeio 30min',
+  'WALK_1H': 'Passeio 1h',
+  'HOME_VISIT': 'Visita Domiciliar',
+  'HOSTING': 'Hospedagem',
+}
+
+speciesLabels: {
+  'DOG': 'Cão',
+  'CAT': 'Gato',
+  'OTHER': 'Outro',
+}
+
+statusLabels: {
+  'OPEN': 'Aberta',
+  'ACCEPTED': 'Aceita',
+  'IN_PROGRESS': 'Em andamento',
+  'COMPLETED': 'Concluída',
+  'CANCELLED': 'Cancelada',
+  'REFUSED': 'Recusada',
+}
+```
+
+**`speciesIconWidget(species, size, color)`:** Retorna um `Widget`.
+- `'DOG'` → `Icon(Icons.pets, ...)`
+- `'CAT'` → `Center(child: FaIcon(FontAwesomeIcons.cat, ...))` — o `Center` é necessário porque o `FaIcon` não se centraliza automaticamente como o `Icon` do Material
+- `'OTHER'` → `Icon(Icons.help_outline, ...)`
+
+**`speciesColor(species)`:** Retorna `Color`.
+- `'DOG'` → `AppColors.primary` (azul)
+- `'CAT'` → `AppColors.speciesCat` (roxo)
+- `'OTHER'` → `AppColors.textSecondary` (cinza)
 
 ---
 
 ## Dependências
 
-| Pacote | Versão | Uso |
+**Arquivo:** `mobile/pubspec.yaml`
+
+| Pacote | Versão | Finalidade |
 |---|---|---|
-| `flutter` | SDK | Framework |
-| `provider` | ^6.1.2 | Gerenciamento de estado |
-| `http` | ^1.2.1 | Chamadas REST |
-| `flutter_secure_storage` | ^9.2.4 | JWT no Keychain/Keystore |
-| `socket_io_client` | ^2.0.3+1 | Eventos em tempo real |
-| `intl` | ^0.19.0 | Formatação de datas em pt_BR |
-| `cupertino_icons` | ^1.0.6 | Ícones iOS |
-| `flutter_lints` | ^4.0.0 (dev) | Análise estática |
+| `provider` | `^6.1.2` | Gerenciamento de estado com `ChangeNotifier` |
+| `http` | `^1.2.1` | Chamadas HTTP REST |
+| `flutter_secure_storage` | `^9.2.4` | JWT no Keychain (iOS) / EncryptedSharedPreferences (Android) |
+| `socket_io_client` | `^2.0.3+1` | WebSocket para notificações em tempo real |
+| `intl` | `^0.19.0` | Formatação de datas em pt_BR |
+| `font_awesome_flutter` | `^11.0.0` | Ícone do gato (`FontAwesomeIcons.cat`) |
+| `cupertino_icons` | `^1.0.6` | Ícones iOS |
+| `flutter_lints` | `^4.0.0` | Regras de lint estático (dev) |
 
 ---
 
