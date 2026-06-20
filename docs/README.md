@@ -87,8 +87,6 @@ O relatório cobre todos os tópicos exigidos (EDA, MOM, Clean Architecture, RES
 | Mínimo 3 referências | 5 referências (Martin, Hohpe & Woolf, Richardson, Coulouris, Bailey) |
 
 → **Relatório em PDF:** [Relatório Técnico Final — Sprint 4](Relatório%20Técnico%20Final%20—%20Sprint%204.pdf)  
-→ **Versão web (HTML):** [relatorio-sprint4.html](relatorio-sprint4.html)
-
 ---
 
 ## Índice completo de documentos
@@ -132,7 +130,6 @@ docs/
 ├── mobile-owner-app.md                    ← Sprint 3: app Flutter do Dono
 ├── mobile-caregiver-app.md               ← Sprint 4: app Flutter do Cuidador
 ├── Relatório Técnico Final — Sprint 4.pdf ← Sprint 4: relatório técnico (PDF)
-├── relatorio-sprint4.html                 ← Sprint 4: relatório técnico (web)
 ├── Proposta.pdf                           ← Sprint 1: proposta de domínio
 ├── Plantão Pet.postman_collection.json    ← Sprint 1: coleção de testes
 ├── prototype/                             ← protótipos de telas
