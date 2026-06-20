@@ -45,31 +45,7 @@ A plataforma funciona como um marketplace de serviços veterinários domiciliare
 
 O backend utiliza uma **arquitetura orientada a eventos (Event-Driven Architecture)**. Toda mudança de estado relevante — aceitação, início ou conclusão de um serviço — é publicada no Kafka. Um consumer dedicado consome esses eventos e os entrega via Socket.IO para os clientes Flutter conectados, sem que o código de negócio precise saber quem vai receber a mensagem.
 
-```mermaid
-flowchart TD
-    APP["App Flutter (iOS / Android)\nPerfil Dono · Perfil Cuidador"]
-
-    subgraph BACKEND["Backend (Node.js)"]
-        ROUTES["Routes → Controllers → Services → Repos"]
-        PRODUCER["Kafka Producer"]
-        ROUTES --> PRODUCER
-    end
-
-    subgraph KAFKA["Apache Kafka (KRaft)"]
-        TOPICS["service_request.created · service_request.accepted\nservice_request.refused · service_request.in_progress\nservice.completed · review.created"]
-    end
-
-    CONSUMER["Consumer\nNotification DB + Socket.IO"]
-    DB[("PostgreSQL 15\nvia Prisma ORM")]
-
-    APP -->|"HTTP REST"| BACKEND
-    BACKEND -->|"WebSocket (Socket.IO)"| APP
-    PRODUCER -->|"Publish (evento de domínio)"| KAFKA
-    KAFKA -->|"Subscribe (Kafka Consumer)"| CONSUMER
-    CONSUMER -->|"Socket.IO"| APP
-    CONSUMER --> DB
-    BACKEND --> DB
-```
+![Arquitetura do Sistema](docs/images/Arquitetura.jpg)
 
 **Por que Kafka?** Em vez de o backend chamar diretamente "envie uma notificação para o dono", ele publica um evento `service_request.accepted`. O consumer Kafka, completamente independente, consome esse evento, grava a notificação no banco e a envia via Socket.IO. Isso desacopla a lógica de negócio da entrega de notificações.
 
@@ -271,12 +247,16 @@ plantao-pet-system/
 
 ## Documentação
 
-| Documento | O que você vai encontrar |
+A documentação técnica completa do projeto está organizada em **[docs/README.md](docs/README.md)**, com navegação por critério de avaliação e índice de todos os documentos por sprint.
+
+| Documento | Conteúdo |
 |---|---|
-| [Backend — API REST](docs/backend-api.md) | Arquitetura em camadas, todos os endpoints, modelo de dados, regras de negócio, variáveis de ambiente |
-| [App Mobile — Dono do Pet](docs/mobile-owner-app.md) | Telas do Dono (home, pets, cuidadores, solicitações, avaliação), providers, repositórios, Socket.IO |
-| [App Mobile — Cuidador](docs/mobile-caregiver-app.md) | Telas do Cuidador (solicitações abertas, atendimentos, perfil, status), providers, repositórios, Socket.IO |
-| [Integração com Kafka (MOM)](docs/integracao_Mom.md) | Comunicação assíncrona, tópicos, payloads, integração Socket.IO, deduplicação |
+| [Índice geral da documentação](docs/README.md) | Navegação por critério de avaliação (Sprint 4), índice completo por sprint, tecnologias |
+| [Backend — API REST](docs/backend-api.md) | Arquitetura em camadas, todos os endpoints, modelo de dados, 15 regras de negócio, variáveis de ambiente |
+| [Integração MOM — Apache Kafka](docs/integracao_Mom.md) | 6 tópicos Kafka com payloads, diagrama de sequência, Socket.IO, deduplicação, logs reais |
+| [App Mobile — Dono do Pet](docs/mobile-owner-app.md) | 10+ telas, providers, repositórios, fluxos Socket.IO com diagramas de sequência |
+| [App Mobile — Cuidador](docs/mobile-caregiver-app.md) | 5 telas, providers, repositórios, listeners Socket.IO, padrões EDA + Clean Architecture |
+| [Relatório Técnico Final — Sprint 4](docs/Relatório%20Técnico%20Final%20—%20Sprint%204.pdf) | Arquitetura, decisões de design, dificuldades, reflexão sobre padrões, 5 referências bibliográficas |
 
 ---
 

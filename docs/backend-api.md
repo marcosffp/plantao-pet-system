@@ -42,17 +42,7 @@ Além de servir a API, o backend também atua como **publicador de eventos Kafka
 
 O backend segue uma separação clara de responsabilidades. Cada camada tem uma função específica e não deve "pular" camadas:
 
-```mermaid
-flowchart TD
-    HTTP["Requisição HTTP"]
-    ROUTES["Routes\nDefine rotas e aplica middlewares\n(autenticação, validação)"]
-    CTRL["Controllers\nRecebe req/res, delega ao service\nserializa a resposta HTTP"]
-    SVC["Services\nLógica de negócio — regras,\nvalidações, publicação de eventos"]
-    REPO["Repositories\nÚnico ponto de acesso ao banco via Prisma"]
-    DB[("PostgreSQL")]
-
-    HTTP --> ROUTES --> CTRL --> SVC --> REPO --> DB
-```
+![Arquitetura do Sistema](images/Arquitetura.jpg)
 
 | Camada | Pasta | Responsabilidade |
 |---|---|---|
