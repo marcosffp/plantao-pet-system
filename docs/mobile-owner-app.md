@@ -11,6 +11,7 @@
 - [O que é o perfil Dono?](#o-que-é-o-perfil-dono)
 - [Fluxo completo do Dono](#fluxo-completo-do-dono)
 - [Arquitetura do app](#arquitetura-do-app)
+- [Padrões Arquiteturais Aplicados](#padrões-arquiteturais-aplicados)
 - [Estrutura de arquivos](#estrutura-de-arquivos)
 - [Configuração e execução](#configuração-e-execução)
 - [Segurança — JWT e armazenamento](#segurança--jwt-e-armazenamento)
@@ -129,6 +130,50 @@ flowchart TD
 **Gerenciamento de estado:** `provider` (`ChangeNotifier`). Quatro providers independentes, cada um responsável por um domínio.
 
 **Comunicação REST:** pacote `http`. Cada repositório encapsula as chamadas de um domínio e lança `Exception` em caso de erro HTTP; o provider captura e expõe no campo `error`.
+
+---
+
+## Padrões Arquiteturais Aplicados
+
+### Clean Architecture
+
+O app segue **Clean Architecture** (MARTIN, 2019), com regra de dependência unidirecional: camadas externas conhecem as internas, nunca o contrário. Nenhum widget conhece URLs ou parsing JSON; nenhum repositório conhece a existência de telas.
+
+| Camada | Artefatos | Responsabilidade |
+|---|---|---|
+| `presentation/` | Screens, Providers, Widgets | Renderizar estado e capturar ações do usuário |
+| `data/` | Repositories, Models | Acessar a API REST, serializar/deserializar JSON |
+| `services/` | SocketService | Manter conexão WebSocket e despachar eventos |
+| `core/` | AppTheme, AppConstants, TokenStorage | Configurações e utilitários transversais |
+
+O `SocketService` é criado em `main.dart` e injetado nos providers via construtor — tornando cada componente testável de forma isolada.
+
+### Arquitetura Orientada a Eventos (EDA) e MOM
+
+O sistema adota **Event-Driven Architecture** (HOHPE; WOOLF, 2003), com o **Apache Kafka** como Middleware Orientado a Mensagens (MOM). Toda transição de estado — criação, aceite, início e conclusão de serviço — é publicada como evento em um tópico Kafka. Um consumer independente consome esses eventos, persiste notificações no banco e entrega atualizações em tempo real via Socket.IO.
+
+```mermaid
+flowchart LR
+    CMD["Comando REST\n(criar / aceitar / iniciar / concluir)"]
+    KAFKA["Apache Kafka\n(tópico de domínio)"]
+    CONSUMER["Consumer Kafka\n(processador de evento)"]
+    DB[("PostgreSQL\nNotificações")]
+    SOCKET["Socket.IO\n(entrega ao app)"]
+
+    CMD -->|"Publica evento"| KAFKA
+    KAFKA -->|"Consome"| CONSUMER
+    CONSUMER --> DB
+    CONSUMER -->|"Emite para clientes conectados"| SOCKET
+```
+
+**Benefícios no Plantão Pet:**
+- A lógica de negócio não conhece os destinatários das notificações — apenas publica eventos
+- Novos consumidores (push notifications, e-mail) podem ser adicionados sem alterar os serviços existentes
+- O Kafka persiste eventos mesmo que o consumer esteja temporariamente indisponível
+
+### REST como protocolo de comando
+
+As chamadas HTTP REST são usadas exclusivamente para **comandos** — ações que alteram estado no servidor. A **leitura assíncrona de atualizações** ocorre via Socket.IO, garantindo que o Dono veja mudanças de status (aceito, em andamento, concluído) em tempo real, sem nenhuma ação manual de atualização.
 
 ---
 

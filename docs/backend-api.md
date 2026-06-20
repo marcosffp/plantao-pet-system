@@ -42,18 +42,16 @@ Além de servir a API, o backend também atua como **publicador de eventos Kafka
 
 O backend segue uma separação clara de responsabilidades. Cada camada tem uma função específica e não deve "pular" camadas:
 
-```
-Requisição HTTP
-       │
-  [Routes]          → Define as rotas e aplica middlewares (autenticação, validação)
-       │
-  [Controllers]     → Recebe req/res, delega ao service, serializa a resposta HTTP
-       │
-  [Services]        → Contém a lógica de negócio (regras, validações, publicação de eventos)
-       │
-  [Repositories]    → Único ponto de acesso ao banco de dados via Prisma
-       │
-  PostgreSQL
+```mermaid
+flowchart TD
+    HTTP["Requisição HTTP"]
+    ROUTES["Routes\nDefine rotas e aplica middlewares\n(autenticação, validação)"]
+    CTRL["Controllers\nRecebe req/res, delega ao service\nserializa a resposta HTTP"]
+    SVC["Services\nLógica de negócio — regras,\nvalidações, publicação de eventos"]
+    REPO["Repositories\nÚnico ponto de acesso ao banco via Prisma"]
+    DB[("PostgreSQL")]
+
+    HTTP --> ROUTES --> CTRL --> SVC --> REPO --> DB
 ```
 
 | Camada | Pasta | Responsabilidade |
@@ -193,22 +191,19 @@ Representa o prestador de serviços que aceita e executa os atendimentos.
 
 **Ciclo de vida dos status:**
 
-```
-                    ┌──────────────────────────────┐
-                    │             OPEN             │ ← criada pelo dono
-                    └──────┬─────────────┬─────────┘
-                           │ aceitar      │ cancelar / expirar
-                           ▼             ▼
-                      ACCEPTED      CANCELLED
-                           │
-                           │ recusar (volta para OPEN)
-                           │ ou iniciar
-                           ▼
-                      IN_PROGRESS
-                           │
-                           │ concluir
-                           ▼
-                       COMPLETED    ← dono pode avaliar
+```mermaid
+flowchart TD
+    OPEN["OPEN\ncriada pelo dono"]
+    ACCEPTED["ACCEPTED"]
+    CANCELLED["CANCELLED"]
+    IN_PROGRESS["IN_PROGRESS"]
+    COMPLETED["COMPLETED\ndono pode avaliar"]
+
+    OPEN -->|"aceitar"| ACCEPTED
+    OPEN -->|"cancelar / expirar"| CANCELLED
+    ACCEPTED -->|"recusar — volta para OPEN"| OPEN
+    ACCEPTED -->|"iniciar"| IN_PROGRESS
+    IN_PROGRESS -->|"concluir"| COMPLETED
 ```
 
 ### Entidade: Review (Avaliação)
