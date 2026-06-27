@@ -21,7 +21,12 @@ class _CaregiverMainScreenState extends State<CaregiverMainScreen> {
   late final _screens = [
     CaregiverHomeScreen(onAccepted: () => setState(() => _currentIndex = 1)),
     const CaregiverMyRequestsScreen(),
-    CaregiverNotificationsScreen(onNavigate: (i) => setState(() => _currentIndex = i)),
+    CaregiverNotificationsScreen(
+      onNavigate: (i) {
+        setState(() => _currentIndex = i);
+        if (i == 3) context.read<AuthProvider>().refreshProfile();
+      },
+    ),
     const CaregiverProfileScreen(),
   ];
 

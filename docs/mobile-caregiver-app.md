@@ -43,7 +43,6 @@ O **Cuidador** é o profissional que oferece serviços de cuidado para animais d
 - Aceita ou recusa cada solicitação individualmente
 - Inicia o serviço na data combinada (uma vez aceito, o serviço pertence a ele)
 - Conclui o serviço ao terminar o atendimento
-- Controla sua própria disponibilidade com um toggle ATIVO/INATIVO no perfil
 - Visualiza seu histórico de atendimentos com filtros por status
 - Recebe notificações de cada transição de estado
 - Vê sua média de avaliação baseada nas notas que os donos atribuem após cada serviço
@@ -353,12 +352,16 @@ Ao tocar na aba Perfil (índice 3), `refreshProfile()` é chamado para buscar da
 
 | Índice | Ícone | Label | Tela |
 |---|---|---|---|
-| 0 | `Icons.home` | Início | `CaregiverHomeScreen` |
-| 1 | `Icons.assignment` | Meus | `CaregiverMyRequestsScreen` |
-| 2 | `Icons.notifications` | Alertas | `CaregiverNotificationsScreen` |
-| 3 | `Icons.person` | Perfil | `CaregiverProfileScreen` |
+| 0 | `Icons.home_outlined` / `Icons.home` | Início | `CaregiverHomeScreen` |
+| 1 | `Icons.list_alt_outlined` / `Icons.list_alt` | Meus | `CaregiverMyRequestsScreen` |
+| 2 | `Icons.notifications_outlined` / `Icons.notifications` | Alertas | `CaregiverNotificationsScreen` |
+| 3 | `Icons.person_outlined` / `Icons.person` | Perfil | `CaregiverProfileScreen` |
 
-O badge da aba Alertas lê `NotificationProvider.unreadCount` reativamente.
+O badge da aba Alertas usa o widget `Badge` do Material 3 com o número de não lidas — só fica visível quando `unreadCount > 0`.
+
+**Callbacks entre telas:**
+- `CaregiverHomeScreen(onAccepted: ...)` — ao aceitar uma solicitação, navega automaticamente para a aba "Meus" (índice 1)
+- `CaregiverNotificationsScreen(onNavigate: ...)` — ao tocar em uma notificação de `service_request.created`, navega para a aba "Início" (0); para `review.created`, navega para "Perfil" (3)
 
 ---
 
@@ -372,10 +375,9 @@ Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de di
 
 **Componentes:**
 - `_Header`: área com gradiente roxo-claro (`#EEF2FF` → `#E0E7FF`), ícone de pets, logo "Plantão**Pet**" e tagline "Cuidado profissional para seu melhor amigo"
-- `RoleToggle`: dois botões lado a lado ("Dono do Pet" com `Icons.favorite_border` e "Cuidador" com `Icons.star_border`). O selecionado recebe borda azul 2px e fundo branco
+- `RoleToggle`: dois botões lado a lado ("Dono do Pet" com `Icons.favorite_border` e "Cuidador" com `Icons.star_border`). O selecionado recebe borda azul 2px, fundo branco e texto/ícone em azul
 - Campo e-mail com validação `contains('@')`
 - Campo senha com toggle de visibilidade (`Icons.visibility_off` / `Icons.visibility`)
-- Botão "Esqueci minha senha" — presente na UI mas sem ação implementada
 - Botão "Entrar" — desabilitado durante loading (`auth.loading == true`), exibe `CircularProgressIndicator`
 - Separador "ou" + `OutlinedButton` "Criar conta" → abre `RegisterScreen` com o perfil já selecionado
 
@@ -404,13 +406,13 @@ Tela única para ambos os perfis — a seleção do perfil determina quais campo
 | Nome completo | Mínimo 2 caracteres | — |
 | Email | Deve conter `@` | — |
 | Telefone | Mínimo 10 dígitos | `replaceAll(RegExp(r'\D'), '')` antes de enviar |
-| Bairros atendidos | Pelo menos 1 selecionado | Multi-select de bairros (chips toggling) |
-| Serviços oferecidos | Pelo menos 1 selecionado | Multi-select de tipos de serviço |
+| Bairros atendidos | Pelo menos 1, separados por vírgula | Campo de texto livre: "Centro, Vila Madalena" |
+| Serviços oferecidos | Pelo menos 1 selecionado | Multi-select de tipos de serviço (`FilterChip`) |
 | Senha | Mínimo 6 caracteres | Toggle de visibilidade |
 
 **Campos específicos do Cuidador** (não existem para o Dono):
-- **Bairros atendidos:** chips com bairros predefinidos, seleção múltipla
-- **Serviços oferecidos:** chips com labels traduzidos (`WALK_30MIN` = "Passeio 30min", etc.)
+- **Bairros atendidos:** campo de texto livre onde o cuidador digita os bairros separados por vírgula (ex: "Centro, Vila Madalena"). O código faz `split(',').map(trim).where(notEmpty)` antes de enviar.
+- **Serviços oferecidos:** `FilterChip` para cada tipo de serviço — seleção múltipla com label traduzido (`WALK_30MIN` = "Passeio 30min", etc.)
 
 Ao submeter:
 1. Chama `AuthProvider.registerCaregiver({name, email, phone, neighborhoods, services, password})`
@@ -428,19 +430,18 @@ Ao submeter:
 
 **AppBar:**
 - Título "Solicitações Abertas"
-- Botão `Icons.refresh` — chama `srProvider.loadOpen(token)` manualmente
 
 **Lista:**
 - `RefreshIndicator` envolvendo `ListView.builder` para pull to refresh
+- Exibe `CircularProgressIndicator` centralizado enquanto `srProvider.loading`
 - Um `_OpenRequestCard` para cada item em `srProvider.openRequests`
-- Estado vazio: ícone cinza + "Nenhuma solicitação aberta no momento" + "Puxe para atualizar"
+- Estado vazio: `Icons.pets` + "Nenhuma solicitação aberta"
 
 **`_OpenRequestCard`** — estrutura de cada card:
-- **Linha superior:** ícone da espécie (colorido conforme espécie) + nome do pet em negrito + raça
-- **Tipo de serviço:** label traduzido + `StatusBadge('OPEN')`
-- **Data/hora:** `dd/MM/yyyy HH:mm` em horário local (`scheduledAt.toLocal()`)
-- **Endereço:** `Icons.location_on` + `meetingAddress`
-- **Botão "Ver detalhes"** (`OutlinedButton` azul, largura total) → abre `CaregiverRequestDetailScreen`
+- **Linha superior:** ícone da espécie (fundo colorido 12% opacidade, 48×48) + "nome · raça" em negrito + badge inline "Aberta" (container personalizado, não `StatusBadge`)
+- **Data/hora:** `Icons.calendar_today_outlined` + `dd/MM/yyyy HH:mm` em horário local
+- **Endereço:** `Icons.location_on_outlined` + `meetingAddress` (overflow ellipsis)
+- **Botão "Ver detalhes"** (`ElevatedButton` azul, largura total) → abre `CaregiverRequestDetailScreen`; ao retornar com `true` (aceite), chama `onAccepted()`
 
 ---
 
@@ -473,16 +474,19 @@ Se a solicitação saiu de `openRequests` (após aceite) e entrou em `requests`,
 
 | Condição | Botão exibido | Comportamento |
 |---|---|---|
-| `status == 'OPEN'` | "Aceitar" (ElevatedButton azul) + "Recusar" (OutlinedButton com borda vermelha) | Aceitar → SnackBar + `pop()`. Recusar → SnackBar + `pop()` |
-| `status == 'ACCEPTED'` e `caregiverId == user.id` | "Iniciar Serviço" (ElevatedButton verde) | SnackBar verde, tela permanece aberta com status atualizado |
-| `status == 'IN_PROGRESS'` e `caregiverId == user.id` | "Concluir Serviço" (botão cinza) | AlertDialog de confirmação → SnackBar → `pop()` |
-| `status == 'COMPLETED'` | Nenhum botão de ação | Exibe card de conclusão |
-| `status == 'CANCELLED'` / `'REFUSED'` | Nenhum botão | Exibe card informativo |
+| `status == 'OPEN'` | "Aceitar Solicitação" (`ElevatedButton.icon`, `Icons.check_circle_outline`) + "Recusar" (`OutlinedButton.icon`, `Icons.cancel_outlined` vermelho) | Aceitar → SnackBar + `pop(context, true)`. Recusar → `pop()` |
+| `status == 'ACCEPTED'` e `caregiverId == user.id` | "Iniciar Serviço" (`ElevatedButton.icon`, `Icons.play_circle_outline`, fundo verde) | SnackBar verde "Serviço iniciado!" — tela continua aberta |
+| `status == 'IN_PROGRESS'` e `caregiverId == user.id` | "Concluir Serviço" (`ElevatedButton.icon`, `Icons.flag_outlined`, fundo `statusCompleted` cinza) | AlertDialog "Não"/"Confirmar" → SnackBar → `pop()` |
+| `status == 'COMPLETED'` | Nenhum botão de ação | — |
+| `status == 'CANCELLED'` / `'REFUSED'` | Nenhum botão | — |
+
+**Erro de limite ao aceitar:**
+Quando o aceite falha com mensagem contendo "atendimentos em andamento", o SnackBar usa cor `warning` (âmbar) e duração de 4 segundos — diferente do erro genérico que usa cor `error` (vermelho).
 
 **Fluxo ao aceitar:**
 1. `srProvider.accept(request.id, token)`
 2. Provider: remove de `_openRequests` + `_updateInMine(updated)` em `_requests`
-3. SnackBar verde "Solicitação aceita!" → `Navigator.pop()`
+3. SnackBar verde "Solicitação aceita!" → `Navigator.pop(context, true)` → `CaregiverHomeScreen.onAccepted()` navega para aba "Meus"
 
 **Fluxo ao iniciar:**
 1. `srProvider.start(request.id, token)`
@@ -552,33 +556,21 @@ Notificações não lidas (`readAt == null`) têm fundo diferenciado. Toque em u
 Tela que exibe dados do cuidador e permite alternar disponibilidade.
 
 **Layout:**
+
+**Cabeçalho (fundo branco, `padding: 24`):**
 - Avatar circular azul (80×80) com iniciais
 - Nome do cuidador
-- Badge "Cuidador" (chip azul claro)
-- Média de avaliação: `averageRating?.toStringAsFixed(1) ?? '0.0'` + estrelas + "(N avaliação/avaliações)"
-- Se sem avaliações ainda: "Sem avaliações ainda"
+- Linha de avaliação: `Icons.star` âmbar + `averageRating?.toStringAsFixed(1) ?? '0.0'`
 
-**`_StatusToggle` — widget de disponibilidade:**
-
-| Estado | Cor de fundo | Ícone | Texto |
-|---|---|---|---|
-| `ACTIVE` | `successLight` (#D1FAE5) | `Icons.check_circle` verde | "Disponível para atendimentos" |
-| `INACTIVE` | `background` (#F5F6FA) | `Icons.circle_outlined` cinza | "Indisponível no momento" |
-
-```dart
-onChanged: (val) {
-  auth.updateCaregiverStatus(val ? 'ACTIVE' : 'INACTIVE');
-}
-```
-
-**Seção SERVIÇOS OFERECIDOS:** chips azuis com labels traduzidos
-
-**Seção BAIRROS ATENDIDOS:** chips cinzas com os bairros cadastrados
-
-**Seção INFORMAÇÕES:** Email e telefone
+**Seção INFORMAÇÕES PESSOAIS** (card com borda):
+Linha a linha com `_InfoRow` (ícone + label + valor):
+- `Icons.email_outlined` — Email
+- `Icons.phone_outlined` — Telefone
+- `Icons.map_outlined` — Bairros atendidos (join por vírgula) — exibido apenas se `neighborhoods != null && isNotEmpty`
+- `Icons.work_outline` — Serviços — chips azuis com labels traduzidos, exibido apenas se `services != null && isNotEmpty`
 
 **Botão Logout:**
-"Sair da conta" (vermelho) → `AlertDialog` → confirmar chama:
+`OutlinedButton.icon` vermelho "Sair da conta" → `AlertDialog` "Tem certeza que deseja sair?" → confirmar chama:
 ```dart
 AuthProvider.logout()
   └── SocketService.disconnect()   ← fecha WebSocket
@@ -587,7 +579,7 @@ AuthProvider.logout()
 ```
 
 **Como a média de avaliação é atualizada:**
-Ao tocar no índice 3 (Perfil) do `BottomNavigationBar`, `CaregiverMainScreen` chama `auth.refreshProfile()`. Esse método faz `GET /caregivers/:id` e reconstrói o `AuthUser` com `averageRating` e `totalReviews` atualizados. A `CaregiverProfileScreen` relê `context.watch<AuthProvider>().user!.averageRating`.
+Ao tocar no índice 3 (Perfil) do `BottomNavigationBar`, `CaregiverMainScreen` chama `auth.refreshProfile()`. Esse método faz `GET /caregivers/:id` e reconstrói o `AuthUser` com `averageRating` atualizado. A `CaregiverProfileScreen` relê `context.watch<AuthProvider>().user!.averageRating`.
 
 ---
 
@@ -1005,10 +997,15 @@ Card de listagem. Usado na `CaregiverMyRequestsScreen`.
 | `textSecondary` | `#6B7280` | Labels, subtítulos |
 | `textHint` | `#9CA3AF` | Placeholders |
 | `divider` | `#E5E7EB` | Bordas, divisores |
-| `error` | `#EF4444` | Erros, botão Recusar |
+| `error` | `#EF4444` | Erros, SnackBar de falha, botão Recusar |
+| `errorLight` | `#FEE2E2` | Fundo de banner de erro |
 | `success` | `#10B981` | Badge IN_PROGRESS, botão Iniciar |
-| `successLight` | `#D1FAE5` | Fundo do toggle ATIVO |
-| `warning` | `#F59E0B` | Badge OPEN, estrelas, avisos |
+| `successLight` | `#D1FAE5` | Fundo de banner verde (`successBg` é alias) |
+| `successBorder` | `#6EE7B7` | Borda de banner de sucesso |
+| `warning` | `#F59E0B` | Badge OPEN, estrelas, SnackBar de limite |
+| `warningText` | `#D97706` | Texto de destaque nos banners de aviso |
+| `warningLight` | `#FFFBEB` | Fundo do banner de aviso (`warningBg` é alias) |
+| `warningBorder` | `#FCD34D` | Borda do banner de aviso |
 | `ratingColor` | `#F59E0B` | Estrelas de avaliação |
 | `speciesCat` | `#8B5CF6` | Cor temática do gato (roxo) |
 

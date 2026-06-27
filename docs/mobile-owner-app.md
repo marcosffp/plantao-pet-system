@@ -387,7 +387,6 @@ Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de di
 - `RoleToggle`: dois botões lado a lado ("Dono do Pet" com `Icons.favorite_border` e "Cuidador" com `Icons.star_border`). O selecionado recebe borda azul e fundo branco
 - Campo e-mail com validação `contains('@')`
 - Campo senha com toggle de visibilidade
-- Botão "Esqueci minha senha" — presente na UI mas sem ação implementada
 - Botão "Entrar" — desabilitado durante loading (exibe `CircularProgressIndicator`)
 - Separador "ou" + botão "Criar conta" → abre `RegisterScreen` com o perfil já selecionado
 
@@ -465,7 +464,8 @@ Formulário dividido em seções (`_SectionCard` com ícone + título uppercase 
 
 **Seção 1 — SELECIONAR PET:**
 - Carrega os pets do dono via `PetProvider.load()` no `initState`
-- Exibe scroll horizontal de cards de 90px. Cada card tem: ícone da espécie no fundo colorido + nome do pet
+- **Auto-seleção:** se o dono tem exatamente 1 pet, ele é selecionado automaticamente
+- Exibe scroll horizontal de cards de 90px. Cada card tem: ícone da espécie no fundo colorido (40×40, borderRadius 8) + nome do pet. Toque novamente no pet selecionado para desmarcar
 - Pet selecionado recebe borda azul de 2px + fundo `primaryLight`
 - Se não há pets: texto "Cadastre um pet antes de criar uma solicitação"
 
@@ -485,9 +485,10 @@ Grid 2×2 de opções:
 
 **Seção 4 — ENDEREÇO DE ATENDIMENTO:**
 - Campo de texto com ícone de localização
+- **Auto-preenchimento:** se `auth.user!.address` não for vazio e o campo estiver vazio, o endereço do perfil do dono é preenchido automaticamente no `initState`
 - Validação: mínimo 5 caracteres
 
-**Banner de aviso:** fundo amarelo claro com texto "O agendamento deve ser feito com pelo menos **2 horas de antecedência**. A solicitação expira automaticamente em 24h se não aceita."
+**Banner de aviso** (fundo `warningLight` `#FFFBEB`, borda `warningBorder` `#FCD34D`): texto "O agendamento deve ser feito com pelo menos **2 horas de antecedência**" (`warningText` `#D97706`) ". A solicitação expira automaticamente em 24h se não aceita."
 
 **Validação extra no submit:** verifica se `scheduledAt` está no futuro com pelo menos 2h antes de enviar à API.
 
@@ -1152,9 +1153,14 @@ Card de listagem para solicitações.
 | `textHint` | `#9CA3AF` | Placeholder dos campos |
 | `divider` | `#E5E7EB` | Divisores, bordas de cards |
 | `error` | `#EF4444` | Erros, snackbars de falha, botão de deletar |
+| `errorLight` | `#FEE2E2` | Fundo de banner de erro |
 | `success` | `#10B981` | Status em andamento, banner verde |
-| `successLight` | `#D1FAE5` | Fundo do banner em andamento |
-| `warning` | `#F59E0B` | Badge Aberta, aviso de 2h |
+| `successLight` | `#D1FAE5` | Fundo do banner em andamento (`successBg` é alias) |
+| `successBorder` | `#6EE7B7` | Borda do banner de sucesso |
+| `warning` | `#F59E0B` | Badge Aberta, snackbar de limite |
+| `warningText` | `#D97706` | Texto de destaque no banner de aviso |
+| `warningLight` | `#FFFBEB` | Fundo do banner de aviso (`warningBg` é alias) |
+| `warningBorder` | `#FCD34D` | Borda do banner de aviso |
 | `ratingColor` | `#F59E0B` | Estrelas de avaliação |
 | `speciesCat` | `#8B5CF6` | Cor temática do gato (roxo) |
 

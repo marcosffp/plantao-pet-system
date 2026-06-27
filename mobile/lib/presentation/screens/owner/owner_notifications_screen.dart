@@ -6,7 +6,9 @@ import '../../providers/auth_provider.dart';
 import '../../providers/notification_provider.dart';
 
 class OwnerNotificationsScreen extends StatelessWidget {
-  const OwnerNotificationsScreen({super.key});
+  final void Function(int index)? onNavigate;
+
+  const OwnerNotificationsScreen({super.key, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class OwnerNotificationsScreen extends StatelessWidget {
                       if (!n.isRead) {
                         notifProvider.markRead(n.id, auth.user!.token);
                       }
+                      _handleNavigate(n.eventType);
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -126,6 +129,17 @@ class OwnerNotificationsScreen extends StatelessWidget {
     );
   }
 
+  void _handleNavigate(String eventType) {
+    switch (eventType) {
+      case 'service_request.accepted':
+      case 'service_request.refused':
+      case 'service_request.in_progress':
+      case 'service.completed':
+        onNavigate?.call(0); // Início — lista de solicitações
+        break;
+    }
+  }
+
   IconData _iconForEvent(String eventType) {
     switch (eventType) {
       case 'service_request.accepted':
@@ -136,10 +150,6 @@ class OwnerNotificationsScreen extends StatelessWidget {
         return Icons.directions_walk;
       case 'service.completed':
         return Icons.flag_outlined;
-      case 'new_request':
-        return Icons.pets;
-      case 'review.created':
-        return Icons.star_outline;
       default:
         return Icons.notifications_outlined;
     }

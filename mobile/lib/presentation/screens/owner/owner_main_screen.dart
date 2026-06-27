@@ -19,12 +19,14 @@ class OwnerMainScreen extends StatefulWidget {
 class _OwnerMainScreenState extends State<OwnerMainScreen> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    OwnerHomeScreen(),
-    PetsScreen(),
-    CaregiversScreen(),
-    OwnerNotificationsScreen(),
-    OwnerProfileScreen(),
+  late final _screens = [
+    const OwnerHomeScreen(),
+    const PetsScreen(),
+    const CaregiversScreen(),
+    OwnerNotificationsScreen(
+      onNavigate: (i) => setState(() => _currentIndex = i),
+    ),
+    const OwnerProfileScreen(),
   ];
 
   @override
