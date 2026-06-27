@@ -18,11 +18,11 @@ class CaregiverMainScreen extends StatefulWidget {
 class _CaregiverMainScreenState extends State<CaregiverMainScreen> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    CaregiverHomeScreen(),
-    CaregiverMyRequestsScreen(),
-    CaregiverNotificationsScreen(),
-    CaregiverProfileScreen(),
+  late final _screens = [
+    CaregiverHomeScreen(onAccepted: () => setState(() => _currentIndex = 1)),
+    const CaregiverMyRequestsScreen(),
+    CaregiverNotificationsScreen(onNavigate: (i) => setState(() => _currentIndex = i)),
+    const CaregiverProfileScreen(),
   ];
 
   @override

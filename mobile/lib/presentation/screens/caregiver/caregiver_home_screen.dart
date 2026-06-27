@@ -9,7 +9,9 @@ import '../../providers/service_request_provider.dart';
 import 'caregiver_request_detail_screen.dart';
 
 class CaregiverHomeScreen extends StatelessWidget {
-  const CaregiverHomeScreen({super.key});
+  final VoidCallback? onAccepted;
+
+  const CaregiverHomeScreen({super.key, this.onAccepted});
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +25,6 @@ class CaregiverHomeScreen extends StatelessWidget {
         title: const Text('Solicitações Abertas'),
         backgroundColor: AppColors.surface,
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () => srProvider.loadOpen(auth.user!.token),
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Atualizar',
-          ),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => srProvider.loadOpen(auth.user!.token),
@@ -46,11 +41,6 @@ class CaregiverHomeScreen extends StatelessWidget {
                           'Nenhuma solicitação aberta',
                           style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Puxe para atualizar',
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-                        ),
                       ],
                     ),
                   )
@@ -60,14 +50,17 @@ class CaregiverHomeScreen extends StatelessWidget {
                     itemBuilder: (ctx, i) {
                       return _OpenRequestCard(
                         request: openRequests[i],
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CaregiverRequestDetailScreen(
-                              request: openRequests[i],
+                        onTap: () async {
+                          final accepted = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CaregiverRequestDetailScreen(
+                                request: openRequests[i],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                          if (accepted == true) onAccepted?.call();
+                        },
                       );
                     },
                   ),

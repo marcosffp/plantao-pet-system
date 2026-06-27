@@ -125,18 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validator: (v) =>
                             v == null || v.isEmpty ? 'Senha obrigatória' : null,
                       ),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Esqueci minha senha',
-                            style: TextStyle(color: AppColors.primary),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(

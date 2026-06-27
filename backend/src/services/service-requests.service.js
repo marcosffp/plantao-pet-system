@@ -62,7 +62,7 @@ const accept = async (id, user) => {
   if (!caregiver || caregiver.status !== 'ACTIVE') throw new AppError(403, 'Cuidador inativo não pode aceitar solicitações');
   
   const inProgressCount = await caregiversRepo.countInProgress(user.id);
-  if (inProgressCount >= 3) throw new AppError(409, 'Limite de atendimentos simultâneos atingido');
+  if (inProgressCount >= 3) throw new AppError(409, 'Você já possui 3 atendimentos em andamento. Conclua um antes de aceitar novos.');
 
   const updated = await serviceRequestsRepo.updateStatus(id, 'ACCEPTED', { caregiverId: user.id });
 
@@ -99,8 +99,15 @@ const cancel = async (id, user) => {
   if (!request) throw new AppError(404, 'Solicitação não encontrada');
   if (request.ownerId !== user.id) throw new AppError(403, 'Você não pode cancelar esta solicitação');
   if (request.status !== 'OPEN') throw new AppError(403, 'Solicitação não pode ser cancelada neste status');
-  
-  return serviceRequestsRepo.updateStatus(id, 'CANCELLED');
+
+  const updated = await serviceRequestsRepo.updateStatus(id, 'CANCELLED');
+
+  await producer.publish('service_request.cancelled', {
+    requestId: id,
+    cancelledAt: new Date().toISOString(),
+  });
+
+  return updated;
 };
 
 const start = async (id, user) => {

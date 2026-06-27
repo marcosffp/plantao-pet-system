@@ -34,6 +34,7 @@ class SocketService {
       'new_request',
       'request_accepted',
       'request_refused',
+      'request_cancelled',
       'service_started',
       'service_completed',
       'new_review',

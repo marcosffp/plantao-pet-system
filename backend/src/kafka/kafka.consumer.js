@@ -12,6 +12,7 @@ const TOPICS = [
   'service_request.created',
   'service_request.accepted',
   'service_request.refused',
+  'service_request.cancelled',
   'service_request.in_progress',
   'service.completed',
   'review.created',
@@ -64,6 +65,21 @@ const handlers = {
         caregiverPhone: payload.caregiverPhone,
       },
     });
+  },
+
+  'service_request.cancelled': async (payload) => {
+    console.log(`\x1b[35m[KAFKA RECV]\x1b[0m Recebido [service_request.cancelled] - ID: ${payload.requestId}`);
+    const caregivers = await caregiversRepo.findAllActive();
+    for (const caregiver of caregivers) {
+      await saveAndEmit({
+        userId: caregiver.id,
+        userRole: 'caregiver',
+        eventType: 'service_request.cancelled',
+        requestId: payload.requestId,
+        socketEvent: 'request_cancelled',
+        socketPayload: { requestId: payload.requestId },
+      });
+    }
   },
 
   'service_request.refused': async (payload) => {

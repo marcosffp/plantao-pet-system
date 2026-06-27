@@ -60,7 +60,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 201) {
-      throw Exception(body['message'] ?? 'Erro ao criar solicitação');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao criar solicitação');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -72,7 +72,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao aceitar solicitação');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao aceitar solicitação');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -84,7 +84,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao recusar solicitação');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao recusar solicitação');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -96,7 +96,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao cancelar solicitação');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao cancelar solicitação');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -108,7 +108,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao iniciar serviço');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao iniciar serviço');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }
@@ -120,7 +120,7 @@ class ServiceRequestRepository {
     );
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     if (res.statusCode != 200) {
-      throw Exception(body['message'] ?? 'Erro ao concluir serviço');
+      throw Exception(body['error'] ?? body['message'] ?? 'Erro ao concluir serviço');
     }
     return ServiceRequest.fromJson(body['data'] as Map<String, dynamic>);
   }

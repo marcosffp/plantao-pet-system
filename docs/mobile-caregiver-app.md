@@ -837,12 +837,13 @@ notifyListeners();
 | Evento | Ação |
 |---|---|
 | `new_request` | `loadOpen(token)` — nova solicitação disponível na home |
+| `request_cancelled` | Remove o item de `_openRequests` diretamente pelo `requestId` — sem nova requisição HTTP |
 | `request_accepted` | `loadMine(token)` |
 | `request_refused` | `loadMine(token)` |
 | `service_started` | `loadMine(token)` |
 | `service_completed` | `loadMine(token)` |
 
-O mesmo provider é usado por ambos os perfis. Para o Cuidador, `new_request` é o evento mais crítico da Home; os outros mantêm `requests` sincronizado.
+O mesmo provider é usado por ambos os perfis. Para o Cuidador, `new_request` e `request_cancelled` são os eventos mais críticos da Home — o primeiro adiciona solicitações e o segundo remove sem necessidade de round-trip HTTP.
 
 **Métodos e efeitos:**
 
@@ -852,6 +853,7 @@ O mesmo provider é usado por ambos os perfis. Para o Cuidador, `new_request` é
 | `loadMine(token)` | — | Substitui inteiro |
 | `accept(id, token)` | Remove o item | `_updateInMine(updated)` |
 | `refuse(id, token)` | Remove o item | — |
+| `cancel(id, token)` | — | `_updateInMine(updated)` |
 | `start(id, token)` | — | `_updateInMine(updated)` |
 | `complete(id, token)` | — | `_updateInMine(updated)` |
 
@@ -867,10 +869,10 @@ O mesmo provider é usado por ambos os perfis. Para o Cuidador, `new_request` é
 | `loading` | `bool` | — |
 | `unreadCount` | `int` | `_notifications.where((n) => !n.isRead).length` |
 
-**Listeners:** todos os 6 eventos → `load(token)`:
+**Listeners:** todos os 7 eventos → `load(token)`:
 ```dart
 final events = [
-  'new_request', 'request_accepted', 'request_refused',
+  'new_request', 'request_cancelled', 'request_accepted', 'request_refused',
   'service_started', 'service_completed', 'new_review',
 ];
 for (final e in events) {

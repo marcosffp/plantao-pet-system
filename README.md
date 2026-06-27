@@ -36,7 +36,7 @@ A documentação técnica completa do projeto está organizada em **[docs/README
 |---|---|
 | [Sprint 2 — Fluxo de mensageria Kafka](https://drive.google.com/file/d/12Vf2aGwrp9X9751zxPZRw6eRGAjnw2HE/view?usp=sharing) | Demonstração dos eventos publicados e consumidos pelo Kafka em tempo real |
 | [Sprint 3 — Fluxo do Dono do Pet no app](https://drive.google.com/file/d/1ga2dp3g4hluzhwW6VxaMzs27TPWKo6Uh/view?usp=share_link) | Ciclo completo: cadastro de pet → solicitação → acompanhamento → avaliação |
-| Sprint 4 — Screencast ponta a ponta *(link a adicionar)* | Sistema completo com dois simuladores simultâneos: Dono cria solicitação → Kafka → Cuidador recebe em tempo real → aceita → conclui |
+| [Sprint 4 — Screencast ponta a ponta](https://drive.google.com/file/d/14LUC0x-nqVtfTL9_tISBh73oJ4vOqfp-/view?usp=sharing) | Sistema completo com dois simuladores simultâneos: Dono cria solicitação → Kafka → Cuidador recebe em tempo real → aceita → conclui |
 
 ---
 

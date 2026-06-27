@@ -42,9 +42,20 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
     super.dispose();
   }
 
-  void _loadPets() {
+  Future<void> _loadPets() async {
     final auth = context.read<AuthProvider>();
-    context.read<PetProvider>().load(auth.user!.id, auth.user!.token);
+    final petProvider = context.read<PetProvider>();
+
+    if (_addressCtrl.text.isEmpty && (auth.user!.address?.isNotEmpty ?? false)) {
+      _addressCtrl.text = auth.user!.address!;
+    }
+
+    await petProvider.load(auth.user!.id, auth.user!.token);
+
+    if (!mounted) return;
+    if (petProvider.pets.length == 1 && _selectedPet == null) {
+      setState(() => _selectedPet = petProvider.pets.first);
+    }
   }
 
   Future<void> _pickDate() async {
@@ -163,7 +174,7 @@ class _CreateServiceRequestScreenState extends State<CreateServiceRequestScreen>
                             final selected = _selectedPet?.id == pet.id;
                             final iconColor = AppConstants.speciesColor(pet.species);
                             return GestureDetector(
-                              onTap: () => setState(() => _selectedPet = pet),
+                              onTap: () => setState(() => _selectedPet = _selectedPet?.id == pet.id ? null : pet),
                               child: Container(
                                 margin: const EdgeInsets.only(right: 12),
                                 padding: const EdgeInsets.all(12),

@@ -6,7 +6,9 @@ import '../../providers/auth_provider.dart';
 import '../../providers/notification_provider.dart';
 
 class CaregiverNotificationsScreen extends StatelessWidget {
-  const CaregiverNotificationsScreen({super.key});
+  final void Function(int index)? onNavigate;
+
+  const CaregiverNotificationsScreen({super.key, this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,11 @@ class CaregiverNotificationsScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       if (!n.isRead) notifProvider.markRead(n.id, auth.user!.token);
+                      if (n.eventType == 'service_request.created') {
+                        onNavigate?.call(0);
+                      } else if (n.eventType == 'review.created') {
+                        onNavigate?.call(3);
+                      }
                     },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 10),

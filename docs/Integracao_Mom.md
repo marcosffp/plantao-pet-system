@@ -84,7 +84,7 @@ flowchart TD
 
 ## Tópicos e eventos
 
-O sistema utiliza 6 tópicos, cada um correspondendo a um evento de domínio específico do ciclo de vida de uma solicitação.
+O sistema utiliza 7 tópicos, cada um correspondendo a um evento de domínio específico do ciclo de vida de uma solicitação.
 
 ### Tabela consolidada dos eventos
 
@@ -93,6 +93,7 @@ O sistema utiliza 6 tópicos, cada um correspondendo a um evento de domínio esp
 | `service_request.created` | `ServiceRequestService.create()` | `NotificationConsumer` | `requestId`, `serviceType`, `scheduledAt`, `petName`, `meetingAddress` | `new_request` | Todos os cuidadores `ACTIVE` |
 | `service_request.accepted` | `ServiceRequestService.accept()` | `NotificationConsumer` | `requestId`, `caregiverName`, `caregiverPhone`, `ownerId` | `request_accepted` | Dono da solicitação |
 | `service_request.refused` | `ServiceRequestService.refuse()` | `NotificationConsumer` | `requestId`, `caregiverId`, `refusedAt`, `ownerId` | `request_refused` | Dono da solicitação |
+| `service_request.cancelled` | `ServiceRequestService.cancel()` | `NotificationConsumer` | `requestId`, `cancelledAt` | `request_cancelled` | Todos os cuidadores `ACTIVE` |
 | `service_request.in_progress` | `ServiceRequestService.start()` | `NotificationConsumer` | `requestId`, `startedAt`, `ownerId` | `service_started` | Dono da solicitação |
 | `service.completed` | `ServiceRequestService.complete()` | `NotificationConsumer` | `requestId`, `completedAt`, `caregiverId`, `ownerId` | `service_completed` | Dono da solicitação |
 | `review.created` | `ReviewService.create()` | `NotificationConsumer` | `caregiverId`, `averageRating`, `comment`, `requestId` | `new_review` | Cuidador avaliado |
@@ -156,6 +157,34 @@ Os payloads JSON completos de cada evento estão detalhados nas seções abaixo.
 **Evidência no Kafka UI:**
 
 ![service_request.accepted no Kafka UI](images/service_request_accepted.png)
+
+---
+
+### `service_request.cancelled`
+
+**Publicado por:** `service-requests.service.js` → método `cancel()`
+**Quando:** dono cancela uma solicitação com status `OPEN`
+
+**Payload:**
+```json
+{
+  "requestId": "87250723-33e2-4f46-8c69-2b1224bae283",
+  "cancelledAt": "2026-06-27T14:11:03.670Z"
+}
+```
+
+**Consumer — o que acontece:**
+1. Busca todos os cuidadores com status `ACTIVE` no banco
+2. Para cada cuidador: verifica deduplicação, grava notificação com `{ requestId }`, emite via Socket.IO
+
+**Evento Socket.IO emitido:** `request_cancelled`
+**Destinatário:** todos os cuidadores `ACTIVE` conectados
+
+No app do Cuidador, este evento remove a solicitação diretamente de `openRequests` sem precisar refazer a requisição HTTP — a lista atualiza imediatamente ao receber o payload com `requestId`.
+
+**Evidência no Kafka UI:**
+
+![service_request.cancelled no Kafka UI](images/service_request_cancelled.png)
 
 ---
 
@@ -307,6 +336,9 @@ sequenceDiagram
 [KAFKA SEND] Evento publicado no tópico "service_request.refused"
 [KAFKA RECV] Recebido [service_request.refused] - ID: 2306bc83-9a50-4acc-acbe-84d29adeb3a0
 
+[KAFKA SEND] Evento publicado no tópico "service_request.cancelled"
+[KAFKA RECV] Recebido [service_request.cancelled] - ID: 87250723-33e2-4f46-8c69-2b1224bae283
+
 [KAFKA SEND] Evento publicado no tópico "service_request.in_progress"
 [KAFKA RECV] Recebido [service_request.in_progress] - ID: 2306bc83-9a50-4acc-acbe-84d29adeb3a0
 payload: { requestId: '2306bc83...', startedAt: '2026-05-16T12:43:46.014Z', ownerId: 'e5c93a04...' }
@@ -341,6 +373,7 @@ O consumer Kafka não entrega notificações diretamente ao usuário — ele del
 | `service_request.created` | `new_request` | `{ requestId, serviceType, petName, meetingAddress, scheduledAt }` |
 | `service_request.accepted` | `request_accepted` | `{ requestId, caregiverName, caregiverPhone }` |
 | `service_request.refused` | `request_refused` | `{ requestId, newStatus: 'OPEN' }` |
+| `service_request.cancelled` | `request_cancelled` | `{ requestId }` |
 | `service_request.in_progress` | `service_started` | `{ requestId, startedAt }` |
 | `service.completed` | `service_completed` | `{ requestId, completedAt }` |
 | `review.created` | `new_review` | `{ comment, newAverageRating }` |
@@ -409,9 +442,10 @@ A verificação usa a combinação `userId + eventType + requestId`. Se já exis
 | 1 | Dono cria solicitação | `service_request.created` | Todos os cuidadores `ACTIVE` |
 | 2 | Cuidador aceita | `service_request.accepted` | Dono da solicitação |
 | 3 | Cuidador recusa | `service_request.refused` | Dono da solicitação |
-| 4 | Cuidador inicia o serviço | `service_request.in_progress` | Dono da solicitação |
-| 5 | Cuidador conclui o serviço | `service.completed` | Dono da solicitação |
-| 6 | Dono avalia o cuidador | `review.created` | Cuidador avaliado |
+| 4 | Dono cancela solicitação | `service_request.cancelled` | Todos os cuidadores `ACTIVE` |
+| 5 | Cuidador inicia o serviço | `service_request.in_progress` | Dono da solicitação |
+| 6 | Cuidador conclui o serviço | `service.completed` | Dono da solicitação |
+| 7 | Dono avalia o cuidador | `review.created` | Cuidador avaliado |
 
 <div align="center">
   <img width="70%" alt="pucminas" src="images/banner-institucional.svg"/>

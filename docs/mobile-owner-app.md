@@ -986,6 +986,7 @@ Todos os providers estendem `ChangeNotifier`. Campos com `_` são privados e exp
 | Evento | Reação |
 |---|---|
 | `new_request` | `loadOpen(token)` — nova solicitação disponível para o Cuidador |
+| `request_cancelled` | Remove o item de `_openRequests` pelo `requestId` (Cuidador); sem efeito no Dono |
 | `request_accepted` | `loadMine(token)` — atualiza lista do Dono |
 | `request_refused` | `loadMine(token)` |
 | `service_started` | `loadMine(token)` |
@@ -1020,13 +1021,13 @@ O mesmo provider lida com eventos de ambos os perfis. O que é chamado depende d
 | `_loading` | `loading` | — |
 | — | `unreadCount` | `_notifications.where(n => !n.isRead).length` |
 
-**Listeners:** registra os mesmos 6 eventos do socket e chama `load(token)` em qualquer um deles.
+**Listeners:** registra os mesmos 7 eventos do socket e chama `load(token)` em qualquer um deles.
 
 | Método | Ação |
 |---|---|
 | `load(token)` | Busca `GET /notifications` |
 | `markRead(id, token)` | `PATCH /notifications/:id/read` + emite `mark_read` no socket + atualiza `readAt` localmente |
-| `listenToSocket(token)` | Registra listeners para os 6 eventos |
+| `listenToSocket(token)` | Registra listeners para os 7 eventos |
 
 ---
 
@@ -1052,7 +1053,7 @@ _socket!.connect();
 **Eventos que o SocketService pré-registra ao conectar:**
 ```dart
 final events = [
-  'new_request', 'request_accepted', 'request_refused',
+  'new_request', 'request_cancelled', 'request_accepted', 'request_refused',
   'service_started', 'service_completed', 'new_review',
 ];
 ```

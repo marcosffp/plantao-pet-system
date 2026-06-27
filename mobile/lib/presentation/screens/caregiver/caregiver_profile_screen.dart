@@ -69,8 +69,6 @@ class CaregiverProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                _StatusToggle(isActive: user.status == 'ACTIVE'),
               ],
             ),
           ),
@@ -192,66 +190,6 @@ class CaregiverProfileScreen extends StatelessWidget {
   }
 }
 
-class _StatusToggle extends StatelessWidget {
-  final bool isActive;
-
-  const _StatusToggle({required this.isActive});
-
-  @override
-  Widget build(BuildContext context) {
-    final auth = context.read<AuthProvider>();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: isActive ? AppColors.successLight : AppColors.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isActive ? AppColors.successBorder : AppColors.divider,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive ? AppColors.success : AppColors.textSecondary,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            isActive ? 'Disponível para atendimentos' : 'Indisponível no momento',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isActive ? AppColors.success : AppColors.textSecondary,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Switch(
-            value: isActive,
-            activeThumbColor: AppColors.success,
-            onChanged: (val) async {
-              final newStatus = val ? 'ACTIVE' : 'INACTIVE';
-              final ok = await auth.updateCaregiverStatus(newStatus);
-              if (!context.mounted) return;
-              if (!ok) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(auth.error ?? 'Erro ao atualizar status'),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _InfoRow extends StatelessWidget {
   final IconData icon;

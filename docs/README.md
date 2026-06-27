@@ -48,6 +48,7 @@ Arquivos em [`images/`](images/):
 | [service_request_in_progress.png](images/service_request_in_progress.png) | Kafka UI — evento `service_request.in_progress` |
 | [service_completed.png](images/service_completed.png) | Kafka UI — evento `service.completed` |
 | [review_created.png](images/review_created.png) | Kafka UI — evento `review.created` |
+| [service_request_cancelled.png](images/service_request_cancelled.png) | Kafka UI — evento `service_request.cancelled` |
 
 ---
 

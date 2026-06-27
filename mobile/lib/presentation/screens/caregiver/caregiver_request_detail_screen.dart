@@ -133,12 +133,15 @@ class CaregiverRequestDetailScreen extends StatelessWidget {
                           backgroundColor: AppColors.success,
                         ),
                       );
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                     } else {
+                      final msg = srProvider.error ?? 'Não foi possível aceitar a solicitação';
+                      final isLimit = msg.contains('atendimentos em andamento');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(srProvider.error ?? 'Erro ao aceitar'),
-                          backgroundColor: AppColors.error,
+                          content: Text(msg),
+                          backgroundColor: isLimit ? AppColors.warning : AppColors.error,
+                          duration: const Duration(seconds: 4),
                         ),
                       );
                     }

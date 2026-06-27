@@ -29,6 +29,8 @@ class AppNotification {
         return 'Solicitação aceita!';
       case 'service_request.refused':
         return 'Solicitação recusada';
+      case 'service_request.cancelled':
+        return 'Solicitação cancelada';
       case 'service_request.in_progress':
         return 'Serviço iniciado!';
       case 'service.completed':
@@ -48,6 +50,8 @@ class AppNotification {
         return '${payload['caregiverName'] ?? 'Um cuidador'} aceitou sua solicitação.';
       case 'service_request.refused':
         return 'Sua solicitação voltou para aberta.';
+      case 'service_request.cancelled':
+        return 'O dono cancelou a solicitação.';
       case 'service_request.in_progress':
         return 'O cuidador iniciou o serviço.';
       case 'service.completed':

@@ -700,6 +700,8 @@ O dono cancela uma solicitação. Só é possível cancelar quando o status é `
 
 **Auth:** Bearer token + role `owner`
 
+**Efeito:** publica evento `service_request.cancelled` → todos os cuidadores `ACTIVE` recebem notificação e a solicitação é removida de suas listas em tempo real.
+
 **Erros possíveis:** `403` se não for o dono da solicitação ou status não for `OPEN`.
 
 ---
@@ -822,6 +824,7 @@ Resumo dos tópicos publicados:
 | `service_request.created` | Dono cria solicitação | Todos os cuidadores `ACTIVE` |
 | `service_request.accepted` | Cuidador aceita | Dono da solicitação |
 | `service_request.refused` | Cuidador recusa | Dono da solicitação |
+| `service_request.cancelled` | Dono cancela solicitação | Todos os cuidadores `ACTIVE` |
 | `service_request.in_progress` | Cuidador inicia | Dono da solicitação |
 | `service.completed` | Cuidador conclui | Dono da solicitação |
 | `review.created` | Dono avalia | Cuidador avaliado |

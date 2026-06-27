@@ -274,27 +274,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
               ),
               const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.successLight,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.successBorder),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.shield_outlined, color: AppColors.success, size: 20),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Seus dados são protegidos e não serão compartilhados sem consentimento.',
-                        style: TextStyle(fontSize: 13, color: AppColors.success),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

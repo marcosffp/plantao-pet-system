@@ -20,11 +20,45 @@ class ServiceRequestProvider extends ChangeNotifier {
   String? get error => _error;
 
   void listenToSocket(String token) {
-    _socket.on('new_request', (_) => loadOpen(token));
-    _socket.on('request_accepted', (_) => loadMine(token));
-    _socket.on('request_refused', (_) => loadMine(token));
-    _socket.on('service_started', (_) => loadMine(token));
-    _socket.on('service_completed', (_) => loadMine(token));
+    _socket.on('new_request', (_) async {
+      try {
+        _openRequests = await _repo.getOpen(token);
+        notifyListeners();
+      } catch (_) {}
+    });
+
+    _socket.on('request_cancelled', (data) {
+      final requestId = data is Map ? data['requestId'] as String? : null;
+      if (requestId != null) {
+        _openRequests.removeWhere((r) => r.id == requestId);
+        notifyListeners();
+      }
+    });
+
+    _socket.on('request_accepted', (_) async {
+      try {
+        _requests = await _repo.getMine(token);
+        notifyListeners();
+      } catch (_) {}
+    });
+    _socket.on('request_refused', (_) async {
+      try {
+        _requests = await _repo.getMine(token);
+        notifyListeners();
+      } catch (_) {}
+    });
+    _socket.on('service_started', (_) async {
+      try {
+        _requests = await _repo.getMine(token);
+        notifyListeners();
+      } catch (_) {}
+    });
+    _socket.on('service_completed', (_) async {
+      try {
+        _requests = await _repo.getMine(token);
+        notifyListeners();
+      } catch (_) {}
+    });
   }
 
   Future<void> loadMine(String token) async {
