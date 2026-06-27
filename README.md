@@ -23,7 +23,7 @@ A documentação técnica completa do projeto está organizada em **[docs/README
 |---|---|
 | [Índice geral da documentação](docs/README.md) | Navegação por critério de avaliação (Sprint 4), índice completo por sprint, tecnologias |
 | [Backend — API REST](docs/backend-api.md) | Arquitetura em camadas, todos os endpoints, modelo de dados, 15 regras de negócio, variáveis de ambiente |
-| [Integração MOM — Apache Kafka](docs/Integracao_Mom.md) | 6 tópicos Kafka com payloads, diagrama de sequência, Socket.IO, deduplicação, logs reais |
+| [Integração MOM — Apache Kafka](docs/Integracao_Mom.md) | 7 tópicos Kafka com payloads, diagrama de sequência, Socket.IO, deduplicação, logs reais |
 | [App Mobile — Dono do Pet](docs/mobile-owner-app.md) | 10+ telas, providers, repositórios, fluxos Socket.IO com diagramas de sequência |
 | [App Mobile — Cuidador](docs/mobile-caregiver-app.md) | 5 telas, providers, repositórios, listeners Socket.IO, padrões EDA + Clean Architecture |
 | [Relatório Técnico Final — Sprint 4](docs/Relatório%20Técnico%20Final%20—%20Sprint%204.pdf) | Arquitetura, decisões de design, dificuldades, reflexão sobre padrões, 5 referências bibliográficas |
@@ -53,7 +53,7 @@ A plataforma funciona como um marketplace de serviços veterinários domiciliare
 | Perfil | Responsabilidades |
 |---|---|
 | **Dono do Pet** | Cadastra seus pets, abre solicitações de serviço, acompanha o status em tempo real, avalia o cuidador após o serviço |
-| **Cuidador** | Visualiza solicitações abertas, aceita ou recusa atendimentos, gerencia a fila de serviços em andamento, controla sua disponibilidade (ATIVO/INATIVO) |
+| **Cuidador** | Visualiza solicitações abertas, aceita ou recusa atendimentos, gerencia a fila de serviços em andamento |
 
 ---
 
@@ -97,9 +97,7 @@ flowchart LR
         C3["3. Aceita ou recusa a solicitação"]
         C4["4. Inicia o serviço na data combinada"]
         C5["5. Conclui o serviço\n(dono pode avaliar)"]
-        C6["6. Alterna disponibilidade\nATIVO / INATIVO"]
         C1 --> C2 --> C3 --> C4 --> C5
-        C1 -.-> C6
     end
 
     OWNER <-->|"API REST · Kafka · Socket.IO"| CAREGIVER

@@ -303,6 +303,14 @@ sequenceDiagram
     K->>B: consume → notifica cuidadores ACTIVE
     B-->>C: Socket.IO: new_request
 
+    alt Dono cancela antes do aceite (status OPEN)
+      O->>B: PATCH /:id/cancel
+      B->>K: publish("service_request.cancelled")
+      K->>B: consume → notifica cuidadores ACTIVE
+      B-->>C: Socket.IO: request_cancelled
+      Note over C: Card removido de openRequests sem HTTP call
+    end
+
     C->>B: PATCH /:id/accept
     B->>K: publish("service_request.accepted")
     K->>B: consume

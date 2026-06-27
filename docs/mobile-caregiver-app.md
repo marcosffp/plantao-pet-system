@@ -67,7 +67,7 @@ flowchart TD
     MAIN --> ABA0["Aba Início\nSolicitações OPEN disponíveis para aceitar"]
     MAIN --> ABA1["Aba Meus\nMeus atendimentos"]
     MAIN --> ABA2["Aba Alertas\nHistórico de notificações (badge)"]
-    MAIN --> ABA3["Aba Perfil\nDados + toggle ATIVO/INATIVO\n+ média de avaliação"]
+    MAIN --> ABA3["Aba Perfil\nDados + média de avaliação"]
 
     ABA0 -->|"Nova solicitação (Socket.IO)"| REALTIME["Lista atualiza automaticamente"]
     ABA0 -->|"Toque no card"| DETAIL["Detalhe da Solicitação\n(botões Aceitar / Recusar)"]
@@ -424,6 +424,8 @@ Ao submeter:
 
 ### Início (Home) — Solicitações Abertas
 
+![CaregiverHomeScreen — Solicitações Abertas](images/telas/lista_solicitacoes.png)
+
 **Arquivo:** `screens/caregiver/caregiver_home_screen.dart`
 
 `CaregiverHomeScreen` é um `StatelessWidget` — toda a lista é lida diretamente de `ServiceRequestProvider.openRequests`. Quando uma nova solicitação chega via Socket.IO, o provider emite `notifyListeners()` e esta tela re-renderiza automaticamente.
@@ -446,6 +448,8 @@ Ao submeter:
 ---
 
 ### Detalhe de Solicitação (Cuidador)
+
+![CaregiverRequestDetailScreen — Detalhes](images/telas/detalhe_acao.png)
 
 **Arquivo:** `screens/caregiver/caregiver_request_detail_screen.dart`
 
@@ -502,6 +506,8 @@ Quando o aceite falha com mensagem contendo "atendimentos em andamento", o Snack
 
 ### Meus Atendimentos
 
+![CaregiverMyRequestsScreen — Meus Atendimentos](images/telas/meus_atendimentos.png)
+
 **Arquivo:** `screens/caregiver/caregiver_my_requests_screen.dart`
 
 Lista de todos os atendimentos que o cuidador aceitou (em qualquer status exceto OPEN).
@@ -529,6 +535,8 @@ Lista de todos os atendimentos que o cuidador aceitou (em qualquer status exceto
 
 ### Alertas / Notificações
 
+![CaregiverNotificationsScreen — Alertas](images/telas/notificacao.png)
+
 **Arquivo:** `screens/caregiver/caregiver_notifications_screen.dart`
 
 Exibe o histórico de notificações recebidas pelo cuidador. Esta é uma tela separada, exclusiva do Cuidador — **não é compartilhada** com o perfil Dono (que tem `OwnerNotificationsScreen` própria).
@@ -553,7 +561,7 @@ Notificações não lidas (`readAt == null`) têm fundo diferenciado. Toque em u
 
 **Arquivo:** `screens/caregiver/caregiver_profile_screen.dart`
 
-Tela que exibe dados do cuidador e permite alternar disponibilidade.
+Tela que exibe dados do cuidador e a média de avaliações recebidas.
 
 **Layout:**
 

@@ -552,7 +552,6 @@ final results = await Future.wait([
 **Layout:**
 - Avatar circular azul com iniciais (80×80)
 - Nome, média de estrelas + total de avaliações
-- Badge "Disponível" (verde) ou "Indisponível" (cinza) — baseado em `status == 'ACTIVE'`
 
 **Seção INFORMAÇÕES:** telefone + bairros atendidos
 
