@@ -15,6 +15,31 @@
 
 ---
 
+## Documentação
+
+A documentação técnica completa do projeto está organizada em **[docs/README.md](docs/README.md)**, com navegação por critério de avaliação e índice de todos os documentos por sprint.
+
+| Documento | Conteúdo |
+|---|---|
+| [Índice geral da documentação](docs/README.md) | Navegação por critério de avaliação (Sprint 4), índice completo por sprint, tecnologias |
+| [Backend — API REST](docs/backend-api.md) | Arquitetura em camadas, todos os endpoints, modelo de dados, 15 regras de negócio, variáveis de ambiente |
+| [Integração MOM — Apache Kafka](docs/Integracao_Mom.md) | 6 tópicos Kafka com payloads, diagrama de sequência, Socket.IO, deduplicação, logs reais |
+| [App Mobile — Dono do Pet](docs/mobile-owner-app.md) | 10+ telas, providers, repositórios, fluxos Socket.IO com diagramas de sequência |
+| [App Mobile — Cuidador](docs/mobile-caregiver-app.md) | 5 telas, providers, repositórios, listeners Socket.IO, padrões EDA + Clean Architecture |
+| [Relatório Técnico Final — Sprint 4](docs/Relatório%20Técnico%20Final%20—%20Sprint%204.pdf) | Arquitetura, decisões de design, dificuldades, reflexão sobre padrões, 5 referências bibliográficas |
+
+---
+
+## Vídeos de apresentação
+
+| Vídeo | Conteúdo |
+|---|---|
+| [Sprint 2 — Fluxo de mensageria Kafka](https://drive.google.com/file/d/12Vf2aGwrp9X9751zxPZRw6eRGAjnw2HE/view?usp=sharing) | Demonstração dos eventos publicados e consumidos pelo Kafka em tempo real |
+| [Sprint 3 — Fluxo do Dono do Pet no app](https://drive.google.com/file/d/1ga2dp3g4hluzhwW6VxaMzs27TPWKo6Uh/view?usp=share_link) | Ciclo completo: cadastro de pet → solicitação → acompanhamento → avaliação |
+| Sprint 4 — Screencast ponta a ponta *(link a adicionar)* | Sistema completo com dois simuladores simultâneos: Dono cria solicitação → Kafka → Cuidador recebe em tempo real → aceita → conclui |
+
+---
+
 ## O que é o Plantão Pet?
 
 O **Plantão Pet** resolve um problema prático: donos de pets precisam de cuidadores confiáveis para passear, visitar ou hospedar seus animais, e cuidadores precisam de uma forma organizada de encontrar e gerenciar esses serviços.
@@ -82,143 +107,213 @@ flowchart LR
 
 ---
 
-## Início rápido
+## Requisitos
 
-### Pré-requisitos
+Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
 
-- Docker e Docker Compose instalados
-- Flutter SDK 3.7+ (para o app mobile)
+| Ferramenta | Versão mínima | Para quê |
+|---|---|---|
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | qualquer versão recente | Rodar PostgreSQL, Kafka e a API (tudo em containers) |
+| [Flutter SDK](https://docs.flutter.dev/get-started/install) | 3.7+ | Compilar e rodar o app mobile |
+| Xcode + iOS Simulator | qualquer versão recente | Rodar o app em simulador iOS (macOS apenas) |
 
-### 1. Backend
+> **Você não precisa instalar Node.js, PostgreSQL ou Kafka localmente.** O backend roda inteiramente dentro do Docker.
+
+---
+
+## Como rodar
+
+### 1. Clone o repositório
 
 ```bash
-# Entre na pasta do backend
+git clone <url-do-repositorio>
+cd plantao-pet-system
+```
+
+---
+
+### 2. Backend
+
+#### Passo 1 — Crie o arquivo de variáveis de ambiente
+
+```bash
 cd backend
-
-# Crie o arquivo de variáveis de ambiente a partir do template
 cp .env.example .env
-# Edite o .env com sua configuração (banco, JWT_SECRET, etc.)
+```
 
-# Suba todos os serviços: PostgreSQL, Kafka, Kafka UI e a API
+Abra o arquivo `.env` gerado e ajuste os valores marcados abaixo:
+
+```env
+# ─── Banco de Dados ───────────────────────────────────────────
+POSTGRES_DB=plantao_pet
+POSTGRES_USER=plantao
+POSTGRES_PASSWORD=troque_esta_senha        # ← troque por qualquer senha
+
+# Use @postgres quando rodar com Docker (não altere esta linha)
+DATABASE_URL=postgresql://plantao:troque_esta_senha@postgres:5432/plantao_pet
+#                                ↑ deve ser igual a POSTGRES_PASSWORD acima
+
+# ─── API ──────────────────────────────────────────────────────
+JWT_SECRET=cole_o_segredo_aqui             # ← gere um segredo (veja abaixo)
+JWT_EXPIRES_IN=7d
+PORT=3000
+
+# ─── Kafka ────────────────────────────────────────────────────
+KAFKAJS_NO_PARTITIONER_WARNING=1
+KAFKA_BROKER=kafka:29092                   # não altere ao rodar com Docker
+
+# ─── Kafka UI ─────────────────────────────────────────────────
+KAFKA_UI_PORT=8080
+KAFKA_CLUSTER_NAME=plantao-pet
+```
+
+**Como gerar o `JWT_SECRET`:** execute o comando abaixo no terminal e cole o resultado no `.env`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
+```
+
+#### Passo 2 — Suba os containers
+
+```bash
 docker compose up -d
+```
 
-# Verifique se todos os containers estão rodando
+Esse comando sobe automaticamente quatro serviços: **PostgreSQL**, **Kafka**, **Kafka UI** e a **API** (as migrations do banco são aplicadas automaticamente na primeira vez).
+
+Na primeira execução pode levar até 60 segundos para o Kafka inicializar. Acompanhe com:
+
+```bash
 docker compose ps
 ```
 
-Após subir, os seguintes endereços estarão disponíveis:
+Aguarde todos estarem com status `healthy` ou `running`:
+
+```
+NAME                       STATUS
+plantao-pet-postgres       healthy
+plantao-pet-kafka          healthy
+plantao-pet-kafka-ui       running
+plantao-pet-api            running
+```
+
+#### Passo 3 — Verifique se está funcionando
 
 | Serviço | URL |
 |---|---|
 | API REST | `http://localhost:3000` |
 | Documentação Swagger | `http://localhost:3000/api-docs` |
-| Kafka UI | `http://localhost:8080` |
+| Kafka UI (painel de mensagens) | `http://localhost:8080` |
 
-### 2. App Mobile (um simulador)
-
-```bash
-# Entre na pasta do mobile
-cd mobile
-
-# Crie o arquivo de variáveis de ambiente
-cp .env.example .env
-# Ajuste BASE_URL e SOCKET_URL se necessário (padrão: http://localhost:3000)
-
-# Instale as dependências Flutter
-flutter pub get
-
-# Execute o app no dispositivo/emulador conectado
-flutter run --dart-define-from-file=.env
-```
-
-> **iOS Simulator:** mantenha `BASE_URL=http://localhost:3000`
-> **Android Emulator:** use `BASE_URL=http://10.0.2.2:3000`
+Acesse `http://localhost:3000/api-docs` no navegador — se a página Swagger carregar, o backend está pronto.
 
 ---
 
-### 3. Testando com dois simuladores (Dono + Cuidador)
+### 3. App Mobile
 
-Para testar o fluxo completo — um usuário como Dono e outro como Cuidador — é necessário rodar o app em **dois simuladores simultaneamente**, cada um em seu próprio terminal.
-
-#### Passo 1 — Verificar os simuladores disponíveis
-
-```bash
-# Listar todos os simuladores iOS instalados
-xcrun simctl list devices available
-```
-
-Exemplo de saída:
-```
-iPhone 17
-iPhone 17 Pro
-iPhone 17 Pro Max
-iPhone 16
-```
-
-#### Passo 2 — Abrir os simuladores
-
-**Via Terminal:**
-```bash
-# Abrir o Simulator (já abre o último usado)
-open -a Simulator
-
-# Se precisar inicializar um modelo específico manualmente:
-xcrun simctl boot "iPhone 17 Pro"
-open -a Simulator
-```
-
-**Via Xcode:**
-1. Abra o Xcode
-2. Menu **Xcode → Open Developer Tool → Simulator**
-3. Com o Simulator aberto: menu **File → Open Simulator** → escolha o modelo
-
-#### Passo 3 — Confirmar que o Flutter enxerga os dois dispositivos
+#### Passo 1 — Crie o arquivo de variáveis de ambiente
 
 ```bash
 cd mobile
+cp .env.example .env
+```
+
+O `.env` do mobile tem apenas dois campos:
+
+```env
+# Endereço da API REST
+BASE_URL=http://localhost:3000
+
+# Endereço do servidor WebSocket (mesmo endereço da API)
+SOCKET_URL=http://localhost:3000
+```
+
+> **iOS Simulator:** mantenha `localhost` — funciona direto.
+>
+> **Android Emulator:** substitua `localhost` por `10.0.2.2`:
+> ```env
+> BASE_URL=http://10.0.2.2:3000
+> SOCKET_URL=http://10.0.2.2:3000
+> ```
+> O emulador Android trata `localhost` como ele mesmo, não como sua máquina. O IP `10.0.2.2` é o alias que aponta para a sua máquina host.
+
+#### Passo 2 — Instale as dependências
+
+```bash
+flutter pub get
+```
+
+#### Passo 3 — Rode o app
+
+```bash
+flutter run --dart-define-from-file=.env
+```
+
+Se houver mais de um dispositivo conectado, o Flutter vai perguntar em qual rodar. Escolha o simulador desejado.
+
+---
+
+### 4. Testando o fluxo completo (dois simuladores)
+
+O Plantão Pet tem dois perfis — Dono e Cuidador. Para testar a comunicação em tempo real entre eles, rode o app **simultaneamente em dois simuladores iOS**, cada um em um terminal separado.
+
+#### Passo 1 — Liste os simuladores disponíveis
+
+```bash
+xcrun simctl list devices available
+```
+
+#### Passo 2 — Abra dois simuladores
+
+**Via Terminal:**
+```bash
+# Inicializa o primeiro simulador
+xcrun simctl boot "iPhone 17"
+# Inicializa o segundo simulador
+xcrun simctl boot "iPhone 17 Pro"
+# Abre o app Simulator com os dois rodando
+open -a Simulator
+```
+
+**Via Xcode:** Menu **Xcode → Open Developer Tool → Simulator**, depois **File → Open Simulator** para abrir o segundo.
+
+#### Passo 3 — Confirme que o Flutter enxerga os dois
+
+```bash
 flutter devices
 ```
 
-Saída esperada (exemplo real):
+Saída esperada:
 ```
 Found 4 connected devices:
-  iPhone 17 Pro (mobile) • 2D22ACC7-4CC6-48A4-8432-010F8578099B • ios • com.apple.CoreSimulator.SimRuntime.iOS-26-5
-  iPhone 17 (mobile)     • DE4CF79D-444A-4F30-9C51-FE875EB2B486 • ios • com.apple.CoreSimulator.SimRuntime.iOS-26-5
-  macOS (desktop)        • macos                                 • darwin-arm64
-  Chrome (web)           • chrome                                • web-javascript
+  iPhone 17 Pro (mobile) • 2D22ACC7-4CC6-48A4-8432-010F8578099B • ios
+  iPhone 17 (mobile)     • DE4CF79D-444A-4F30-9C51-FE875EB2B486 • ios
+  macOS (desktop)        • macos
+  Chrome (web)           • chrome
 ```
 
-#### Passo 4 — Rodar o app nos dois simuladores (terminais separados)
+#### Passo 4 — Rode em terminais separados
 
-**Terminal 1 — Dono do Pet (iPhone 17):**
+**Terminal 1 — perfil Dono do Pet:**
 ```bash
-cd ~/Developer/plantao-pet-system/mobile
+cd mobile
 flutter run -d "iPhone 17" --dart-define-from-file=.env
 ```
 
-**Terminal 2 — Cuidador (iPhone 17 Pro):**
+**Terminal 2 — perfil Cuidador:**
 ```bash
-cd ~/Developer/plantao-pet-system/mobile
+cd mobile
 flutter run -d "iPhone 17 Pro" --dart-define-from-file=.env
 ```
 
-Você também pode usar o UUID diretamente (mais preciso):
-```bash
-# Terminal 1 — Dono
-flutter run -d DE4CF79D-444A-4F30-9C51-FE875EB2B486 --dart-define-from-file=.env
+#### O que esperar
 
-# Terminal 2 — Cuidador
-flutter run -d 2D22ACC7-4CC6-48A4-8432-010F8578099B --dart-define-from-file=.env
-```
-
-#### Resultado esperado
-
-| Simulador | Perfil | O que testar |
+| Simulador | Perfil | Fluxo para testar |
 |---|---|---|
-| iPhone 17 | Dono do Pet | Cadastrar pet → abrir solicitação → acompanhar status → avaliar |
-| iPhone 17 Pro | Cuidador | Receber solicitação em tempo real → aceitar → iniciar → concluir |
+| iPhone 17 | Dono do Pet | Cadastrar pet → abrir solicitação → receber notificação de aceite → avaliar |
+| iPhone 17 Pro | Cuidador | Receber nova solicitação em tempo real → aceitar → iniciar → concluir |
 
-As notificações Socket.IO fluem em tempo real entre os dois: quando o Cuidador aceitar no iPhone 17 Pro, o Dono verá o status atualizar automaticamente no iPhone 17.
+Quando o Cuidador aceitar a solicitação no iPhone 17 Pro, o Dono verá o status atualizar **automaticamente** no iPhone 17 — sem nenhuma ação manual. Esse é o fluxo Kafka → Socket.IO funcionando ponta a ponta.
 
 ---
 
@@ -240,33 +335,8 @@ plantao-pet-system/
     ├── backend-api.md
     ├── mobile-owner-app.md
     ├── mobile-caregiver-app.md
-    └── integracao_Mom.md
+    └── Integracao_Mom.md
 ```
-
----
-
-## Documentação
-
-A documentação técnica completa do projeto está organizada em **[docs/README.md](docs/README.md)**, com navegação por critério de avaliação e índice de todos os documentos por sprint.
-
-| Documento | Conteúdo |
-|---|---|
-| [Índice geral da documentação](docs/README.md) | Navegação por critério de avaliação (Sprint 4), índice completo por sprint, tecnologias |
-| [Backend — API REST](docs/backend-api.md) | Arquitetura em camadas, todos os endpoints, modelo de dados, 15 regras de negócio, variáveis de ambiente |
-| [Integração MOM — Apache Kafka](docs/integracao_Mom.md) | 6 tópicos Kafka com payloads, diagrama de sequência, Socket.IO, deduplicação, logs reais |
-| [App Mobile — Dono do Pet](docs/mobile-owner-app.md) | 10+ telas, providers, repositórios, fluxos Socket.IO com diagramas de sequência |
-| [App Mobile — Cuidador](docs/mobile-caregiver-app.md) | 5 telas, providers, repositórios, listeners Socket.IO, padrões EDA + Clean Architecture |
-| [Relatório Técnico Final — Sprint 4](docs/Relatório%20Técnico%20Final%20—%20Sprint%204.pdf) | Arquitetura, decisões de design, dificuldades, reflexão sobre padrões, 5 referências bibliográficas |
-
----
-
-## Vídeos de apresentação
-
-| Vídeo | Conteúdo |
-|---|---|
-| [Sprint 2 — Fluxo de mensageria Kafka](https://drive.google.com/file/d/12Vf2aGwrp9X9751zxPZRw6eRGAjnw2HE/view?usp=sharing) | Demonstração dos eventos publicados e consumidos pelo Kafka em tempo real |
-| [Sprint 3 — Fluxo do Dono do Pet no app](https://drive.google.com/file/d/1ga2dp3g4hluzhwW6VxaMzs27TPWKo6Uh/view?usp=share_link) | Ciclo completo: cadastro de pet → solicitação → acompanhamento → avaliação |
-| Sprint 4 — Screencast ponta a ponta *(link a adicionar)* | Sistema completo com dois simuladores simultâneos: Dono cria solicitação → Kafka → Cuidador recebe em tempo real → aceita → conclui |
 
 ---
 

@@ -38,7 +38,7 @@ Kafka    Kafka        Kafka        Kafka      Kafka
 ```
 
 → **Diagrama de sequência completo:** [Relatório Técnico Final — seção 6](Relatório%20Técnico%20Final%20—%20Sprint%204.pdf)  
-→ **Eventos, payloads e logs de execução:** [Integração MOM — Fluxo ponta a ponta](integracao_Mom.md#fluxo-completo-ponta-a-ponta)
+→ **Eventos, payloads e logs de execução:** [Integração MOM — Fluxo ponta a ponta](Integracao_Mom.md#fluxo-completo-ponta-a-ponta)
 
 ---
 
@@ -55,9 +55,9 @@ Dono → POST /service-requests
           → Card aparece na tela do Cuidador sem nenhuma ação manual
 ```
 
-→ **Arquitetura assíncrona completa:** [Integração MOM — Visão geral](integracao_Mom.md#visão-geral-da-arquitetura-assíncrona)  
+→ **Arquitetura assíncrona completa:** [Integração MOM — Visão geral](Integracao_Mom.md#visão-geral-da-arquitetura-assíncrona)  
 → **Implementação no app:** [App Cuidador — Serviço de Socket.IO](mobile-caregiver-app.md#serviço-de-socketio--tempo-real)  
-→ **Desacoplamento producer/consumer:** [Integração MOM — Desafios](integracao_Mom.md#desafios-de-implementação)
+→ **Desacoplamento producer/consumer:** [Integração MOM — Desafios](Integracao_Mom.md#desafios-de-implementação)
 
 ---
 
@@ -103,7 +103,7 @@ O relatório cobre todos os tópicos exigidos (EDA, MOM, Clean Architecture, RES
 
 | Documento | Conteúdo |
 |---|---|
-| [integracao_Mom.md](integracao_Mom.md) | Configuração do Kafka (KRaft), 6 tópicos com payloads JSON de exemplo, diagrama de sequência, integração Socket.IO, persistência e deduplicação de notificações, logs reais de execução |
+| [Integracao_Mom.md](Integracao_Mom.md) | Configuração do Kafka (KRaft), 6 tópicos com payloads JSON de exemplo, diagrama de sequência, integração Socket.IO, persistência e deduplicação de notificações, logs reais de execução |
 
 ### Sprint 3 — App Flutter do Cliente (Dono do Pet)
 
@@ -126,7 +126,7 @@ O relatório cobre todos os tópicos exigidos (EDA, MOM, Clean Architecture, RES
 docs/
 ├── README.md                              ← este arquivo (índice de navegação)
 ├── backend-api.md                         ← Sprint 1: documentação da API REST
-├── integracao_Mom.md                      ← Sprint 2: integração Kafka + Socket.IO
+├── Integracao_Mom.md                      ← Sprint 2: integração Kafka + Socket.IO
 ├── mobile-owner-app.md                    ← Sprint 3: app Flutter do Dono
 ├── mobile-caregiver-app.md               ← Sprint 4: app Flutter do Cuidador
 ├── Relatório Técnico Final — Sprint 4.pdf ← Sprint 4: relatório técnico (PDF)
