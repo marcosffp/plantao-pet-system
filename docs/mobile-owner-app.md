@@ -77,7 +77,10 @@ flowchart TD
     MAIN --> ABA4["Aba Perfil\nDados da conta + Sair"]
 
     ABA0 -->|"Toque no card"| DETAIL["Detalhe da Solicitação"]
-    DETAIL -->|"Status OPEN"| CANCEL["Cancelar (menu ···)"]
+    DETAIL -->|"Status OPEN\nmenu ···"| CANCEL_DLG{"AlertDialog\nConfirmar cancelamento?"}
+    CANCEL_DLG -->|"Cancelar"| DETAIL
+    CANCEL_DLG -->|"Confirmar"| CANCEL_ACTION["ServiceRequestProvider.cancel()\nPATCH /service-requests/{id}/cancel"]
+    CANCEL_ACTION --> ABA0
     DETAIL -->|"COMPLETED + sem avaliação"| REVIEW["Avaliar Cuidador"]
     DETAIL -->|"Toque no cuidador"| CPERFIL["Perfil do Cuidador"]
 
@@ -395,8 +398,8 @@ Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de di
 **Fluxo de login do Dono:**
 1. `_isOwner == true` → chama `AuthProvider.loginOwner(email, senha)`
 2. Provider chama `AuthRepository.loginOwner()` → `POST /auth/owner/login`
-3. Extrai token da resposta, decodifica com `TokenStorage.decodeToken()` para pegar `id`
-4. Faz segunda chamada: `GET /owners/{id}` para buscar dados completos do perfil
+3. Extrai token da resposta
+4. Faz segunda chamada: `GET /owners/me` para buscar dados completos do perfil
 5. Salva token e usuário no `TokenStorage`
 6. Conecta `SocketService` com o token
 7. `_AppRoot` detecta mudança no `AuthProvider` e exibe `OwnerMainScreen`
@@ -434,29 +437,40 @@ Ao submeter:
 
 ### Início (Home)
 
+<img width="220" alt="OwnerHomeScreen — Início" src="images/telas/home_dono.png" />
+
 **Arquivo:** `screens/owner/owner_home_screen.dart`
 
 Tela principal do Dono. Lista todas as suas solicitações de serviço.
 
 **Layout:**
-- `_Header`: fundo branco, saudação "Olá, {primeiro nome}!" + data atual formatada em pt_BR (ex: "quinta-feira, 19 de junho")
-  - Avatar circular azul com iniciais do usuário (ex: "JS")
-- Contador "N no total" e filtros horizontais
-- `SliverList` com `ServiceRequestCard` para cada solicitação filtrada
+- `_Header`: fundo branco, saudação "Olá, {primeiro nome}!" + data atual formatada em pt_BR (ex: "sábado, 27 de junho")
+  - Avatar circular azul com iniciais do usuário no canto superior direito (ex: "MA")
+- Título "**Suas solicitações**" à esquerda + contador "**N no total**" à direita
+- Filtros horizontais (chips pill) + lista de `ServiceRequestCard`
 
 **Filtros (chips horizontais scrolláveis):**
 
-| Chip | Status filtrado |
-|---|---|
-| Todas | nenhum (exibe todas) |
-| Em andamento | `IN_PROGRESS` |
-| Abertas | `OPEN` |
+| Chip | Status filtrado | Estilo selecionado |
+|---|---|---|
+| Todas | nenhum (exibe todas) | Fundo azul preenchido, texto branco |
+| Em andamento | `IN_PROGRESS` | Contorno, texto cinza |
+| Abertas | `OPEN` | Contorno, texto cinza |
+
+O chip ativo tem fundo azul sólido (`AppColors.primary`) com texto branco; os demais têm fundo branco com borda cinza.
+
+**Cards (`ServiceRequestCard`):**
+- Ícone da espécie (fundo colorido com opacidade): pata azul para DOG, gato roxo para CAT, "?" cinza para OTHER
+- Nome do pet + tipo de serviço (ex: "Rex · Visita Domiciliar")
+- `StatusBadge` no canto superior direito (ex: "Aceita", "Concluída")
+- Quando há cuidador: mini-avatar azul com inicial + nome do cuidador em azul (ex: "M · Matheus Gualberto")
+- Data e horário: formato `dd MMM., yyyy` e `HH:mm` (ex: "29 jun., 2026" | "14:08")
 
 **Pull to refresh:** chama `srProvider.loadMine(auth.user!.token)`.
 
 **Estado vazio:** ícone de pets cinza + mensagem contextual (muda se há filtro ativo).
 
-**FAB** (`heroTag: 'fab_home'`): abre `CreateServiceRequestScreen`. O `heroTag` personalizado evita conflito com o FAB da tela de Pets.
+**FAB** (`heroTag: 'fab_home'`): botão azul com ícone "+" no canto inferior direito. Abre `CreateServiceRequestScreen`. O `heroTag` personalizado evita conflito com o FAB da tela de Pets.
 
 ---
 
@@ -880,7 +894,7 @@ Todos os repositórios leem `AppConstants.baseUrl` e lançam `Exception` em erro
 
 | Método | HTTP | Endpoint | Descrição |
 |---|---|---|---|
-| `loginOwner(email, password)` | POST → GET | `/auth/owner/login` → `/owners/{id}` | Faz login (retorna token), decodifica JWT para obter `id`, busca perfil completo |
+| `loginOwner(email, password)` | POST → GET | `/auth/owner/login` → `/owners/me` | Faz login (retorna token), busca perfil completo do dono autenticado |
 | `registerOwner({name, email, phone, address, password})` | POST | `/auth/owner/register` | Cadastra dono; resposta inclui token diretamente nos `data` |
 | `fetchCaregiverProfile(id, token)` | GET | `/caregivers/{id}` | Busca perfil atualizado (chamado pelo AuthProvider ao abrir aba Perfil do Cuidador) |
 | `updateCaregiverStatus(status, token)` | PATCH | `/caregivers/status` | Alterna ACTIVE/INACTIVE (não usado pelo Dono) |

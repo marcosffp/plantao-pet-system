@@ -18,9 +18,8 @@ class AuthRepository {
       throw Exception(body['message'] ?? 'Erro ao fazer login');
     }
     final token = body['token'] as String;
-    final claims = TokenStorage.decodeToken(token)!;
     final profileRes = await http.get(
-      Uri.parse('$_base/owners/${claims['id']}'),
+      Uri.parse('$_base/owners/me'),
       headers: {'Authorization': 'Bearer $token'},
     );
     final profileBody = jsonDecode(profileRes.body) as Map<String, dynamic>;
