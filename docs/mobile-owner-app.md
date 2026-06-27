@@ -378,6 +378,8 @@ O badge da aba Alertas lê `NotificationProvider.unreadCount` reativamente.
 
 ### Login
 
+<img width="220" alt="LoginScreen — Dono do Pet" src="images/telas/login_dono.png" />
+
 **Arquivo:** `screens/auth/login_screen.dart`
 
 Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de digitar e-mail e senha.
@@ -402,6 +404,8 @@ Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de di
 ---
 
 ### Cadastro
+
+<img width="220" alt="RegisterScreen — Dono do Pet" src="images/telas/cadastro_dono.png" />
 
 **Arquivo:** `screens/auth/register_screen.dart`
 
@@ -458,6 +462,8 @@ Tela principal do Dono. Lista todas as suas solicitações de serviço.
 
 ### Criar Solicitação
 
+<img width="220" alt="CreateServiceRequestScreen — Criar Solicitação" src="images/telas/criar_solicitacao.png" />
+
 **Arquivo:** `screens/owner/create_service_request_screen.dart`
 
 Formulário dividido em seções (`_SectionCard` com ícone + título uppercase + conteúdo).
@@ -497,6 +503,8 @@ Grid 2×2 de opções:
 ---
 
 ### Detalhe da Solicitação
+
+<img width="220" alt="ServiceRequestDetailScreen — Detalhe da Solicitação" src="images/telas/detalhes_solicitacao.png" />
 
 **Arquivo:** `screens/owner/service_request_detail_screen.dart`
 
@@ -563,6 +571,8 @@ final results = await Future.wait([
 
 ### Avaliação
 
+<img width="220" alt="ReviewScreen — Avaliar Cuidador" src="images/telas/avaliacao.png" />
+
 **Arquivo:** `screens/owner/review_screen.dart`
 
 Acessível somente a partir do `ServiceRequestDetailScreen` quando `status == 'COMPLETED'` e ainda não há avaliação.
@@ -585,6 +595,8 @@ POST /reviews  { serviceRequestId, caregiverId, rating, comment }
 
 ### Pets
 
+<img width="220" alt="PetsScreen — Meus Pets" src="images/telas/pets.png" />
+
 **Arquivo:** `screens/owner/pets_screen.dart`
 
 `PetsScreen` carrega os pets no `initState` via `PetProvider.load()`. Após uma edição ou exclusão, chama `_load()` novamente via `.then((_) => _load())` no callback do `Navigator.push`.
@@ -605,6 +617,8 @@ POST /reviews  { serviceRequestId, caregiverId, rating, comment }
 ---
 
 ### Criar / Editar Pet
+
+<img width="220" alt="CreatePetScreen — Cadastrar Pet" src="images/telas/cadastrar_pet.png" /> <img width="220" alt="CreatePetScreen — Editar / Excluir Pet" src="images/telas/editar_excluir_pet.png" />
 
 **Arquivo:** `screens/owner/create_pet_screen.dart`
 
@@ -641,6 +655,8 @@ No modo edição, os controllers são pré-preenchidos com os dados do pet exist
 
 ### Explorar Cuidadores
 
+<img width="220" alt="CaregiversScreen — Explorar Cuidadores" src="images/telas/explorar_cuidadores.png" />
+
 **Arquivo:** `screens/owner/caregivers_screen.dart`
 
 Lista todos os cuidadores retornados por `GET /caregivers`. Não usa um provider — instancia `CaregiverRepository()` diretamente com estado local (`setState`).
@@ -659,6 +675,8 @@ Lista todos os cuidadores retornados por `GET /caregivers`. Não usa um provider
 ---
 
 ### Alertas / Notificações
+
+<img width="220" alt="OwnerNotificationsScreen — Alertas" src="images/telas/notificacoes_dono.png" />
 
 **Arquivo:** `screens/owner/owner_notifications_screen.dart`
 
@@ -681,6 +699,8 @@ Notificações não lidas (`readAt == null`) têm fundo diferenciado. Toque em u
 ---
 
 ### Perfil do Dono
+
+<img width="220" alt="OwnerProfileScreen — Perfil do Dono" src="images/telas/tela_perfil_dono.png" />
 
 **Arquivo:** `screens/owner/owner_profile_screen.dart`
 

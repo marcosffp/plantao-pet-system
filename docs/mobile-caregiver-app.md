@@ -369,6 +369,8 @@ O badge da aba Alertas usa o widget `Badge` do Material 3 com o número de não 
 
 ### Login
 
+<img width="220" alt="LoginScreen — Cuidador" src="images/telas/login_cuidador.png" />
+
 **Arquivo:** `screens/auth/login_screen.dart`
 
 Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de digitar e-mail e senha.
@@ -393,6 +395,8 @@ Tela única para ambos os perfis. O usuário escolhe o tipo de conta antes de di
 ---
 
 ### Cadastro
+
+<img width="220" alt="RegisterScreen — Cuidador" src="images/telas/cadastro_cuidador.png" />
 
 **Arquivo:** `screens/auth/register_screen.dart`
 
@@ -424,7 +428,7 @@ Ao submeter:
 
 ### Início (Home) — Solicitações Abertas
 
-![CaregiverHomeScreen — Solicitações Abertas](images/telas/lista_solicitacoes.png)
+<img width="220" alt="CaregiverHomeScreen — Solicitações Abertas" src="images/telas/lista_solicitacoes.png" />
 
 **Arquivo:** `screens/caregiver/caregiver_home_screen.dart`
 
@@ -449,7 +453,7 @@ Ao submeter:
 
 ### Detalhe de Solicitação (Cuidador)
 
-![CaregiverRequestDetailScreen — Detalhes](images/telas/detalhe_acao.png)
+<img width="220" alt="CaregiverRequestDetailScreen — Detalhes" src="images/telas/detalhe_acao.png" />
 
 **Arquivo:** `screens/caregiver/caregiver_request_detail_screen.dart`
 
@@ -506,7 +510,7 @@ Quando o aceite falha com mensagem contendo "atendimentos em andamento", o Snack
 
 ### Meus Atendimentos
 
-![CaregiverMyRequestsScreen — Meus Atendimentos](images/telas/meus_atendimentos.png)
+<img width="220" alt="CaregiverMyRequestsScreen — Meus Atendimentos" src="images/telas/meus_atendimentos.png" />
 
 **Arquivo:** `screens/caregiver/caregiver_my_requests_screen.dart`
 
@@ -535,7 +539,7 @@ Lista de todos os atendimentos que o cuidador aceitou (em qualquer status exceto
 
 ### Alertas / Notificações
 
-![CaregiverNotificationsScreen — Alertas](images/telas/notificacao.png)
+<img width="220" alt="CaregiverNotificationsScreen — Alertas" src="images/telas/notificacoes_cuidador.png" />
 
 **Arquivo:** `screens/caregiver/caregiver_notifications_screen.dart`
 
@@ -558,6 +562,8 @@ Notificações não lidas (`readAt == null`) têm fundo diferenciado. Toque em u
 ---
 
 ### Perfil do Cuidador
+
+<img width="220" alt="CaregiverProfileScreen — Perfil" src="images/telas/tela_perfil_cuidador.png" />
 
 **Arquivo:** `screens/caregiver/caregiver_profile_screen.dart`
 
