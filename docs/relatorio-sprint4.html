@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Técnico Final – Sprint 4 – Plantão Pet</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    @page {
+      size: A4;
+      margin: 22mm 26mm 20mm 26mm;
+    }
+
+    body {
+      font-family: Arial, 'Helvetica Neue', sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.68;
+      color: #1c1c1c;
+      background: #ccc;
+      margin: 0;
+      padding: 24px 0 40px;
+    }
+
+    .document {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 3px 12px rgba(0,0,0,.22);
+    }
+
+    /* ── COVER ── */
+    .cover {
+      min-height: 297mm;
+      padding: 22mm 26mm 18mm;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .cover-header {
+      border-bottom: 1.5px solid #1a3a7c;
+      padding-bottom: 10px;
+      margin-bottom: 0;
+    }
+
+    .cover-inst {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #1a3a7c;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .cover-dept {
+      font-size: 9pt;
+      color: #333;
+      margin-top: 2px;
+    }
+
+    .cover-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .cover-title {
+      font-size: 27pt;
+      font-weight: 700;
+      color: #1a3a7c;
+      line-height: 1.25;
+      margin: 0 0 14px;
+    }
+
+    .cover-tagline {
+      font-size: 11.5pt;
+      font-weight: 600;
+      color: #2563eb;
+      margin: 0 0 56px;
+    }
+
+    .cover-box {
+      width: 78%;
+      border: 1px solid #c8ccd4;
+      border-radius: 5px;
+    }
+
+    .cover-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .cover-box td {
+      padding: 9px 20px;
+      font-size: 9.5pt;
+      border-bottom: 1px solid #e8eaee;
+      text-align: left;
+    }
+
+    .cover-box tr:last-child td { border-bottom: none; }
+
+    .cover-box .lbl {
+      font-weight: 700;
+      color: #1a3a7c;
+      width: 30%;
+    }
+
+    .cover-bar {
+      height: 3.5px;
+      background: linear-gradient(90deg, #1a3a7c 0%, #2563eb 100%);
+      margin-top: auto;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 20mm 26mm 18mm;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    h1 {
+      font-size: 17pt;
+      font-weight: 700;
+      color: #1a3a7c;
+      margin: 0 0 8px;
+      padding-bottom: 7px;
+      border-bottom: 2px solid #1a3a7c;
+      page-break-after: avoid;
+    }
+
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #2563eb;
+      margin: 26px 0 8px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #1a3a7c;
+      margin: 20px 0 6px;
+      page-break-after: avoid;
+    }
+
+    .sec { margin-top: 34px; }
+
+    p { text-align: justify; margin: 0 0 10px; }
+
+    strong { color: #1a3a7c; }
+
+    em { font-style: italic; }
+
+    ul, ol { margin: 6px 0 10px 22px; }
+
+    li { margin-bottom: 5px; }
+
+    /* ── CODE ── */
+    code {
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 8.8pt;
+      background: #f3f4f6;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    pre {
+      background: #f3f4f6;
+      padding: 13px 15px;
+      border-radius: 5px;
+      border-left: 3px solid #3b82f6;
+      overflow-x: auto;
+      margin: 10px 0;
+      page-break-inside: avoid;
+    }
+
+    pre code { background: none; padding: 0; font-size: 8.2pt; line-height: 1.55; }
+
+    /* ── TABLES ── */
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 9.2pt;
+      page-break-inside: avoid;
+    }
+
+    .tbl th {
+      background: #f1f3f6;
+      color: #4a5568;
+      font-weight: 700;
+      padding: 7px 11px;
+      border-bottom: 1px solid #d8dce4;
+      text-align: left;
+    }
+
+    .tbl td {
+      padding: 6px 11px;
+      border-bottom: 1px solid #e8eaee;
+      vertical-align: top;
+    }
+
+    .tbl tr:last-child td { border-bottom: none; }
+
+    .tbl-dark th { background: #1a3a7c; color: white; }
+
+    /* ── DIAGRAMS ── */
+    .diag {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 22px;
+      margin: 14px 0;
+      page-break-inside: avoid;
+    }
+
+    /* Architecture vertical flow */
+    .arch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .arch-node {
+      border: 1.5px solid #3b82f6;
+      background: white;
+      border-radius: 5px;
+      padding: 9px 22px;
+      text-align: center;
+      font-size: 9.3pt;
+      line-height: 1.45;
+      min-width: 250px;
+      max-width: 320px;
+    }
+
+    .arch-node b { font-size: 9.8pt; display: block; }
+
+    .arch-node.db { border-radius: 30% / 22%; padding: 10px 36px; }
+
+    .arr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #2563eb;
+      font-size: 8pt;
+    }
+
+    .arr-lbl { margin-top: 3px; }
+
+    .arr-line { width: 1.5px; height: 13px; background: #3b82f6; }
+
+    .arr-head {
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid #3b82f6;
+    }
+
+    .arr-row {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .arr-side {
+      font-size: 7.8pt;
+      color: #2563eb;
+      min-width: 130px;
+      text-align: center;
+      padding-top: 6px;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      padding: 11px 15px;
+      margin: 10px 0;
+      border-radius: 0 4px 4px 0;
+      page-break-inside: avoid;
+    }
+
+    .callout.green { border-color: #10b981; background: #f0fdf4; }
+
+    .callout-ttl {
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 5px;
+      font-size: 9.5pt;
+    }
+
+    .callout.green .callout-ttl { color: #059669; }
+
+    .callout p { margin: 0; text-align: left; }
+
+    /* ── STEP LIST ── */
+    .steps { list-style: none; margin: 0; padding: 0; }
+
+    .steps li {
+      display: flex;
+      gap: 11px;
+      padding: 7px 0;
+      border-bottom: 1px dashed #d1d5db;
+      align-items: flex-start;
+      font-size: 9.5pt;
+    }
+
+    .steps li:last-child { border-bottom: none; }
+
+    .step-n {
+      background: #1a3a7c;
+      color: white;
+      font-weight: 700;
+      font-size: 8pt;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── REFERENCES ── */
+    .refs { font-size: 10pt; }
+
+    .ref {
+      margin-bottom: 15px;
+      padding-left: 28px;
+      text-indent: -28px;
+      line-height: 1.6;
+    }
+
+    .ref strong { color: #2563eb; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 38px;
+      padding-top: 10px;
+      border-top: 1px solid #d1d5db;
+      text-align: center;
+      font-size: 8pt;
+      color: #9ca3af;
+    }
+
+    /* ── SCREENS GALLERY ── */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .screen-item { text-align: center; }
+
+    .screen-item img {
+      width: 100%;
+      max-width: 120px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+
+    .screen-cap {
+      font-size: 7.5pt;
+      color: #374151;
+      margin-top: 6px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .screen-sub {
+      font-size: 7pt;
+      color: #6b7280;
+      line-height: 1.35;
+    }
+
+    /* ── MERMAID ── */
+    .mermaid { margin: 0 auto; text-align: center; }
+
+    /* ── HELPERS ── */
+    .pb { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    .blue { color: #2563eb; font-weight: 700; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; padding: 0; }
+      .document { box-shadow: none; max-width: 100%; }
+      .cover { min-height: auto; padding: 0; }
+      .content { padding: 0; }
+    }
+
+    @media screen {
+      .cover { margin-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#dbeafe',
+      primaryTextColor: '#1a3a7c',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#3b82f6',
+      secondaryColor: '#eff6ff',
+      tertiaryColor: '#ffffff',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '13px',
+      sequenceNumberColor: '#1a3a7c',
+      activationBorderColor: '#3b82f6',
+      activationBkgColor: '#dbeafe',
+      noteBorderColor: '#3b82f6',
+      noteBkgColor: '#fffbeb',
+      labelBoxBorderColor: '#3b82f6',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis', rankSpacing: 60, nodeSpacing: 40 },
+    sequence: { diagramMarginX: 16, diagramMarginY: 8, actorMargin: 60, width: 130, height: 46, boxMargin: 8, noteMargin: 10, messageMargin: 35 }
+  });
+</script>
+
+<div class="document">
+
+  <!-- ══════════════════════════════════════════
+       CAPA
+  ══════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-header">
+      <div class="cover-inst">Pontifícia Universidade Católica de Minas Gerais</div>
+      <div class="cover-dept">Engenharia de Software — Laboratório de Desenvolvimento de Aplicações Móveis e Distribuídas</div>
+    </div>
+
+    <div class="cover-body">
+      <h1 class="cover-title">Relatório Técnico Final<br>Sprint 4</h1>
+      <p class="cover-tagline">Plantão Pet — Sistema Distribuído com EDA, MOM e Clean Architecture</p>
+
+      <div class="cover-box">
+        <table>
+          <tr><td class="lbl">Aluno</td><td>Marcos Alberto</td></tr>
+          <tr><td class="lbl">Curso</td><td>Engenharia de Software — 5º Período — Noite</td></tr>
+          <tr><td class="lbl">Disciplina</td><td>Lab. de Desenvolvimento de Aplic. Móveis e Distribuídas</td></tr>
+          <tr><td class="lbl">Professores</td><td>Cleiton Silva Tavares e Cristiano de Macedo Neto</td></tr>
+          <tr><td class="lbl">Semestre</td><td>1º Semestre 2026</td></tr>
+          <tr><td class="lbl">Entrega</td><td>03 de julho de 2026</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="cover-bar"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       CONTEÚDO
+  ══════════════════════════════════════════ -->
+  <div class="content pb">
+
+    <!-- ─────────────────────────────
+         1. Introdução
+    ───────────────────────────── -->
+    <h1>1. Introdução</h1>
+
+    <p>
+      O <strong>Plantão Pet</strong> é uma plataforma de <em>matchmaking</em> desenvolvida como Projeto Integrador da
+      disciplina LDAMD. O sistema conecta donos de animais de estimação a cuidadores profissionais,
+      viabilizando o agendamento de serviços como passeios, visitas domiciliares e hospedagem temporária.
+      A motivação do domínio é a necessidade real de um mercado onde a descoberta de cuidadores confiáveis
+      e o agendamento de serviços ainda ocorre majoritariamente por canais informais — como grupos de
+      WhatsApp —, sem rastreabilidade ou garantia de qualidade.
+    </p>
+
+    <p>
+      O projeto foi desenvolvido em quatro sprints progressivas. A <strong>Sprint 1</strong> definiu a arquitetura e
+      implementou o backend REST com Node.js, Express e PostgreSQL via Prisma ORM. A <strong>Sprint 2</strong> integrou
+      o Apache Kafka como Middleware Orientado a Mensagens (MOM), substituindo chamadas diretas de
+      notificação por um fluxo orientado a eventos. A <strong>Sprint 3</strong> entregou o aplicativo Flutter do
+      cliente — o Dono do Pet — com integração ao backend REST e recebimento de atualizações assíncronas
+      via Socket.IO. Esta <strong>Sprint 4</strong> completa o sistema com o aplicativo Flutter do prestador de
+      serviços (Cuidador), demonstrando o fluxo de ponta a ponta com comunicação assíncrona real via MOM,
+      conforme exigido pelo escopo da disciplina.
+    </p>
+
+    <p>
+      O presente relatório descreve a arquitetura implementada, as decisões técnicas tomadas ao longo do
+      projeto, as dificuldades encontradas e as lições aprendidas com os padrões estudados. Os incrementos
+      desta sprint incluem callbacks de navegação entre telas do Cuidador, seleção automática de pet no
+      formulário de solicitação e a documentação completa do evento de cancelamento no fluxo Kafka.
+    </p>
+
+    <!-- ─────────────────────────────
+         2. Arquitetura do Sistema
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>2. Arquitetura do Sistema</h1>
+
+      <p>
+        O Plantão Pet adota uma <strong>arquitetura orientada a eventos (Event-Driven Architecture — EDA)</strong>
+        com três camadas principais: os aplicativos Flutter (front-end móvel), o backend Node.js (lógica de
+        negócio e API REST) e o Apache Kafka (middleware de mensagens).
+      </p>
+
+      <div class="diag no-break">
+        <div class="arch">
+
+          <div class="arch-node">
+            <b>📱 Apps Flutter</b>
+            Dono do Pet &nbsp;·&nbsp; Cuidador
+          </div>
+
+          <div class="arr">
+            <div class="arr-lbl">HTTP REST (comandos)</div>
+            <div class="arr-line"></div>
+            <div class="arr-head"></div>
+          </div>
+
+          <div class="arch-node">
+            <b>Backend Node.js (Express)</b>
+            API REST + Kafka Producer
+          </div>
+
+          <div class="arr-row" style="margin: 2px 0;">
+            <div class="arr-side">Publish evento de domínio</div>
+            <div class="arr" style="margin:0;">
+              <div class="arr-line"></div>
+              <div class="arr-head"></div>
+            </div>
+            <div class="arr-side">WebSocket — Socket.IO ↑</div>
+          </div>
+
+          <div class="arch-node" style="font-size:8.5pt;">
+            <b>Apache Kafka — KRaft Mode</b>
+            service_request.created &nbsp;·&nbsp; accepted &nbsp;·&nbsp; refused<br>
+            service_request.in_progress &nbsp;·&nbsp; service_request.cancelled<br>
+            service.completed &nbsp;·&nbsp; review.created
+          </div>
+
+          <div class="arr">
+            <div class="arr-lbl">Subscribe</div>
+            <div class="arr-line"></div>
+            <div class="arr-head"></div>
+          </div>
+
+          <div class="arch-node">
+            <b>Kafka Consumer + Socket.IO</b>
+            Persiste notificação &nbsp;·&nbsp; Entrega em tempo real
+          </div>
+
+          <div class="arr">
+            <div class="arr-line"></div>
+            <div class="arr-head"></div>
+          </div>
+
+          <div class="arch-node db">
+            <b>PostgreSQL 15</b>
+            Prisma ORM
+          </div>
+
+        </div>
+      </div>
+
+      <p>
+        A separação entre <strong>comandos REST</strong> e <strong>eventos Kafka</strong> é o princípio central da arquitetura.
+        Toda ação que altera estado (criar solicitação, aceitar, iniciar, concluir, cancelar) é feita via REST.
+        Toda atualização assíncrona resultante é propagada via Kafka → Consumer → Socket.IO. Os
+        aplicativos nunca fazem <em>polling</em>: recebem atualizações no momento em que ocorrem.
+      </p>
+
+      <p>
+        O banco de dados PostgreSQL armazena todas as entidades do domínio: <code>owners</code>,
+        <code>caregivers</code>, <code>pets</code>, <code>service_requests</code>, <code>reviews</code>,
+        <code>notifications</code>. O Prisma ORM garante migrações versionadas e <em>type safety</em> nas
+        <em>queries</em>. O ambiente é gerenciado com <strong>Docker Compose</strong> — PostgreSQL, Kafka
+        (modo KRaft, sem Zookeeper), Kafka UI e a API Node.js rodam como serviços isolados com rede interna
+        dedicada, alinhado às práticas recomendadas para implantação de sistemas distribuídos em nuvem
+        (JOURNAL OF CLOUD COMPUTING, 2012–).
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         3. App Cuidador
+    ───────────────────────────── -->
+    <div class="sec pb">
+      <h1>3. Aplicativo Flutter do Prestador de Serviços (Cuidador)</h1>
+
+      <p>
+        O aplicativo do Cuidador é o principal entregável desta Sprint 4. Implementado no mesmo binário
+        Flutter que o aplicativo do Dono, o perfil é determinado no cadastro e direciona para interfaces
+        distintas. O binário único reduz a superfície de manutenção e permite compartilhar widgets,
+        repositórios e o <code>SocketService</code>.
+      </p>
+
+      <h2>3.1 Telas Implementadas — mínimo de 3 exigido</h2>
+
+      <p>
+        O app do Cuidador entrega <strong>4 telas principais</strong> (superando o mínimo de 3 exigido),
+        organizadas em um <code>BottomNavigationBar</code> com <code>IndexedStack</code> — estado
+        preservado ao trocar de aba:
+      </p>
+
+      <div class="diag no-break">
+        <div class="mermaid">
+flowchart TD
+    MAIN["CaregiverMainScreen\n4 abas"]
+    ABA0["Aba Início\nSolicitações OPEN — lista pendentes"]
+    ABA1["Aba Meus\nAtendimentos aceitos + filtros por status"]
+    ABA2["Aba Alertas\nHistórico de notificações + badge"]
+    ABA3["Aba Perfil\nDados + média de avaliações"]
+    DETAIL["CaregiverRequestDetailScreen\nAceitar · Recusar · Iniciar · Concluir"]
+
+    MAIN --> ABA0
+    MAIN --> ABA1
+    MAIN --> ABA2
+    MAIN --> ABA3
+    ABA0 -->|"toque no card"| DETAIL
+    ABA1 -->|"toque"| DETAIL
+        </div>
+      </div>
+
+      <div class="diag no-break" style="margin-top:14px;">
+        <div class="screens-grid">
+          <div class="screen-item">
+            <img src="images/telas/lista_solicitacoes.png" alt="CaregiverHomeScreen">
+            <div class="screen-cap">Solicitações Abertas</div>
+            <div class="screen-sub">CaregiverHomeScreen</div>
+          </div>
+          <div class="screen-item">
+            <img src="images/telas/detalhe_acao.png" alt="CaregiverRequestDetailScreen">
+            <div class="screen-cap">Detalhes da Solicitação</div>
+            <div class="screen-sub">CaregiverRequestDetailScreen</div>
+          </div>
+          <div class="screen-item">
+            <img src="images/telas/meus_atendimentos.png" alt="CaregiverMyRequestsScreen">
+            <div class="screen-cap">Meus Atendimentos</div>
+            <div class="screen-sub">CaregiverMyRequestsScreen</div>
+          </div>
+          <div class="screen-item">
+            <img src="images/telas/notificacao.png" alt="CaregiverNotificationsScreen">
+            <div class="screen-cap">Alertas</div>
+            <div class="screen-sub">CaregiverNotificationsScreen</div>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        <span class="blue">Tela 1 — Lista de solicitações (<code>CaregiverHomeScreen</code>):</span>
+        exibe cards de todas as solicitações com status <code>OPEN</code> disponíveis — cada card traz
+        nome e espécie do pet, tipo de serviço, data/hora agendada e endereço de encontro. Quando uma
+        nova solicitação chega via Socket.IO (evento <code>new_request</code>), o card aparece
+        automaticamente sem nenhuma ação do usuário. Ao aceitar, o callback <code>onAccepted()</code>
+        navega automaticamente para a aba "Meus" — o cuidador não precisa trocar de aba manualmente.
+      </p>
+
+      <p>
+        <span class="blue">Tela 2 — Detalhe e ação (<code>CaregiverRequestDetailScreen</code>):</span>
+        mostra todos os dados da solicitação: pet (nome e espécie), tipo de serviço, data, horário,
+        endereço, nome e telefone do dono. Os botões de ação são condicionais ao status:
+        <strong>Aceitar Solicitação</strong> e <strong>Recusar</strong> (status <code>OPEN</code>),
+        <strong>Iniciar Serviço</strong> (status <code>ACCEPTED</code>) e
+        <strong>Concluir Serviço</strong> (status <code>IN_PROGRESS</code>). A tela consulta ambos os
+        providers (<code>openRequests</code> e <code>requests</code>) em cascata para manter consistência
+        durante transições de status.
+      </p>
+
+      <p>
+        <span class="blue">Tela 3 — Meus atendimentos (<code>CaregiverMyRequestsScreen</code>):</span>
+        lista todos os atendimentos aceitos pelo cuidador, com contador total e filtros horizontais
+        scrolláveis: Todos, Aceitos, Em andamento, Concluídos. Cada card exibe pet, tipo de serviço,
+        nome do dono, data e horário. Ao tocar, abre o detalhe com ações disponíveis para o status atual.
+      </p>
+
+      <p>
+        <span class="blue">Tela 4 — Alertas (<code>CaregiverNotificationsScreen</code>):</span>
+        exibe o histórico completo de notificações recebidas. Itens não lidos têm fundo azul claro e
+        um indicador de ponto. O badge numérico na aba é atualizado em tempo real pelo
+        <code>NotificationProvider</code>. Esta sprint incorporou o callback <code>onNavigate()</code>:
+        ao tocar em uma notificação de nova solicitação, navega para a aba "Início" (0); ao tocar
+        em uma avaliação recebida (<code>review.created</code>), navega para "Perfil" (3).
+      </p>
+
+      <p>
+        A <span class="blue">Tela de Perfil (<code>CaregiverProfileScreen</code>)</span> exibe os dados
+        cadastrais do cuidador e a média de avaliações, atualizada ao tocar na aba via
+        <code>GET /caregivers/:id</code>.
+      </p>
+
+      <h2>3.2 Notificação Assíncrona ao Prestador</h2>
+
+      <p>
+        A notificação de novas solicitações ao Cuidador ocorre <strong>sem polling</strong>, conforme
+        exigido pela disciplina:
+      </p>
+
+      <div class="diag no-break">
+        <ol class="steps">
+          <li>
+            <span class="step-n">1</span>
+            <span>Dono cria uma solicitação → <code>POST /service-requests</code></span>
+          </li>
+          <li>
+            <span class="step-n">2</span>
+            <span>Backend publica evento <code>service_request.created</code> no Kafka</span>
+          </li>
+          <li>
+            <span class="step-n">3</span>
+            <span>Consumer Kafka persiste notificação no banco e emite evento Socket.IO <code>new_request</code></span>
+          </li>
+          <li>
+            <span class="step-n">4</span>
+            <span><code>SocketService</code> no app do Cuidador recebe o evento</span>
+          </li>
+          <li>
+            <span class="step-n">5</span>
+            <span><code>ServiceRequestProvider.loadOpen(token)</code> recarrega a lista</span>
+          </li>
+          <li>
+            <span class="step-n">6</span>
+            <span><code>NotificationProvider.load(token)</code> recarrega notificações e incrementa o badge</span>
+          </li>
+        </ol>
+
+        <div class="callout green" style="margin-top:13px;">
+          <div class="callout-ttl">Resultado observável</div>
+          <p>O Cuidador vê a nova solicitação aparecer na tela sem precisar fazer nada, caracterizando
+          comunicação assíncrona real via MOM — sem chamada REST direta entre os componentes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────
+         4. App Dono
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>4. Aplicativo Flutter do Cliente (Dono do Pet)</h1>
+
+      <p>
+        Entregue na Sprint 3, o app do Dono também recebe atualizações em tempo real via Socket.IO.
+        Funcionalidades principais:
+      </p>
+
+      <ul>
+        <li>Cadastro e gerenciamento de pets (espécie, raça, idade, observações de saúde)</li>
+        <li>Criação de solicitações de serviço: o formulário pré-preenche o endereço com o endereço
+            cadastrado no perfil do dono, que pode ser editado livremente antes de enviar</li>
+        <li>Seleção automática de pet quando o dono possui exatamente um cadastrado — elimina uma
+            etapa desnecessária no fluxo mais comum</li>
+        <li>Acompanhamento em tempo real via <em>timeline</em> de 4 etapas:
+            <em>criada → aceita → em andamento → concluída</em> — o status atualiza
+            automaticamente quando o Cuidador age</li>
+        <li>Cancelamento de solicitações ainda abertas (status <code>OPEN</code>), com remoção
+            imediata da lista ao Cuidador via evento <code>request_cancelled</code></li>
+        <li>Avaliação do Cuidador após conclusão (1–5 estrelas + comentário)</li>
+      </ul>
+
+      <p>
+        O app possui <strong>5 abas</strong> (Início, Pets, Cuidadores, Alertas, Perfil), superando o
+        mínimo de 3 telas exigido. A tela de detalhe apresenta uma <em>timeline</em> de progresso visual
+        com 4 etapas: <em>criada → aceita → em andamento → concluída</em>.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         5. Integração MOM com Apache Kafka
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>5. Integração MOM com Apache Kafka</h1>
+
+      <h2>5.1 Escolha do Apache Kafka</h2>
+
+      <p>O Apache Kafka foi escolhido como MOM por três razões principais:</p>
+
+      <ol>
+        <li>
+          <strong>Persistência de mensagens:</strong> o Kafka persiste todas as mensagens em disco com
+          retenção configurável. Mensagens não consumidas não são perdidas se o consumer reiniciar —
+          diferente do RabbitMQ em configuração padrão.
+        </li>
+        <li>
+          <strong>Log de eventos imutável:</strong> o modelo de <em>log append-only</em> permite
+          reprocessar eventos históricos — útil para reenviar notificações ou auditar transições de estado.
+        </li>
+        <li>
+          <strong>Desacoplamento produtor-consumer:</strong> o producer não conhece os consumers. Novos
+          consumers (e-mail, push notifications, analytics) podem ser adicionados sem alterar o produtor.
+        </li>
+      </ol>
+
+      <p>
+        O Kafka foi configurado em <strong>modo KRaft</strong> (sem Zookeeper, estável a partir do Kafka
+        3.3), simplificando a infraestrutura Docker e reduzindo a latência de <em>startup</em>. O ambiente
+        de containerização — PostgreSQL, Kafka, Kafka UI e API — é orquestrado via Docker Compose.
+      </p>
+
+      <h2>5.2 Tópicos, Eventos e Produtores</h2>
+
+      <p>
+        Todos os tópicos são consumidos pelo <code>NotificationConsumer</code>, que persiste notificações
+        no banco e as entrega via Socket.IO:
+      </p>
+
+      <table class="tbl no-break">
+        <thead>
+          <tr>
+            <th>Tópico Kafka</th>
+            <th>Evento de Domínio</th>
+            <th>Produtor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>service_request.created</code></td>
+            <td>Nova solicitação criada pelo Dono</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>service_request.accepted</code></td>
+            <td>Cuidador aceitou a solicitação</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>service_request.refused</code></td>
+            <td>Cuidador recusou a solicitação</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>service_request.in_progress</code></td>
+            <td>Cuidador iniciou o serviço</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>service_request.cancelled</code></td>
+            <td>Dono cancelou a solicitação aberta</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>service.completed</code></td>
+            <td>Serviço concluído pelo Cuidador</td>
+            <td><code>ServiceRequestService</code></td>
+          </tr>
+          <tr>
+            <td><code>review.created</code></td>
+            <td>Dono avaliou o Cuidador</td>
+            <td><code>ReviewService</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>5.3 Payload dos Eventos</h2>
+
+      <p>
+        Cada evento carrega um <em>payload</em> JSON com os dados necessários para o consumer processar
+        a notificação sem fazer chamadas adicionais ao banco:
+      </p>
+
+      <pre><code>{
+  "eventType":     "service_request.accepted",
+  "requestId":     "uuid-da-solicitacao",
+  "ownerId":       "uuid-do-dono",
+  "caregiverId":   "uuid-do-cuidador",
+  "caregiverName": "Carlos Melo",
+  "petName":       "Rex",
+  "serviceType":   "WALK_30MIN",
+  "scheduledAt":   "2026-06-20T14:00:00.000Z",
+  "timestamp":     "2026-06-19T10:23:45.123Z"
+}</code></pre>
+
+      <h2>5.4 Consumer e Socket.IO</h2>
+
+      <p>O <code>NotificationConsumer</code> realiza três operações por evento recebido:</p>
+
+      <ol>
+        <li><strong>Persiste</strong> a notificação na tabela <code>notifications</code> do PostgreSQL</li>
+        <li><strong>Emite</strong> via Socket.IO para o <em>socket room</em> do destinatário (<code>room: userId</code>)</li>
+        <li><strong>Confirma</strong> o <em>offset</em> ao Kafka (commit manual — <em>at-least-once delivery</em>)</li>
+      </ol>
+
+      <p>
+        O consumer verifica deduplicação antes de persistir, usando a combinação
+        <code>userId + eventType + requestId</code>. Se já existir um registro com esses três valores, a
+        mensagem é descartada silenciosamente — proteção necessária porque o Kafka pode entregar a mesma
+        mensagem mais de uma vez em cenários de falha de rede.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         6. Fluxo Completo de Ponta a Ponta
+    ───────────────────────────── -->
+    <div class="sec pb">
+      <h1>6. Fluxo Completo de Ponta a Ponta</h1>
+
+      <p>
+        O diagrama abaixo demonstra o fluxo de ponta a ponta, cobrindo todos os eventos do ciclo
+        de vida de uma solicitação: criação, cancelamento (alternativo), aceite, início do serviço,
+        conclusão e avaliação. Em nenhum momento existe chamada direta entre os apps — toda
+        comunicação passa pelo MOM Kafka e é entregue via Socket.IO.
+      </p>
+
+      <div class="diag no-break">
+        <div class="mermaid">
+sequenceDiagram
+    participant D as Dono (Cliente)
+    participant B as Backend REST
+    participant K as Apache Kafka
+    participant C as Cuidador (Prestador)
+
+    rect rgb(255, 249, 210)
+      Note over D,C: 1 — Criação da Solicitação
+      D->>B: POST /service-requests
+      B->>K: publish("service_request.created")
+      K->>B: consume → notifica cuidadores ACTIVE
+      B-->>C: Socket.IO: new_request
+      Note over C: Card aparece na aba Início sem polling
+    end
+
+    rect rgb(255, 240, 240)
+      Note over D,C: 1b — Cancelamento (alternativo, status OPEN)
+      D->>B: DELETE /{id}/cancel
+      B->>K: publish("service_request.cancelled")
+      K->>B: consume → notifica cuidadores ACTIVE
+      B-->>C: Socket.IO: request_cancelled
+      Note over C: Card removido da lista sem chamada HTTP
+    end
+
+    rect rgb(255, 249, 210)
+      Note over D,C: 2 — Aceite pelo Prestador
+      C->>B: PATCH /{id}/accept
+      B->>K: publish("service_request.accepted")
+      K->>B: consume
+      B-->>D: Socket.IO: request_accepted
+      Note over D: Status atualiza para Aceito automaticamente
+    end
+
+    rect rgb(255, 249, 210)
+      Note over D,C: 3 — Execução do Serviço
+      C->>B: PATCH /{id}/start
+      B->>K: publish("service_request.in_progress")
+      K->>B: consume
+      B-->>D: Socket.IO: service_started
+    end
+
+    rect rgb(255, 249, 210)
+      Note over D,C: 4 — Conclusão e Avaliação
+      C->>B: PATCH /{id}/complete
+      B->>K: publish("service.completed")
+      K->>B: consume
+      B-->>D: Socket.IO: service_completed
+      D->>B: POST /reviews (1–5 estrelas)
+      B->>K: publish("review.created")
+      K->>B: consume
+      B-->>C: Socket.IO: new_review
+    end
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:14px;">
+        <div class="callout-ttl">Demonstração gravada</div>
+        <p>O <em>screencast</em> de entrega (3–5 minutos) mostra este fluxo completo com dois simuladores
+        iOS rodando simultaneamente — um com perfil Dono, outro com perfil Cuidador — sem nenhuma
+        atualização manual de tela.</p>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────
+         7. Clean Architecture nos Aplicativos Flutter
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>7. Clean Architecture nos Aplicativos Flutter</h1>
+
+      <p>
+        Os dois aplicativos Flutter seguem os princípios de <em>Clean Architecture</em> descritos por
+        Martin (2019), com regra de dependência unidirecional — camadas externas conhecem as internas,
+        nunca o contrário:
+      </p>
+
+      <div class="diag no-break">
+        <div class="mermaid">
+flowchart LR
+    SCREENS["Screens\nWidgets de UI"]
+    SOCKET["SocketService\nWebSocket"]
+    PROVIDERS["Providers\nChangeNotifier"]
+    REPOS["Repositories\nHTTP / JSON"]
+    MODELS["Models\nEntidades de domínio"]
+
+    SCREENS -->|"lê estado"| PROVIDERS
+    SOCKET -->|"entrega eventos"| PROVIDERS
+    PROVIDERS -->|"chama"| REPOS
+    REPOS -->|"retorna"| MODELS
+        </div>
+      </div>
+
+      <table class="tbl no-break" style="margin-top:14px;">
+        <thead>
+          <tr>
+            <th>Camada</th>
+            <th>Artefatos</th>
+            <th>Responsabilidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>presentation/</code></td>
+            <td>Screens, Providers, Widgets</td>
+            <td>Renderizar estado e capturar ações do usuário</td>
+          </tr>
+          <tr>
+            <td><code>data/</code></td>
+            <td>Repositories, Models</td>
+            <td>Acessar a API REST, serializar/deserializar JSON</td>
+          </tr>
+          <tr>
+            <td><code>services/</code></td>
+            <td>SocketService</td>
+            <td>Manter conexão WebSocket e despachar eventos</td>
+          </tr>
+          <tr>
+            <td><code>core/</code></td>
+            <td>AppTheme, AppConstants, TokenStorage</td>
+            <td>Configurações e utilitários transversais</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Nenhum widget conhece URLs ou parsing JSON; nenhum repositório conhece a existência de telas.
+        O <code>SocketService</code> é criado em <code>main.dart</code> e injetado nos providers via
+        construtor, tornando cada componente testável de forma isolada.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         8. Decisões de Design
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>8. Decisões de Design</h1>
+
+      <h2>8.1 Binário único para dois perfis</h2>
+
+      <p>
+        Um único aplicativo Flutter serve Dono e Cuidador. O perfil é determinado no cadastro e
+        armazenado no JWT — no <em>auto-login</em>, <code>AuthUser.role</code> direciona para
+        <code>OwnerMainScreen</code> ou <code>CaregiverMainScreen</code>. Isso reduz a complexidade de
+        manutenção (uma base de código, um processo de <em>build</em>) e permite compartilhar widgets,
+        repositórios e <code>SocketService</code>.
+      </p>
+
+      <h2>8.2 JWT como <em>query parameter</em> no Socket.IO</h2>
+
+      <p>
+        O protocolo Socket.IO não suporta <em>headers</em> HTTP customizados de forma portável. O JWT é
+        passado como <em>query parameter</em> na URL de conexão (<code>ws://host?token=eyJ...</code>)
+        e validado por <em>middleware</em> no backend antes de associar o socket ao <code>userId</code>.
+      </p>
+
+      <h2>8.3 Kafka em modo KRaft (sem Zookeeper)</h2>
+
+      <p>
+        O modo KRaft (estável desde Kafka 3.3) elimina a necessidade do Zookeeper como terceiro serviço
+        no Docker Compose, simplificando a infraestrutura e reduzindo o tempo de inicialização do
+        ambiente de desenvolvimento.
+      </p>
+
+      <h2>8.4 Atualização otimista no estado local</h2>
+
+      <p>
+        Operações como aceitar solicitação atualizam a lista local imediatamente, antes de aguardar
+        resposta da API. Em caso de erro HTTP, o estado é revertido e a mensagem de erro é exposta no
+        campo <code>error</code> do provider.
+      </p>
+
+      <h2>8.5 Armazenamento seguro de credenciais</h2>
+
+      <p>
+        O JWT é armazenado com <code>flutter_secure_storage</code> (Keychain no iOS,
+        <code>EncryptedSharedPreferences</code> no Android), evitando que o token fique legível em
+        texto plano no sistema de arquivos do dispositivo.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         9. Dificuldades Encontradas
+    ───────────────────────────── -->
+    <div class="sec pb">
+      <h1>9. Dificuldades Encontradas e Soluções Adotadas</h1>
+
+      <h2>9.1 Sincronização de estado entre dois providers reativos</h2>
+
+      <p>
+        <strong>Problema:</strong> ao aceitar uma solicitação, ela precisa sair de
+        <code>openRequests</code> e entrar em <code>requests</code> simultaneamente. Durante a transição
+        o item poderia não ser encontrado em nenhuma das listas.
+      </p>
+
+      <p><strong>Solução:</strong> busca com <em>fallback</em> em cascata:</p>
+
+      <pre><code>final request = srProvider.openRequests.firstWhere(
+  (r) => r.id == widget.request.id,
+  orElse: () => srProvider.requests.firstWhere(
+    (r) => r.id == widget.request.id,
+    orElse: () => widget.request,
+  ),
+);</code></pre>
+
+      <h2>9.2 Múltiplos registros de <em>listeners</em> no Socket.IO</h2>
+
+      <p>
+        <strong>Problema:</strong> ao renavegar, <code>on(event, callback)</code> era chamado
+        novamente, acumulando <em>callbacks</em> duplicados e causando chamadas redundantes à API.
+      </p>
+
+      <p>
+        <strong>Solução:</strong> o <code>SocketService</code> mantém um
+        <code>Map&lt;String, List&lt;Function&gt;&gt;</code>. O método <code>off(event, callback)</code>
+        remove o <em>callback</em> anterior antes de cada novo registro. Os providers registram
+        <em>listeners</em> apenas uma vez, no <code>initState</code> da tela <em>shell</em>.
+      </p>
+
+      <h2>9.3 Fuso horário nas datas agendadas</h2>
+
+      <p>
+        <strong>Problema:</strong> datas salvas em UTC no banco eram exibidas em UTC no app, mostrando
+        horários 3h adiantados para usuários em Brasília.
+      </p>
+
+      <p>
+        <strong>Solução:</strong> todas as exibições chamam <code>.toLocal()</code> antes de formatar:
+        <code>scheduledAt.toLocal()</code>. O <code>DateFormat</code> usa <code>'pt_BR'</code> via
+        pacote <code>intl</code>.
+      </p>
+
+      <h2>9.4 Conflito de <code>heroTag</code> entre FABs no <code>IndexedStack</code></h2>
+
+      <p>
+        <strong>Problema:</strong> o Flutter lança exceção quando dois
+        <code>FloatingActionButton</code> com o mesmo <code>heroTag</code> coexistem em um
+        <code>IndexedStack</code> (todas as telas ficam em memória simultaneamente).
+      </p>
+
+      <p>
+        <strong>Solução:</strong> atribuição de <code>heroTag</code> único: <code>'fab_home'</code> e
+        <code>'fab_pets'</code>. Particularidade do <code>IndexedStack</code> — diferentemente de
+        <code>Navigator.push</code>, onde apenas uma tela fica ativa por vez.
+      </p>
+
+      <h2>9.5 Disponibilidade dos tópicos Kafka na inicialização</h2>
+
+      <p>
+        <strong>Problema:</strong> na primeira execução do ambiente Docker, o broker Kafka ainda está
+        inicializando quando o consumer tenta se inscrever nos tópicos, resultando em erro de conexão.
+      </p>
+
+      <p>
+        <strong>Solução:</strong> o consumer usa um loop de <em>retry</em> com delay de 3 segundos
+        entre tentativas. O <em>healthcheck</em> no <code>docker-compose.yml</code> também configura a
+        <code>api</code> para aguardar o Kafka estar saudável antes de subir.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         10. Reflexão sobre os Padrões
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>10. Reflexão sobre os Padrões Estudados</h1>
+
+      <h2>10.1 Event-Driven Architecture (EDA)</h2>
+
+      <p>
+        Com EDA, o <code>ServiceRequestService</code> apenas publica um evento ao Kafka; não sabe que
+        existem apps mobile, sockets ou banco de notificações. O <code>NotificationConsumer</code>,
+        completamente independente, decide o que fazer com o evento. Esta separação é o que Hohpe e
+        Woolf (2003) descrevem como <strong>desacoplamento temporal e espacial</strong> — produtor e
+        consumer não precisam estar ativos ao mesmo tempo, e novos consumers não requerem mudanças no
+        produtor.
+      </p>
+
+      <p>
+        Na prática, a EDA introduz <strong>consistência eventual</strong>: existe uma janela de tempo
+        entre o backend processar a requisição REST e o consumer processar o evento Kafka. A solução foi
+        disparar <code>loadMine()</code> e <code>loadOpen()</code> a partir dos eventos Socket.IO,
+        garantindo atualização da UI com delay de ~50–200 ms no ambiente local.
+      </p>
+
+      <h2>10.2 Middleware Orientado a Mensagens (MOM) — Apache Kafka</h2>
+
+      <p>
+        O Kafka se mostrou mais complexo de configurar do que o RabbitMQ, mas ofereceu vantagens
+        concretas: persistência em disco, log imutável para auditoria e suporte a <em>consumer groups</em>
+        para escalabilidade horizontal. Uma limitação observada foi a latência de <em>startup</em>
+        (~10–15 s após <code>docker compose up</code>), absorvida com <em>retry</em> automático no
+        backend.
+      </p>
+
+      <h2>10.3 Clean Architecture</h2>
+
+      <p>
+        Quando a API mudou um <em>endpoint</em> (de <code>/owners/pets</code> para <code>/pets</code>),
+        a alteração foi feita apenas no <code>PetRepository</code>, sem tocar em nenhuma tela ou
+        provider. Martin (2019) argumenta que a regra de dependência protege as regras de negócio das
+        mudanças nos detalhes de implementação — no projeto, essa proteção foi verificada empiricamente
+        ao longo das quatro sprints.
+      </p>
+
+      <h2>10.4 REST como Interface de Comandos</h2>
+
+      <p>
+        A separação entre <strong>comandos REST</strong> (que alteram estado) e
+        <strong>eventos assíncronos</strong> (que propagam atualizações) resulta em um padrão próximo
+        ao CQRS (<em>Command Query Responsibility Segregation</em>), descrito por Richardson (2018).
+        Essa separação reduz a carga sobre a API REST e melhora a responsividade percebida dos
+        aplicativos, pois o Dono e o Cuidador recebem atualizações via Socket.IO sem precisar
+        re-consultar o servidor.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         11. Conclusão
+    ───────────────────────────── -->
+    <div class="sec">
+      <h1>11. Conclusão</h1>
+
+      <p>
+        O Plantão Pet demonstra como os padrões estudados na disciplina — EDA, MOM, Clean Architecture
+        e REST — podem ser aplicados de forma integrada em um sistema distribuído real. Um Dono cria
+        uma solicitação no smartphone e, em menos de um segundo, o Cuidador vê essa solicitação aparecer
+        na sua tela, sem nenhuma ação manual. O fluxo inverso — aceite e conclusão pelo Cuidador
+        atualizando automaticamente o app do Dono — também funciona de forma assíncrona real.
+      </p>
+
+      <p>
+        A jornada de quatro sprints evidenciou que cada padrão resolveu um problema concreto: EDA
+        desacoplou a lógica de negócio das notificações; Clean Architecture isolou mudanças de API sem
+        refatorações em cascata; REST padronizou a interface de comandos; o Kafka garantiu que eventos
+        não se perdessem mesmo sob condições adversas.
+      </p>
+
+      <p>
+        O maior aprendizado foi compreender que <strong>consistência eventual</strong> não é uma
+        limitação a ser evitada, mas um <em>trade-off</em> consciente. Em troca da consistência
+        imediata, o sistema ganhou desacoplamento real, escalabilidade e resiliência — qualidades que
+        justificam a complexidade adicional de um MOM em qualquer sistema distribuído de produção.
+      </p>
+    </div>
+
+    <!-- ─────────────────────────────
+         12. Referências Bibliográficas
+    ───────────────────────────── -->
+    <div class="sec pb">
+      <h1>12. Referências Bibliográficas</h1>
+
+      <div class="refs">
+
+        <div class="ref">
+          MARTIN, Robert C. <strong>Arquitetura limpa: o guia do artesão para estrutura e design de
+          software.</strong> Rio de Janeiro: Alta Books, 2019. (Fundamenta os princípios de Clean
+          Architecture adotados na organização dos apps Flutter e do backend.)
+        </div>
+
+        <div class="ref">
+          BAILEY, Thomas. <strong>Flutter for beginners.</strong> 3rd ed. Birmingham: Packt, 2023.
+          (Referência principal para o desenvolvimento dos aplicativos móveis com Flutter 3.10+ e
+          Dart 3.x.)
+        </div>
+
+        <div class="ref">
+          HOHPE, Gregor; WOOLF, Bobby. <strong>Enterprise Integration Patterns: designing, building,
+          and deploying messaging solutions.</strong> Boston: Addison-Wesley, 2003. (Padrões de
+          integração por mensagens: filas, tópicos, pub/sub, pipes and filters. Base teórica para o
+          MOM com Apache Kafka.)
+        </div>
+
+        <div class="ref">
+          RICHARDSON, Chris. <strong>Microservices patterns: with examples in Java.</strong> Shelter
+          Island: Manning, 2018. (Padrões de EDA, Saga e comunicação assíncrona entre serviços.
+          Fundamenta as decisões de design orientado a eventos do backend.)
+        </div>
+
+        <div class="ref">
+          COULOURIS, George et al. <strong>Distributed Systems: concepts and design.</strong> 5th ed.
+          Boston: Addison-Wesley, 2011. (Conceitos de sistemas distribuídos, comunicação indireta e
+          middlewares. Contexto teórico para o uso do Kafka como MOM.)
+        </div>
+
+        <div class="ref">
+          JOURNAL OF CLOUD COMPUTING. London: Springer, 2012–. ISSN 2192-113X. Disponível em:
+          &lt;https://journalofcloudcomputing.springeropen.com/&gt;. (Periódico consultado em relação
+          aos aspectos de containerização e implantação do sistema em nuvem via Docker Compose.)
+        </div>
+
+      </div>
+
+      <div class="footer">
+        Marcos Alberto &nbsp;·&nbsp; Engenharia de Software — PUC Minas &nbsp;·&nbsp; 1º Semestre 2026
+        &nbsp;·&nbsp; Plantão Pet — Relatório Técnico Sprint 4
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .document -->
+</body>
+</html>
